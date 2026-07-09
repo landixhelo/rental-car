@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  <title>AutoRent</title>
+</head>
+
+<body>
+
+
+    <nav class="navbar navbar-expand-lg">
+
+    <div class="container-fluid">
+
+        <a class="navbar-brand" href="index.html">
+            AutoRent
+        </a>
+
+        <button
+            class="navbar-toggler"
+            type="button"
+            data-bs-toggle="collapse"
+            data-bs-target="#navbarSupportedContent">
+
+            <span class="navbar-toggler-icon"></span>
+
+        </button>
+
+        <div
+            class="collapse navbar-collapse"
+            id="navbarSupportedContent">
+
+            <ul class="navbar-nav ms-auto align-items-center">
+
+                <li class="nav-item">
+                    <a class="nav-link" href="cars.html" data-translate="cars">
+                        Makinat
+                    </a>
+                </li>
+
+               <li class="nav-item dropdown" id="userDropdown" style="display:none;">
+
+    <a
+        class="nav-link dropdown-toggle"
+        href="#"
+        id="clientName"
+        data-bs-toggle="dropdown">
+
+        👤 User
+
+    </a>
+
+    <ul class="dropdown-menu dropdown-menu-end">
+        <li>
+
+    <a
+        id="myReservationsLink"
+        class="dropdown-item"
+        href="myreservations.html">
+
+        Rezervimet e Mia
+
+    </a>
+
+</li>
+
+        <li>
+
+            <a
+                id="adminLink"
+                class="dropdown-item"
+                href="admin.html"
+                style="display:none;">
+
+                Admin Panel
+
+            </a>
+
+        </li>
+
+        <li>
+
+            <a
+                id="logoutBtn"
+                class="dropdown-item"
+                href="#">
+
+                Dil
+
+            </a>
+
+        </li>
+
+    </ul>
+
+</li>
+
+
+<li class="nav-item" id="loginNav">
+
+    <a
+        class="nav-link"
+        href="login.html"
+        data-translate="login">
+
+        Hyr
+
+    </a>
+
+</li>
+
+                <li class="nav-item dropdown">
+
+                    <a
+                        class="nav-link dropdown-toggle"
+                        href="#"
+                        data-bs-toggle="dropdown"
+                        data-translate="language">
+
+                        Gjuha
+
+                    </a>
+
+                    <ul class="dropdown-menu">
+
+                        <li>
+                            <a class="dropdown-item" href="#" data-lang="en">
+                                English
+                            </a>
+                        </li>
+
+                        <li>
+                            <a class="dropdown-item" href="#" data-lang="sq">
+                                Albanian
+                            </a>
+                        </li>
+
+                        <li>
+                            <a class="dropdown-item" href="#" data-lang="it">
+                                Italian
+                            </a>
+                        </li>
+
+                    </ul>
+
+                </li>
+
+                <li class="nav-item">
+                    <a
+                        id="registerBtn"
+                        class="btn"
+                        href="register.html"
+                        data-translate="register">
+                        Regjistrohu
+                    </a>
+                </li>
+
+            </ul>
+
+        </div>
+
+    </div>
+
+</nav>
+
+<section id="register">
+
+    <!-- LEFT IMAGE -->
+
+    <div class="register-image">
+
+        <div class="image-overlay"></div>
+
+        <a href="index.html" class="back-home">
+            <i class="fa-solid fa-arrow-left"></i>
+            Kthehu në faqen kryesore
+        </a>
+
+    </div>
+
+
+
+    <!-- RIGHT FORM -->
+
+    <div class="register-content">
+
+    <div class="register-logo">
+
+        <div class="logo-icon">
+            <i class="fa-solid fa-car-side"></i>
+        </div>
+
+        <span>AutoRent</span>
+
+    </div>
+
+    <h1>Krijo Llogarinë</h1>
+
+    <p>
+        Regjistrohu për të rezervuar makinën tuaj
+    </p>
+
+
+    <form class="register-form">
+
+        <div class="input-box">
+
+            <label>Emri i Plotë</label>
+
+            <input
+            type="text"
+            id="registerName"
+            placeholder="Emri Mbiemri">
+
+        </div>
+
+
+        <div class="input-box">
+
+            <label>Email</label>
+
+            <input
+            type="email"
+            id="registerEmail"
+            placeholder="email@shembull.com">
+
+        </div>
+
+
+        <div class="input-box">
+
+            <label>Fjalëkalimi</label>
+
+            <input
+            type="password"
+            id="registerPassword"
+            placeholder="••••••••">
+
+        </div>
+
+
+        <div class="input-box">
+
+            <label>Konfirmo Fjalëkalimin</label>
+
+            <input
+            type="password"
+            id="confirmPassword"
+            placeholder="••••••••">
+
+        </div>
+
+
+        <button type="submit">
+            Krijo Llogari
+        </button>
+
+    </form>
+
+
+
+    <div class="register-link">
+
+        Keni llogari?
+
+        <a href="login.html">
+            Identifikohu
+        </a>
+
+    </div>
+
+</div>
+</section>
+
+
+
+<!-- FOOTER -->
+
+<footer>
+
+    <div class="footer-logo">
+
+        <div class="logo-icon">
+            <i class="fa-solid fa-car-side"></i>
+        </div>
+
+        <span>AutoRent</span>
+
+    </div>
+
+    <p>
+        © 2024 AutoRent. Të gjitha të drejtat e rezervuara.
+    </p>
+
+</footer>
+
+
+    
+
+<script src="toast.js"></script>
+<script src="register.js"></script>
+<script src="navbar.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+
+</html>

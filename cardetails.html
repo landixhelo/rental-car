@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <title>AutoRent</title>
+</head>
+
+<body>
+
+  <nav class="navbar navbar-expand-lg">
+
+    <div class="container-fluid">
+
+        <a class="navbar-brand" href="index.html">
+            AutoRent
+        </a>
+
+        <button
+            class="navbar-toggler"
+            type="button"
+            data-bs-toggle="collapse"
+            data-bs-target="#navbarSupportedContent">
+
+            <span class="navbar-toggler-icon"></span>
+
+        </button>
+
+        <div
+            class="collapse navbar-collapse"
+            id="navbarSupportedContent">
+
+            <ul class="navbar-nav ms-auto align-items-center">
+
+                <li class="nav-item">
+                    <a class="nav-link" href="cars.html" data-translate="cars">
+                        Makinat
+                    </a>
+                </li>
+
+               <li class="nav-item dropdown" id="userDropdown" style="display:none;">
+
+    <a
+        class="nav-link dropdown-toggle"
+        href="#"
+        id="clientName"
+        data-bs-toggle="dropdown">
+
+        👤 User
+
+    </a>
+
+    <ul class="dropdown-menu dropdown-menu-end">
+        <li>
+
+    <a
+        id="myReservationsLink"
+        class="dropdown-item"
+        href="myreservations.html">
+
+        Rezervimet e Mia
+
+    </a>
+
+</li>
+
+        <li>
+
+            <a
+                id="adminLink"
+                class="dropdown-item"
+                href="admin.html"
+                style="display:none;">
+
+                Admin Panel
+
+            </a>
+
+        </li>
+
+        <li>
+
+            <a
+                id="logoutBtn"
+                class="dropdown-item"
+                href="#">
+
+                Dil
+
+            </a>
+
+        </li>
+
+    </ul>
+
+</li>
+
+
+<li class="nav-item" id="loginNav">
+
+    <a
+        class="nav-link"
+        href="login.html"
+        data-translate="login">
+
+        Hyr
+
+    </a>
+
+</li>
+
+                <li class="nav-item dropdown">
+
+                    <a
+                        class="nav-link dropdown-toggle"
+                        href="#"
+                        data-bs-toggle="dropdown"
+                        data-translate="language">
+
+                        Gjuha
+
+                    </a>
+
+                    <ul class="dropdown-menu">
+
+                        <li>
+                            <a class="dropdown-item" href="#" data-lang="en">
+                                English
+                            </a>
+                        </li>
+
+                        <li>
+                            <a class="dropdown-item" href="#" data-lang="sq">
+                                Albanian
+                            </a>
+                        </li>
+
+                        <li>
+                            <a class="dropdown-item" href="#" data-lang="it">
+                                Italian
+                            </a>
+                        </li>
+
+                    </ul>
+
+                </li>
+
+                <li class="nav-item">
+                    <a
+                        id="registerBtn"
+                        class="btn"
+                        href="register.html"
+                        data-translate="register">
+                        Regjistrohu
+                    </a>
+                </li>
+
+            </ul>
+
+        </div>
+
+    </div>
+
+</nav>
+
+
+
+    
+ <!-- MAIN CONTAINER -->
+
+    <main class="container">
+
+        <!-- LEFT SIDE -->
+
+        <section class="car-section">
+
+            <a href="cars.html"
+            class="back-link">
+
+                <i class="fa-solid fa-arrow-left"></i>
+
+                Kthehu te makinat
+
+            </a>
+
+
+
+            <div class="car-image-card">
+
+                <span class="badge" id="carType">
+                </span>
+
+                <img id="carImage" src=""  alt="">
+
+            </div>
+
+
+
+            <!-- FEATURES -->
+
+            <div class="features">
+
+                <div class="feature-box">
+
+                    <i class="fa-solid fa-users"></i>
+
+                    <h3 id="carSeats"></h3>
+
+                    <p>Vende</p>
+
+                </div>
+
+
+
+                <div class="feature-box">
+
+                    <i class="fa-solid fa-gas-pump"></i>
+
+                    <h3 id="carFuel"></h3>
+
+                    <p id="carTransmission"></p>
+
+                </div>
+
+
+            </div>
+
+        </section>
+
+
+
+        <!-- RIGHT SIDE -->
+
+        <section class="booking-section">
+
+            <div class="car-header">
+
+                <div>
+
+                    <h1 id="carTitle"></h1>
+
+                    <span id="carYear"></span>
+
+                </div>
+
+
+
+                <div class="price">
+
+                    <h2 id="carPrice"></h2>
+
+                    <p>/ditë</p>
+
+                </div>
+
+            </div>
+
+
+
+            <p class="description" id="carDescription">
+
+               
+            </p>
+
+
+
+            <!-- BOOKING CARD -->
+
+            <div class="booking-card">
+
+                <h3>Rezervo Tani</h3>
+
+
+
+                <!-- DATES -->
+
+                <div class="date-group">
+
+                    <div class="input-group">
+
+                        <label>Data e Fillimit</label>
+
+                        <div class="input-icon">
+
+                            <i class="fa-regular fa-calendar"></i>
+
+                            <input
+                            type="date"
+                            id="startDate">
+
+                        </div>
+
+                    </div>
+
+
+
+                    <div class="input-group">
+
+                        <label>Data e Përfundimit</label>
+
+                        <div class="input-icon">
+
+                            <i class="fa-regular fa-calendar"></i>
+
+                            <input
+                            type="date"
+                            id="endDate">
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+
+                <!-- LOCATION -->
+
+                <div class="input-group">
+
+                    <label>
+                        Vendndodhja e Marrjes
+                    </label>
+
+                    <div class="input-icon">
+
+                        <i class="fa-solid fa-location-dot"></i>
+
+                        <input
+                        type="text"
+                        id="pickupLocation"
+                        placeholder="p.sh. Aeroporti, Qendra...">
+
+                    </div>
+
+                </div>
+
+
+
+                <!-- NOTES -->
+
+                <div class="input-group">
+
+                    <label>
+                        Shënime (opsionale)
+                    </label>
+
+                    <textarea
+                    id="reservationNotes"
+                    placeholder="Shënime shtesë për rezervimin..."></textarea>
+
+                </div>
+
+                <div class="reservation-summary">
+
+    <p>
+        Ditë:
+        <span id="totalDays">0</span>
+    </p>
+
+    <p>
+        Totali:
+        <span id="totalPrice">€0</span>
+    </p>
+
+</div>
+
+
+
+                <!-- BUTTON -->
+
+                <button id="reserveBtn" class="reserve-btn">
+
+                    <i class="fa-solid fa-circle-check"></i>
+
+                    Konfirmo Rezervimin
+
+                </button>
+
+                
+
+
+
+                <p class="login-text">
+
+                    Plotësoni të dhënat për rezervim
+
+                </p>
+
+            </div>
+
+        </section>
+
+    </main>
+
+
+
+
+
+
+
+        <!-- FOOTER -->
+
+        <footer>
+
+            <div class="footer-logo">
+
+                <div class="logo-icon">
+                    <i class="fa-solid fa-car-side"></i>
+                </div>
+
+                <span>AutoRent</span>
+
+            </div>
+
+            <p>
+                © 2026 AutoRent. Të gjitha të drejtat e rezervuara.
+            </p>
+
+        </footer>
+
+
+
+
+        <script src="toast.js"></script>
+<script src="navbar.js"></script>
+<script src="logout.js"></script>
+<script src="cardetails.js"></script>
+<script src="reservation.js"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+
+</html>

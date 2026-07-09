@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="admin.css">
+    <link rel="stylesheet" href="style.css">
+    <title>AutoRent</title>
+</head>
+
+<body>
+
+<nav class="navbar navbar-expand-lg">
+
+    <div class="container-fluid">
+
+        <a class="navbar-brand" href="index.html">
+            AutoRent
+        </a>
+
+        <button
+            class="navbar-toggler"
+            type="button"
+            data-bs-toggle="collapse"
+            data-bs-target="#navbarSupportedContent">
+
+            <span class="navbar-toggler-icon"></span>
+
+        </button>
+
+        <div
+            class="collapse navbar-collapse"
+            id="navbarSupportedContent">
+
+            <ul class="navbar-nav ms-auto align-items-center">
+
+                <li class="nav-item">
+                    <a class="nav-link" href="cars.html" data-translate="cars">
+                        Makinat
+                    </a>
+                </li>
+
+               <li class="nav-item dropdown" id="userDropdown" style="display:none;">
+
+    <a
+        class="nav-link dropdown-toggle"
+        href="#"
+        id="clientName"
+        data-bs-toggle="dropdown">
+
+        👤 User
+
+    </a>
+
+    <ul class="dropdown-menu dropdown-menu-end">
+        <li>
+
+    <a
+        id="myReservationsLink"
+        class="dropdown-item"
+        href="myreservations.html">
+
+        Rezervimet e Mia
+
+    </a>
+
+</li>
+
+        <li>
+
+            <a
+                id="adminLink"
+                class="dropdown-item"
+                href="admin.html"
+                style="display:none;">
+
+                Admin Panel
+
+            </a>
+
+        </li>
+
+        <li>
+
+            <a
+                id="logoutBtn"
+                class="dropdown-item"
+                href="#">
+
+                Dil
+
+            </a>
+
+        </li>
+
+    </ul>
+
+</li>
+
+
+<li class="nav-item" id="loginNav">
+
+    <a
+        class="nav-link"
+        href="login.html"
+        data-translate="login">
+
+        Hyr
+
+    </a>
+
+</li>
+
+                <li class="nav-item dropdown">
+
+                    <a
+                        class="nav-link dropdown-toggle"
+                        href="#"
+                        data-bs-toggle="dropdown"
+                        data-translate="language">
+
+                        Gjuha
+
+                    </a>
+
+                    <ul class="dropdown-menu">
+
+                        <li>
+                            <a class="dropdown-item" href="#" data-lang="en">
+                                English
+                            </a>
+                        </li>
+
+                        <li>
+                            <a class="dropdown-item" href="#" data-lang="sq">
+                                Albanian
+                            </a>
+                        </li>
+
+                        <li>
+                            <a class="dropdown-item" href="#" data-lang="it">
+                                Italian
+                            </a>
+                        </li>
+
+                    </ul>
+
+                </li>
+
+                <li class="nav-item">
+                    <a
+                        id="registerBtn"
+                        class="btn"
+                        href="register.html"
+                        data-translate="register">
+                        Regjistrohu
+                    </a>
+                </li>
+
+            </ul>
+
+        </div>
+
+    </div>
+
+</nav>
+
+   
+<div class="dashboard">
+
+        <header>
+
+            <h1>Admin Dashboard</h1>
+
+            <button id="logoutBtn">
+                Logout
+            </button>
+
+        </header>
+
+
+
+        <!-- STATISTIKA -->
+
+        <div class="stats">
+
+            <div class="card">
+                <h2 id="carsCount">0</h2>
+                <p>Makina</p>
+            </div>
+
+            <div class="card">
+                <h2 id="reservationsCount">0</h2>
+                <p>Rezervime</p>
+            </div>
+
+            <div class="card">
+                <h2 id="usersCount">0</h2>
+                <p>Përdorues</p>
+            </div>
+
+        </div>
+
+
+
+        <!-- SHTO MAKINË -->
+
+        <section class="add-car">
+
+            <h2>Shto Makinë</h2>
+            <form id="carForm">
+
+    <input
+        type="hidden"
+        id="carId">
+
+    <input
+        type="text"
+        id="brand"
+        placeholder="Marka">
+
+    <input
+        type="text"
+        id="model"
+        placeholder="Modeli">
+
+    <input
+        type="number"
+        id="year"
+        placeholder="Viti">
+
+    <input
+        type="number"
+        id="price"
+        placeholder="Çmimi">
+
+    <input
+        type="number"
+        id="seats"
+        placeholder="Vendet">
+
+    <select id="fuel">
+
+        <option>Petrol</option>
+        <option>Diesel</option>
+        <option>Hybrid</option>
+        <option>Electric</option>
+
+    </select>
+
+    <select id="transmission">
+
+        <option>Automatic</option>
+        <option>Manual</option>
+
+    </select>
+
+    <select id="type">
+
+        <option>SUV</option>
+        <option>Luxury</option>
+        <option>Sports</option>
+        <option>Sedan</option>
+
+    </select>
+
+    <select id="status">
+
+        <option>Disponueshme</option>
+        <option>E rezervuar</option>
+
+    </select>
+
+    <input
+        type="file"
+        id="imageUpload"
+        accept="image/*">
+
+    <img
+        id="preview"
+        style="display:none;width:200px;">
+
+    <button type="submit">
+        Ruaj Makinën
+    </button>
+
+</form>
+             
+
+        </section>
+
+
+
+        <!-- MAKINAT -->
+
+        <section>
+
+            <h2>Lista e Makinave</h2>
+
+            <table>
+
+                <thead>
+
+                    <tr>
+                        <th>Makina</th>
+                        <th>Viti</th>
+                        <th>Çmimi</th>
+                        <th>Veprim</th>
+                    </tr>
+
+                </thead>
+
+                <tbody id="carsTable">
+
+                </tbody>
+
+            </table>
+
+        </section>
+
+
+
+        <!-- REZERVIMET -->
+
+        <section>
+
+            <h2>Rezervimet</h2>
+
+            <table>
+
+                <thead>
+
+                    <tr>
+                        <th>Klienti</th>
+                        <th>Makina</th>
+                        <th>Fillimi</th>
+                        <th>Përfundimi</th>
+                    </tr>
+
+                </thead>
+
+                <tbody id="reservationsTable">
+
+                </tbody>
+
+            </table>
+
+        </section>
+
+    </div>
+   
+
+    
+
+
+
+
+
+    
+    <!-- FOOTER -->
+
+    <footer>
+
+        <div class="footer-logo">
+
+            <div class="logo-icon">
+                <i class="fa-solid fa-car-side"></i>
+            </div>
+
+            <span>AutoRent</span>
+
+        </div>
+
+        <p>
+            © 2026 AutoRent. Të gjitha të drejtat e rezervuara.
+        </p>
+
+    </footer>
+
+
+    <script src="toast.js"></script>
+<script src="navbar.js"></script>
+<script src="logout.js"></script>
+<script src="admin.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+
+</html>
