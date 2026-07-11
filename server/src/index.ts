@@ -17,6 +17,8 @@ import adminRoutes from "./routes/admin.js";
 import superAdminRoutes from "./routes/superAdmin.js";
 import { EXTRAS, LOCATIONS } from "./lib/pricing.js";
 
+console.log("Booting AutoRent API...");
+
 const app = express();
 
 app.set("trust proxy", 1);
@@ -88,6 +90,6 @@ app.use("/api/super-admin", superAdminRoutes);
 app.use(notFound);
 app.use(errorHandler);
 
-app.listen(env.PORT, () => {
-  console.log(`AutoRent API on http://localhost:${env.PORT}`);
+app.listen(env.PORT, "0.0.0.0", () => {
+  console.log(`AutoRent API on http://0.0.0.0:${env.PORT}`);
 });

@@ -4,5 +4,7 @@ buildCommand = "npm ci && npm run build"
 
 [deploy]
 startCommand = "npx prisma db push && npm run start"
-healthcheckPath = "/api/health"
+# Temporarily disabled — re-enable after first successful boot
+# healthcheckPath = "/api/health"
+# healthcheckTimeout = 300
 restartPolicyType = "ON_FAILURE"

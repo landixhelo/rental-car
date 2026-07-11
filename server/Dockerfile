@@ -17,4 +17,4 @@ RUN npm ci --omit=dev && npx prisma generate
 COPY --from=build /app/dist ./dist
 RUN mkdir -p uploads
 EXPOSE 5000
-CMD ["sh", "-c", "npx prisma db push && node dist/index.js"]
+CMD ["sh", "-c", "npx prisma db push && echo \"Starting AutoRent on PORT=${PORT:-5000}\" && node dist/index.js"]
