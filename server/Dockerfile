@@ -16,5 +16,5 @@ COPY prisma ./prisma
 RUN npm ci --omit=dev && npx prisma generate
 COPY --from=build /app/dist ./dist
 RUN mkdir -p uploads
-EXPOSE 5000
-CMD ["sh", "-c", "npx prisma db push && echo \"Starting AutoRent on PORT=${PORT:-5000}\" && node dist/index.js"]
+EXPOSE 8080
+CMD ["sh", "-c", "npx prisma db push --skip-generate && echo \"Starting AutoRent on PORT=${PORT:-8080}\" && node dist/index.js"]

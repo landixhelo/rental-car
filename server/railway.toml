@@ -3,8 +3,5 @@ builder = "NIXPACKS"
 buildCommand = "npm ci && npm run build"
 
 [deploy]
-startCommand = "npx prisma db push && npm run start"
-# Temporarily disabled — re-enable after first successful boot
-# healthcheckPath = "/api/health"
-# healthcheckTimeout = 300
+startCommand = "npx prisma db push --skip-generate && node dist/index.js"
 restartPolicyType = "ON_FAILURE"
