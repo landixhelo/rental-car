@@ -1,0 +1,178 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  USER
+  CONTRACTOR
+  ADMIN
+  SUPER_ADMIN
+}
+
+enum CarStatus {
+  AVAILABLE
+  RESERVED
+  MAINTENANCE
+}
+
+enum ReservationStatus {
+  PENDING
+  CONFIRMED
+  COMPLETED
+  CANCELLED
+  REJECTED
+}
+
+enum PaymentMethod {
+  CASH
+  BANK_TRANSFER
+  CARD
+}
+
+enum PaymentStatus {
+  PENDING
+  AWAITING_TRANSFER
+  PAY_ON_PICKUP
+  PAID
+}
+
+model User {
+  id           String         @id @default(cuid())
+  fullName     String
+  email        String         @unique
+  passwordHash String
+  phone        String?
+  companyName  String?
+  role         Role           @default(USER)
+  isActive     Boolean        @default(true)
+  notes        String?
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @updatedAt
+  reservations Reservation[]
+  reviews      Review[]
+  favorites    Favorite[]
+  notifications Notification[]
+  ownedCars    Car[]          @relation("CarOwner")
+
+  @@index([email])
+  @@index([role])
+  @@index([isActive])
+}
+
+model Car {
+  id           String         @id @default(cuid())
+  brand        String
+  model        String
+  year         Int
+  pricePerDay  Decimal        @db.Decimal(10, 2)
+  seats        Int
+  doors        Int            @default(4)
+  luggage      Int            @default(2)
+  horsepower   String?
+  color        String?
+  mileage      String?
+  location     String         @default("Tiranë")
+  fuel         String
+  transmission String
+  type         String
+  status       CarStatus      @default(AVAILABLE)
+  description  String
+  features     Json           @default("[]")
+  imageUrl     String
+  ownerId      String?
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @updatedAt
+  owner        User?          @relation("CarOwner", fields: [ownerId], references: [id], onDelete: SetNull)
+  reservations Reservation[]
+  reviews      Review[]
+  favorites    Favorite[]
+
+  @@index([type, status])
+  @@index([location])
+  @@index([pricePerDay])
+  @@index([ownerId])
+}
+
+model Reservation {
+  id             String            @id @default(cuid())
+  userId         String
+  carId          String
+  startDate      DateTime          @db.Date
+  endDate        DateTime          @db.Date
+  totalDays      Int
+  carSubtotal    Decimal           @db.Decimal(10, 2)
+  extras         Json              @default("[]")
+  extrasTotal    Decimal           @db.Decimal(10, 2) @default(0)
+  pickupLocation String
+  returnLocation String
+  locationFees   Decimal           @db.Decimal(10, 2) @default(0)
+  totalPrice     Decimal           @db.Decimal(10, 2)
+  notes          String?
+  paymentMethod  PaymentMethod
+  paymentStatus  PaymentStatus     @default(PENDING)
+  documentUrl    String?
+  status         ReservationStatus @default(CONFIRMED)
+  createdAt      DateTime          @default(now())
+  updatedAt      DateTime          @updatedAt
+  user           User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  car            Car               @relation(fields: [carId], references: [id], onDelete: Restrict)
+
+  @@index([carId, startDate, endDate])
+  @@index([userId])
+  @@index([status])
+}
+
+model Review {
+  id        String   @id @default(cuid())
+  userId    String
+  carId     String
+  rating    Int
+  comment   String?
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  car       Car      @relation(fields: [carId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, carId])
+  @@index([carId])
+}
+
+model Favorite {
+  id        String   @id @default(cuid())
+  userId    String
+  carId     String
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  car       Car      @relation(fields: [carId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, carId])
+}
+
+model ContactMessage {
+  id        String   @id @default(cuid())
+  name      String
+  email     String
+  phone     String?
+  subject   String
+  message   String
+  status    String   @default("New")
+  createdAt DateTime @default(now())
+
+  @@index([createdAt])
+}
+
+model Notification {
+  id        String   @id @default(cuid())
+  userId    String
+  title     String
+  message   String
+  read      Boolean  @default(false)
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, createdAt])
+}

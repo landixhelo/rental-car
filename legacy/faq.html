@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="sq">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <title>FAQ | AutoRent</title>
+</head>
+<body>
+<nav class="navbar navbar-expand-lg">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="index.html">AutoRent</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav ms-auto align-items-center">
+                <li class="nav-item"><a class="nav-link" href="cars.html">Makinat</a></li>
+                <li class="nav-item dropdown" id="userDropdown" style="display:none;">
+                    <a class="nav-link dropdown-toggle" href="#" id="clientName" data-bs-toggle="dropdown">👤 User</a>
+                    <ul class="dropdown-menu dropdown-menu-end">
+                        <li><a id="myReservationsLink" class="dropdown-item" href="myreservations.html">Rezervimet e Mia</a></li>
+                        <li><a id="adminLink" class="dropdown-item" href="admin.html" style="display:none;">Admin Panel</a></li>
+                        <li><a id="logoutBtn" class="dropdown-item" href="#">Dil</a></li>
+                    </ul>
+                </li>
+                <li class="nav-item" id="loginNav"><a class="nav-link" href="login.html">Hyr</a></li>
+                <li class="nav-item"><a id="registerBtn" class="btn" href="register.html">Regjistrohu</a></li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<main class="page-shell">
+    <div class="page-hero">
+        <h1>Pyetjet e Shpeshta</h1>
+        <p>Gjithçka që duhet të dish para se të rezervosh.</p>
+    </div>
+
+    <div class="faq-list">
+        <details open>
+            <summary>Si funksionon rezervimi?</summary>
+            <p>Zgjidh makinën, datat, lokacionin e marrjes/kthimit, extras dhe mënyrën e pagesës. Pastaj konfirmo rezervimin.</p>
+        </details>
+        <details>
+            <summary>Çfarë dokumentesh më duhen?</summary>
+            <p>Patentë e vlefshme dhe dokument identifikimi. Mund t’i ngarkosh gjatë rezervimit.</p>
+        </details>
+        <details>
+            <summary>A mund ta anuloj rezervimin?</summary>
+            <p>Po, nga “Rezervimet e Mia”. Anulimi falas deri 24 orë para fillimit (sipas kushteve).</p>
+        </details>
+        <details>
+            <summary>Si paguaj?</summary>
+            <p>Cash në marrje, transfer bankar, ose kartë (simulim). Statusi i pagesës ruhet te rezervimi.</p>
+        </details>
+        <details>
+            <summary>A ka depozitë?</summary>
+            <p>Po, zakonisht kërkohet depozitë e kthyeshme sipas kategorisë së makinës.</p>
+        </details>
+        <details>
+            <summary>A ofroni pickup në aeroport?</summary>
+            <p>Po. Aeroporti Rinas ka tarifë ekstra +€15.</p>
+        </details>
+    </div>
+
+    <div class="panel-card center-cta">
+        <p>Nuk e gjetët përgjigjen?</p>
+        <a href="contact.html" class="btn">Na Kontaktoni</a>
+        <a href="terms.html" class="text-link">Lexo Kushtet e Qirasë</a>
+    </div>
+</main>
+
+<footer>
+    <div class="footer-logo">
+        <div class="logo-icon"><i class="fa-solid fa-car-side"></i></div>
+        <span>AutoRent</span>
+    </div>
+    <p>© 2026 AutoRent. Të gjitha të drejtat e rezervuara.</p>
+</footer>
+
+<script src="toast.js"></script>
+<script src="app.js"></script>
+<script src="navbar.js"></script>
+<script src="logout.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

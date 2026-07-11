@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="sq">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <title>Kontakt | AutoRent</title>
+</head>
+<body>
+<nav class="navbar navbar-expand-lg">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="index.html">AutoRent</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav ms-auto align-items-center">
+                <li class="nav-item"><a class="nav-link" href="cars.html">Makinat</a></li>
+                <li class="nav-item dropdown" id="userDropdown" style="display:none;">
+                    <a class="nav-link dropdown-toggle" href="#" id="clientName" data-bs-toggle="dropdown">👤 User</a>
+                    <ul class="dropdown-menu dropdown-menu-end">
+                        <li><a id="myReservationsLink" class="dropdown-item" href="myreservations.html">Rezervimet e Mia</a></li>
+                        <li><a id="adminLink" class="dropdown-item" href="admin.html" style="display:none;">Admin Panel</a></li>
+                        <li><a id="logoutBtn" class="dropdown-item" href="#">Dil</a></li>
+                    </ul>
+                </li>
+                <li class="nav-item" id="loginNav"><a class="nav-link" href="login.html">Hyr</a></li>
+                <li class="nav-item"><a id="registerBtn" class="btn" href="register.html">Regjistrohu</a></li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<main class="page-shell">
+    <div class="page-hero">
+        <h1>Na Kontaktoni</h1>
+        <p>Jemi këtu për çdo pyetje rreth rezervimeve, makinave ose pagesave.</p>
+    </div>
+
+    <div class="contact-grid">
+        <form id="contactForm" class="panel-card">
+            <h2>Dërgo Mesazh</h2>
+            <input type="text" id="contactName" placeholder="Emri juaj" required>
+            <input type="email" id="contactEmail" placeholder="Email" required>
+            <input type="text" id="contactPhone" placeholder="Telefon (opsionale)">
+            <select id="contactSubject">
+                <option value="Rezervim">Rezervim</option>
+                <option value="Pagesa">Pagesa</option>
+                <option value="Makina">Makina</option>
+                <option value="Tjetër">Tjetër</option>
+            </select>
+            <textarea id="contactMessage" rows="5" placeholder="Mesazhi juaj..." required></textarea>
+            <button type="submit" class="btn-primary-block">Dërgo</button>
+            <p class="hint-text">Ose na shkruaj direkt në WhatsApp.</p>
+            <a class="whatsapp-btn" href="https://wa.me/355690000000" target="_blank" rel="noopener">
+                <i class="fa-brands fa-whatsapp"></i> WhatsApp Support
+            </a>
+        </form>
+
+        <div class="panel-card contact-info">
+            <h2>Info</h2>
+            <p><i class="fa-solid fa-location-dot"></i> Tiranë, Shqipëri</p>
+            <p><i class="fa-solid fa-phone"></i> +355 69 000 0000</p>
+            <p><i class="fa-solid fa-envelope"></i> support@autorent.al</p>
+            <p><i class="fa-regular fa-clock"></i> 08:00 – 20:00, Çdo ditë</p>
+            <div class="info-box">
+                <strong>Përgjigjemi shpejt</strong>
+                <span>Mesatarisht brenda 1-2 orëve gjatë orarit të punës.</span>
+            </div>
+        </div>
+    </div>
+</main>
+
+<footer>
+    <div class="footer-logo">
+        <div class="logo-icon"><i class="fa-solid fa-car-side"></i></div>
+        <span>AutoRent</span>
+    </div>
+    <p>© 2026 AutoRent. Të gjitha të drejtat e rezervuara.</p>
+</footer>
+
+<script src="toast.js"></script>
+<script src="app.js"></script>
+<script src="api.js"></script>
+<script src="navbar.js"></script>
+<script src="logout.js"></script>
+<script src="contact.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
