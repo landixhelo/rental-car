@@ -3,6 +3,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { api, type Car } from "../lib/api";
 import { useAuth } from "../context/AuthContext";
 import { useToast } from "../hooks/useToast";
+import { API_URL } from "../lib/api";
 
 export default function CarDetailsPage() {
   const { id } = useParams();
@@ -89,7 +90,7 @@ export default function CarDetailsPage() {
       // Convert FormData fields for JSON endpoint compatibility:
       // Our API expects JSON for extras array; with multipart we need a small adapter.
       // Send as multipart but server validates req.body - multer puts fields as strings.
-      await fetch(`${import.meta.env.VITE_API_URL}/api/reservations`, {
+      await fetch(`${API_URL}/api/reservations`, {
         method: "POST",
         credentials: "include",
         body: (() => {

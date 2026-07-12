@@ -1,4 +1,8 @@
-const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
+// Production uses same-origin "/api" via Vercel rewrites so auth cookies work on mobile.
+// Dev talks to local Express (or optional VITE_API_URL override).
+const API_URL = import.meta.env.DEV
+  ? import.meta.env.VITE_API_URL || "http://localhost:5000"
+  : "";
 
 export type User = {
   id: string;

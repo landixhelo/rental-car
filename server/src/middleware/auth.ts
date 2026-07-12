@@ -38,8 +38,8 @@ export function setAuthCookie(res: Response, token: string) {
   res.cookie("token", token, {
     httpOnly: true,
     secure: isProd,
-    // Cross-site (Vercel frontend ↔ Railway/Render API) needs None+Secure in production
-    sameSite: isProd ? "none" : "lax",
+    // Same-site via Vercel /api proxy (works on mobile Safari)
+    sameSite: "lax",
     maxAge: 8 * 60 * 60 * 1000,
     path: "/",
   });
@@ -49,7 +49,7 @@ export function clearAuthCookie(res: Response) {
   res.clearCookie("token", {
     httpOnly: true,
     secure: isProd,
-    sameSite: isProd ? "none" : "lax",
+    sameSite: "lax",
     path: "/",
   });
 }
