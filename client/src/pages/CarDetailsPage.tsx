@@ -187,9 +187,12 @@ export default function CarDetailsPage() {
             <h1>
               {car.brand} {car.model}
             </h1>
+            <div className="company-badge">
+              <span className="company-badge-label">Kompania</span>
+              <strong>{car.companyName || "AutoRent"}</strong>
+            </div>
             <p className="muted">
-              {car.companyName || "AutoRent"} · {car.year} · ⭐{" "}
-              {car.ratingAvg || "-"} ({car.ratingCount || 0})
+              {car.year} · ⭐ {car.ratingAvg || "-"} ({car.ratingCount || 0})
             </p>
           </div>
           <div className="price-box">
@@ -200,13 +203,10 @@ export default function CarDetailsPage() {
             <span>/ditë</span>
           </div>
         </div>
-        <p>{car.description}</p>
+        <p className="detail-desc">{car.description}</p>
 
         <form className="panel booking" onSubmit={onReserve}>
           <h3>Rezervo Tani</h3>
-          <p className="muted">
-            Kompania: <strong>{car.companyName || "AutoRent"}</strong>
-          </p>
           <div className="two-col">
             <label>
               Fillimi
@@ -241,23 +241,35 @@ export default function CarDetailsPage() {
           </div>
 
           <div className="extras">
-            {meta.extras.map((ex) => (
-              <label key={ex.id} className="extra-item">
-                <input
-                  type="checkbox"
-                  checked={selectedExtras.includes(ex.id)}
-                  onChange={(e) => {
-                    setSelectedExtras((prev) =>
-                      e.target.checked
-                        ? [...prev, ex.id]
-                        : prev.filter((x) => x !== ex.id)
-                    );
-                  }}
-                />
-                <span>{ex.name}</span>
-                <strong>+€{ex.price}/ditë</strong>
-              </label>
-            ))}
+            <h4 className="extras-title">Opsione shtesë</h4>
+            <div className="extras-grid">
+              {meta.extras.map((ex) => {
+                const checked = selectedExtras.includes(ex.id);
+                return (
+                  <label
+                    key={ex.id}
+                    className={`extra-item${checked ? " selected" : ""}`}
+                  >
+                    <input
+                      type="checkbox"
+                      checked={checked}
+                      onChange={(e) => {
+                        setSelectedExtras((prev) =>
+                          e.target.checked
+                            ? [...prev, ex.id]
+                            : prev.filter((x) => x !== ex.id)
+                        );
+                      }}
+                    />
+                    <span className="extra-check" aria-hidden="true" />
+                    <span className="extra-copy">
+                      <span className="extra-name">{ex.name}</span>
+                      <span className="extra-price">+€{ex.price}/ditë</span>
+                    </span>
+                  </label>
+                );
+              })}
+            </div>
           </div>
 
           <label>

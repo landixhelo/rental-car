@@ -143,11 +143,12 @@ export default function CarsPage() {
                   <h3>
                     {car.brand} {car.model}
                   </h3>
-                  <strong>€{car.pricePerDay}</strong>
+                  <strong className="car-price">€{car.pricePerDay}</strong>
                 </div>
-                <p className="muted">
-                  {car.companyName || "AutoRent"} · {car.year} · {car.location} ·
-                  ⭐ {car.ratingAvg || "-"} ({car.ratingCount || 0})
+                <span className="company-chip">{car.companyName || "AutoRent"}</span>
+                <p className="muted car-meta">
+                  {car.year} · {car.location} · ⭐ {car.ratingAvg || "-"} (
+                  {car.ratingCount || 0})
                 </p>
                 <p className="clamp">{car.description}</p>
               </div>

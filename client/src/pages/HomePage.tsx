@@ -60,9 +60,9 @@ export default function HomePage() {
                 <h3>
                   {car.brand} {car.model}
                 </h3>
-                <p>
-                  {car.companyName || "AutoRent"} · €{car.pricePerDay}/ditë · ⭐{" "}
-                  {car.ratingAvg || "-"}
+                <span className="company-chip">{car.companyName || "AutoRent"}</span>
+                <p className="muted">
+                  €{car.pricePerDay}/ditë · ⭐ {car.ratingAvg || "-"}
                 </p>
               </div>
             </Link>

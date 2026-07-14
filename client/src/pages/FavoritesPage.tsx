@@ -42,9 +42,8 @@ export default function FavoritesPage() {
                 <h3>
                   {car.brand} {car.model}
                 </h3>
-                <p>
-                  {car.companyName || "AutoRent"} · €{car.pricePerDay}/ditë
-                </p>
+                <span className="company-chip">{car.companyName || "AutoRent"}</span>
+                <p className="muted">€{car.pricePerDay}/ditë</p>
               </div>
             </Link>
             <button className="fav-btn active" onClick={() => remove(car.id)}>
