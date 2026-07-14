@@ -2,6 +2,7 @@ import { type FormEvent, useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { api, type Car } from "../lib/api";
 import { buildCarJsonPayload, uploadCarImageFiles } from "../lib/carMedia";
+import { mediaUrl } from "../lib/mediaUrl";
 import { useAuth } from "../context/AuthContext";
 import { useToast } from "../hooks/useToast";
 
@@ -242,7 +243,7 @@ export default function ContractorPage() {
           <div className="image-thumbs">
             {existingImages.map((src) => (
               <div key={src} className="image-thumb">
-                <img src={src} alt="" />
+                <img src={mediaUrl(src)} alt="" />
                 <button
                   type="button"
                   className="btn danger"

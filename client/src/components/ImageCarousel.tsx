@@ -1,5 +1,6 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useT } from "../context/LocaleContext";
+import { mediaUrl } from "../lib/mediaUrl";
 
 type Props = {
   images: string[];
@@ -9,30 +10,53 @@ type Props = {
 
 export default function ImageCarousel({ images, alt, className = "" }: Props) {
   const t = useT();
-  const slides = images.length ? images : [];
+  const slides = images.map(mediaUrl).filter(Boolean);
   const [index, setIndex] = useState(0);
-  const safeIndex = slides.length ? Math.min(index, slides.length - 1) : 0;
+  const [failed, setFailed] = useState<Record<number, boolean>>({});
 
-  if (!slides.length) {
+  useEffect(() => {
+    setIndex(0);
+    setFailed({});
+  }, [images.join("|")]);
+
+  const safeIndex = slides.length ? Math.min(index, slides.length - 1) : 0;
+  const usable = slides
+    .map((src, i) => ({ src, i }))
+    .filter(({ i }) => !failed[i]);
+
+  if (!slides.length || !usable.length) {
     return (
       <div className={`carousel empty ${className}`}>{t("details.noPhoto")}</div>
     );
   }
 
-  const current = slides[safeIndex];
+  const currentEntry = usable.find((u) => u.i === safeIndex) || usable[0];
+  const current = currentEntry.src;
+  const currentIndex = currentEntry.i;
 
   function prev() {
-    setIndex((i) => (i - 1 + slides.length) % slides.length);
+    const pos = usable.findIndex((u) => u.i === currentIndex);
+    const next = usable[(pos - 1 + usable.length) % usable.length];
+    setIndex(next.i);
   }
 
   function next() {
-    setIndex((i) => (i + 1) % slides.length);
+    const pos = usable.findIndex((u) => u.i === currentIndex);
+    const next = usable[(pos + 1) % usable.length];
+    setIndex(next.i);
   }
 
   return (
     <div className={`carousel ${className}`}>
-      <img src={current} alt={alt} className="carousel-image" />
-      {slides.length > 1 ? (
+      <img
+        src={current}
+        alt={alt}
+        className="carousel-image"
+        onError={() => {
+          setFailed((prev) => ({ ...prev, [currentIndex]: true }));
+        }}
+      />
+      {usable.length > 1 ? (
         <>
           <button
             type="button"
@@ -51,11 +75,11 @@ export default function ImageCarousel({ images, alt, className = "" }: Props) {
             ›
           </button>
           <div className="carousel-dots">
-            {slides.map((_, i) => (
+            {usable.map(({ i }) => (
               <button
                 key={i}
                 type="button"
-                className={`carousel-dot${i === safeIndex ? " active" : ""}`}
+                className={`carousel-dot${i === currentIndex ? " active" : ""}`}
                 onClick={() => setIndex(i)}
                 aria-label={`Foto ${i + 1}`}
               />

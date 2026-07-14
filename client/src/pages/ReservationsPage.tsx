@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { api } from "../lib/api";
+import { mediaUrl } from "../lib/mediaUrl";
 import { useAuth } from "../context/AuthContext";
 import { useT } from "../context/LocaleContext";
 import { useToast } from "../hooks/useToast";
@@ -115,7 +116,7 @@ export default function ReservationsPage() {
               {items.map((r) => (
                 <div key={r.id} className="reservation-card fleet-reservation-card">
                   {r.car?.imageUrl ? (
-                    <img src={r.car.imageUrl} alt="" />
+                    <img src={mediaUrl(r.car.imageUrl)} alt="" />
                   ) : (
                     <div className="fleet-reservation-fallback" />
                   )}
@@ -176,7 +177,7 @@ export default function ReservationsPage() {
             <div className="reservation-list">
               {items.map((r) => (
                 <div key={r.id} className="reservation-card">
-                  <img src={r.car.imageUrl} alt={t("details.noPhoto")} />
+                  <img src={mediaUrl(r.car.imageUrl)} alt={t("details.noPhoto")} />
                   <div>
                     <h3>
                       {r.car.brand} {r.car.model}

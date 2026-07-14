@@ -99,6 +99,13 @@ model Car {
   @@index([ownerId])
 }
 
+model MediaFile {
+  id        String   @id @default(cuid())
+  mimeType  String
+  data      Bytes
+  createdAt DateTime @default(now())
+}
+
 model Reservation {
   id             String            @id @default(cuid())
   userId         String

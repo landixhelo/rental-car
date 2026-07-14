@@ -9,6 +9,7 @@ import { env, isProd, getAllowedOrigins } from "./config/env.js";
 import { errorHandler, notFound } from "./middleware/error.js";
 import authRoutes from "./routes/auth.js";
 import carRoutes from "./routes/cars.js";
+import mediaRoutes from "./routes/media.js";
 import reservationRoutes from "./routes/reservations.js";
 import reviewRoutes from "./routes/reviews.js";
 import favoriteRoutes from "./routes/favorites.js";
@@ -72,6 +73,7 @@ app.use(
 
 app.use("/api/auth", authRoutes);
 app.use("/api/cars", carRoutes);
+app.use("/api/media", mediaRoutes);
 app.use("/api/reservations", reservationRoutes);
 app.use("/api/reviews", reviewRoutes);
 app.use("/api/favorites", favoriteRoutes);

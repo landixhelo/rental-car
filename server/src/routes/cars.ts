@@ -18,6 +18,7 @@ import {
 import { uploadCarImages } from "../middleware/upload.js";
 import { Prisma } from "@prisma/client";
 import { Router } from "express";
+import fs from "fs";
 
 const router = Router();
 
@@ -193,7 +194,19 @@ router.post(
   async (req, res, next) => {
     try {
       if (!req.file) throw new AppError("Ngarko një foto", 400);
-      res.status(201).json({ url: `/uploads/${req.file.filename}` });
+
+      const data = fs.readFileSync(req.file.path);
+      fs.unlink(req.file.path, () => {});
+
+      const saved = await prisma.mediaFile.create({
+        data: {
+          mimeType: req.file.mimetype || "image/jpeg",
+          data,
+        },
+      });
+
+      // Persist in DB so images survive Railway redeploys (disk is ephemeral).
+      res.status(201).json({ url: `/api/media/${saved.id}` });
     } catch (err) {
       next(err);
     }

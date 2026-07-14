@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { api, type Car } from "../lib/api";
+import { mediaUrl } from "../lib/mediaUrl";
 import { useAuth } from "../context/AuthContext";
 import { useT } from "../context/LocaleContext";
 import { useToast } from "../hooks/useToast";
@@ -153,7 +154,7 @@ export default function CarsPage() {
         {cars.map((car) => (
           <div key={car.id} className="car-card-wrap">
             <Link to={`/cars/${car.id}`} className="car-card">
-              <img src={car.imageUrl} alt={`${car.brand} ${car.model}`} />
+              <img src={mediaUrl(car.imageUrl)} alt={`${car.brand} ${car.model}`} />
               <div className="car-card-body">
                 <div className="row-between">
                   <h3>

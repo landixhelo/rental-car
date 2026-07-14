@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { api, type Car } from "../lib/api";
+import { mediaUrl } from "../lib/mediaUrl";
 import { useT } from "../context/LocaleContext";
 import { useToast } from "../hooks/useToast";
 
@@ -39,7 +40,7 @@ export default function FavoritesPage() {
         {cars.map((car) => (
           <div key={car.id} className="car-card-wrap">
             <Link to={`/cars/${car.id}`} className="car-card">
-              <img src={car.imageUrl} alt="" />
+              <img src={mediaUrl(car.imageUrl)} alt="" />
               <div className="car-card-body">
                 <h3>
                   {car.brand} {car.model}

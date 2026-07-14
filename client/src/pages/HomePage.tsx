@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { api, type Car } from "../lib/api";
+import { mediaUrl } from "../lib/mediaUrl";
 import { useT } from "../context/LocaleContext";
 
 export default function HomePage() {
@@ -54,7 +55,7 @@ export default function HomePage() {
         <div className="cars-grid">
           {cars.map((car) => (
             <Link key={car.id} to={`/cars/${car.id}`} className="car-card">
-              <img src={car.imageUrl} alt={`${car.brand} ${car.model}`} />
+              <img src={mediaUrl(car.imageUrl)} alt={`${car.brand} ${car.model}`} />
               <div className="car-card-body">
                 <h3>
                   {car.brand} {car.model}

@@ -1,6 +1,7 @@
 import { type FormEvent, useEffect, useState } from "react";
 import { api, type Car } from "../lib/api";
 import { buildCarJsonPayload, uploadCarImageFiles } from "../lib/carMedia";
+import { mediaUrl } from "../lib/mediaUrl";
 import { useToast } from "../hooks/useToast";
 
 const emptyCar = {
@@ -147,7 +148,7 @@ export default function AdminPage() {
           <div className="image-thumbs">
             {existingImages.map((src) => (
               <div key={src} className="image-thumb">
-                <img src={src} alt="" />
+                <img src={mediaUrl(src)} alt="" />
                 <button
                   type="button"
                   className="btn danger"
