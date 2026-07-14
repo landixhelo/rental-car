@@ -3,6 +3,6 @@ builder = "DOCKERFILE"
 dockerfilePath = "Dockerfile"
 
 [deploy]
-# Apply schema then start API
-startCommand = "npx prisma db push --skip-generate && node dist/index.js"
+# Start command comes from Dockerfile CMD (includes prisma db push + node).
+# Do not override with a shell-less `&&` command — Railway will fail to boot.
 restartPolicyType = "ON_FAILURE"
