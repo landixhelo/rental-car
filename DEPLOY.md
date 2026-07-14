@@ -25,12 +25,15 @@ JWT_SECRET=<gjenero_sekret_te_gjate_32+_chars>
 CLIENT_ORIGIN=https://www.landixhelo.me
 CLIENT_ORIGINS=https://landixhelo.me,https://www.landixhelo.me
 ADMIN_EMAIL=landitir22@gmail.com
-ADMIN_PASSWORD=<fjalekalim_i_forte>
+ADMIN_PASSWORD=<fjalekalim_i_forte_10+_chars>
 ADMIN_NAME=AutoRent Admin
+CONTRACTOR_PASSWORD=<fjalekalim_i_forte_10+_chars>
 BCRYPT_ROUNDS=12
 JWT_EXPIRES_IN=8h
 UPLOAD_DIR=uploads
 ```
+
+> Mos i vendos fjalëkalimet e vjetra të demo (`Admin@12345678`) në production.
 
 6. Pas deploy, hap URL e API (p.sh. `https://autorent-api-production.up.railway.app`)
 7. Test: `https://YOUR-API/api/health` → `{ "ok": true }`

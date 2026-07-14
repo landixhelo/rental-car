@@ -56,12 +56,11 @@ app.use(globalLimiter);
 
 const authLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
-  max: 20,
+  max: isProd ? 10 : 40,
   standardHeaders: true,
   legacyHeaders: false,
   message: { message: "Too many auth attempts, try again later" },
 });
-
 app.get("/api/health", (_req, res) => {
   res.json({ ok: true, service: "autorent-api" });
 });

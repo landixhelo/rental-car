@@ -7,7 +7,7 @@ import { env } from "../config/env.js";
 import { AppError } from "../middleware/error.js";
 import { requireAuth, requireSuperAdmin } from "../middleware/auth.js";
 import { validate } from "../middleware/validate.js";
-import { idParamSchema } from "../validators/schemas.js";
+import { idParamSchema, strongPassword } from "../validators/schemas.js";
 
 const router = Router();
 
@@ -17,7 +17,7 @@ const createAccountSchema = z.object({
   body: z.object({
     fullName: z.string().trim().min(2).max(100),
     email: z.string().trim().email(),
-    password: z.string().min(8).max(128),
+    password: strongPassword,
     phone: z.string().trim().max(30).optional(),
     companyName: z.string().trim().max(120).optional(),
     role: z.enum(["USER", "CONTRACTOR", "ADMIN"]),
@@ -34,7 +34,7 @@ const updateAccountSchema = z.object({
     role: z.enum(["USER", "CONTRACTOR", "ADMIN"]).optional(),
     isActive: z.boolean().optional(),
     notes: z.string().trim().max(1000).optional().nullable(),
-    password: z.string().min(8).max(128).optional(),
+    password: strongPassword.optional(),
   }),
 });
 

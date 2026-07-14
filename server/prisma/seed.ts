@@ -204,13 +204,16 @@ async function main() {
     },
   });
 
-  const contractorHash = await bcrypt.hash("Contractor@123", rounds);
+  const contractorPassword =
+    process.env.CONTRACTOR_PASSWORD || "Contractor@123";
+  const contractorHash = await bcrypt.hash(contractorPassword, rounds);
   await prisma.user.upsert({
     where: { email: "contractor@autorent.al" },
     update: {
       role: "CONTRACTOR",
       isActive: true,
       companyName: "Tirana Fleet Partners",
+      passwordHash: contractorHash,
     },
     create: {
       fullName: "Fleet Partner",
@@ -237,8 +240,9 @@ async function main() {
   }
 
   console.log("Seed complete");
-  console.log(`Super Admin: ${adminEmail} / ${adminPassword}`);
-  console.log("Contractor: contractor@autorent.al / Contractor@123");
+  console.log(`Super Admin: ${adminEmail}`);
+  console.log("Contractor: contractor@autorent.al");
+  console.log("(passwords come from ADMIN_PASSWORD / CONTRACTOR_PASSWORD env)");
 }
 
 main()

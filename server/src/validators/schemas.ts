@@ -1,15 +1,20 @@
 import { z } from "zod";
 
+/** Strong password: 10+ chars, upper, lower, number, special */
+export const strongPassword = z
+  .string()
+  .min(10, "Password must be at least 10 characters")
+  .max(128)
+  .regex(/[a-z]/, "Password must include a lowercase letter")
+  .regex(/[A-Z]/, "Password must include an uppercase letter")
+  .regex(/[0-9]/, "Password must include a number")
+  .regex(/[^A-Za-z0-9]/, "Password must include a special character");
+
 export const registerSchema = z.object({
   body: z.object({
     fullName: z.string().trim().min(2).max(100),
     email: z.string().trim().email().max(200),
-    password: z
-      .string()
-      .min(8)
-      .max(128)
-      .regex(/[A-Za-z]/, "Password must include a letter")
-      .regex(/[0-9]/, "Password must include a number"),
+    password: strongPassword,
     phone: z.string().trim().max(30).optional(),
   }),
 });
@@ -25,14 +30,7 @@ export const updateProfileSchema = z.object({
   body: z.object({
     fullName: z.string().trim().min(2).max(100),
     phone: z.string().trim().max(30).optional(),
-    password: z
-      .string()
-      .min(8)
-      .max(128)
-      .regex(/[A-Za-z]/, "Password must include a letter")
-      .regex(/[0-9]/, "Password must include a number")
-      .optional()
-      .or(z.literal("")),
+    password: strongPassword.optional().or(z.literal("")),
   }),
 });
 
@@ -83,13 +81,15 @@ export const reviewSchema = z.object({
 export const contactSchema = z.object({
   body: z.object({
     name: z.string().trim().min(2).max(100),
-    email: z.string().trim().email(),
+    email: z.string().trim().email().max(200),
     phone: z.string().trim().max(30).optional(),
-    subject: z.string().trim().min(2).max(100),
-    message: z.string().trim().min(5).max(2000),
+    subject: z.string().trim().min(2).max(200),
+    message: z.string().trim().min(10).max(2000),
   }),
 });
 
 export const idParamSchema = z.object({
-  params: z.object({ id: z.string().cuid() }),
+  params: z.object({
+    id: z.string().cuid(),
+  }),
 });
