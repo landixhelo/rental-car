@@ -31,20 +31,31 @@ export default function ContractorPage() {
   const { show, Toast } = useToast();
   const [cars, setCars] = useState<Car[]>([]);
   const [reservations, setReservations] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
   const [form, setForm] = useState({ ...emptyCar, featuresText: "" });
   const [editId, setEditId] = useState<string | null>(null);
 
   async function load() {
-    const [c, r] = await Promise.all([
-      api.myCars(),
-      api.fleetReservations(),
-    ]);
-    setCars(c.cars);
-    setReservations(r.reservations);
+    setLoading(true);
+    try {
+      const carsRes = await api.myCars().catch((e) => {
+        show(e instanceof Error ? e.message : "Gabim te makinat");
+        return { cars: [] as Car[] };
+      });
+      setCars(carsRes.cars);
+
+      const fleetRes = await api.fleetReservations().catch((e) => {
+        show(e instanceof Error ? e.message : "Gabim te rezervimet");
+        return { reservations: [] as any[] };
+      });
+      setReservations(fleetRes.reservations || []);
+    } finally {
+      setLoading(false);
+    }
   }
 
   useEffect(() => {
-    load().catch((e) => show(e.message));
+    load();
   }, []);
 
   const stats = useMemo(() => {
@@ -116,6 +127,91 @@ export default function ContractorPage() {
           <h2>€{stats.revenue}</h2>
           <p>Të ardhura (konfirmuara)</p>
         </div>
+      </div>
+
+      <div className="panel" id="fleet-reservations">
+        <div className="row-between" style={{ alignItems: "center" }}>
+          <div>
+            <h2 style={{ marginBottom: 6 }}>Rezervimet e klientëve</h2>
+            <p className="muted" style={{ margin: 0 }}>
+              Rezervimet për makinat e flotës sate
+            </p>
+          </div>
+          <button className="btn ghost" type="button" onClick={() => load()}>
+            Rifresko
+          </button>
+        </div>
+
+        {loading ? (
+          <p className="muted">Duke u ngarkuar rezervimet...</p>
+        ) : !reservations.length ? (
+          <p className="muted" style={{ marginTop: 16 }}>
+            Nuk ka ende rezervime nga klientët për makinat e tua.
+          </p>
+        ) : (
+          <div className="reservation-list" style={{ marginTop: 18 }}>
+            {reservations.map((r) => (
+              <div key={r.id} className="reservation-card fleet-reservation-card">
+                {r.car?.imageUrl ? (
+                  <img src={r.car.imageUrl} alt="" />
+                ) : (
+                  <div className="fleet-reservation-fallback" />
+                )}
+                <div>
+                  <div className="row-between">
+                    <h3>
+                      {r.car?.brand} {r.car?.model}
+                    </h3>
+                    <span className={`badge status-${r.status}`}>{r.status}</span>
+                  </div>
+                  <p>
+                    <strong>{r.user?.fullName}</strong>
+                    {r.user?.email ? ` · ${r.user.email}` : ""}
+                    {r.user?.phone ? ` · ${r.user.phone}` : ""}
+                  </p>
+                  <p>
+                    {String(r.startDate).slice(0, 10)} →{" "}
+                    {String(r.endDate).slice(0, 10)}
+                  </p>
+                  <p>
+                    {r.pickupLocation} → {r.returnLocation}
+                  </p>
+                  <p className="total">€{r.totalPrice}</p>
+                  <label className="fleet-status-label">
+                    Ndrysho statusin
+                    <select
+                      value={r.status}
+                      onChange={async (e) => {
+                        try {
+                          await api.updateReservationStatus(
+                            r.id,
+                            e.target.value
+                          );
+                          show("Statusi u ndryshua");
+                          await load();
+                        } catch (err) {
+                          show(err instanceof Error ? err.message : "Error");
+                        }
+                      }}
+                    >
+                      {[
+                        "PENDING",
+                        "CONFIRMED",
+                        "COMPLETED",
+                        "CANCELLED",
+                        "REJECTED",
+                      ].map((s) => (
+                        <option key={s} value={s}>
+                          {s}
+                        </option>
+                      ))}
+                    </select>
+                  </label>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
       </div>
 
       <form className="panel" onSubmit={saveCar}>
@@ -294,72 +390,6 @@ export default function ContractorPage() {
                     >
                       Fshi
                     </button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      </div>
-
-      <div className="panel">
-        <h2>Rezervimet e flotës</h2>
-        {!reservations.length && (
-          <p className="muted">Nuk ka rezervime për makinat e tua.</p>
-        )}
-        <div className="table-wrap">
-          <table>
-            <thead>
-              <tr>
-                <th>Klient</th>
-                <th>Makina</th>
-                <th>Data</th>
-                <th>Total</th>
-                <th>Status</th>
-              </tr>
-            </thead>
-            <tbody>
-              {reservations.map((r) => (
-                <tr key={r.id}>
-                  <td>
-                    {r.user?.fullName}
-                    <br />
-                    <span className="muted">{r.user?.email}</span>
-                  </td>
-                  <td>
-                    {r.car?.brand} {r.car?.model}
-                  </td>
-                  <td>
-                    {String(r.startDate).slice(0, 10)} →{" "}
-                    {String(r.endDate).slice(0, 10)}
-                  </td>
-                  <td>€{r.totalPrice}</td>
-                  <td>
-                    <select
-                      value={r.status}
-                      onChange={async (e) => {
-                        try {
-                          await api.updateReservationStatus(
-                            r.id,
-                            e.target.value
-                          );
-                          show("Statusi u ndryshua");
-                          await load();
-                        } catch (err) {
-                          show(err instanceof Error ? err.message : "Error");
-                        }
-                      }}
-                    >
-                      {[
-                        "PENDING",
-                        "CONFIRMED",
-                        "COMPLETED",
-                        "CANCELLED",
-                        "REJECTED",
-                      ].map((s) => (
-                        <option key={s}>{s}</option>
-                      ))}
-                    </select>
                   </td>
                 </tr>
               ))}

@@ -501,6 +501,21 @@ textarea { min-height: 90px; resize: vertical; }
 }
 .reservation-card img { height: 100%; min-height: 180px; }
 .reservation-card > div { padding: 18px; }
+.fleet-reservation-card { margin-top: 0; }
+.fleet-reservation-fallback {
+  min-height: 180px;
+  background: var(--bg-soft);
+}
+.fleet-status-label {
+  display: block;
+  margin-top: 10px;
+  font-size: 0.9rem;
+  color: var(--text-muted);
+}
+.fleet-status-label select {
+  margin-top: 6px;
+  margin-bottom: 0;
+}
 .badge {
   display: inline-block;
   padding: 4px 10px;

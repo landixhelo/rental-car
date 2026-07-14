@@ -62,16 +62,35 @@ router.get("/mine", requireAuth, async (req, res, next) => {
 
 router.get("/fleet", requireAuth, requireContractorOrAdmin, async (req, res, next) => {
   try {
-    const where =
-      req.user!.role === "CONTRACTOR"
-        ? { car: { ownerId: req.user!.id } }
-        : {};
+    const isContractor = req.user!.role === "CONTRACTOR";
+
+    // Resolve owned car IDs first so fleet bookings always match the contractor's cars.
+    const ownedCars = isContractor
+      ? await prisma.car.findMany({
+          where: { ownerId: req.user!.id },
+          select: { id: true },
+        })
+      : [];
+
+    const where = isContractor
+      ? ownedCars.length > 0
+        ? { carId: { in: ownedCars.map((c) => c.id) } }
+        : { id: "__no_fleet_cars__" }
+      : {};
 
     const reservations = await prisma.reservation.findMany({
       where,
       include: {
         user: { select: { fullName: true, email: true, phone: true } },
-        car: { select: { brand: true, model: true, year: true, ownerId: true } },
+        car: {
+          select: {
+            brand: true,
+            model: true,
+            year: true,
+            imageUrl: true,
+            ownerId: true,
+          },
+        },
       },
       orderBy: { createdAt: "desc" },
     });
@@ -215,8 +234,15 @@ router.post(
           },
           include: {
             car: {
-              select: { brand: true, model: true, imageUrl: true, year: true },
+              select: {
+                brand: true,
+                model: true,
+                imageUrl: true,
+                year: true,
+                ownerId: true,
+              },
             },
+            user: { select: { fullName: true, email: true, phone: true } },
           },
         });
 
@@ -227,6 +253,16 @@ router.post(
             message: `Rezervimi për ${created.car.brand} ${created.car.model} (${startDate} → ${endDate}) u ruajt. Pagesa: ${paymentMethod}.`,
           },
         });
+
+        if (created.car.ownerId && created.car.ownerId !== req.user!.id) {
+          await tx.notification.create({
+            data: {
+              userId: created.car.ownerId,
+              title: "Rezervim i ri nga klienti",
+              message: `${created.user.fullName} rezervoi ${created.car.brand} ${created.car.model} (${startDate} → ${endDate}). Totali: €${Number(created.totalPrice)}.`,
+            },
+          });
+        }
 
         return created;
       });
