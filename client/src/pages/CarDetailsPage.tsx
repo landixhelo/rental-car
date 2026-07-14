@@ -64,6 +64,25 @@ export default function CarDetailsPage() {
     };
   }, [car, meta, startDate, endDate, selectedExtras, pickup, ret]);
 
+  const dateConflict = useMemo(() => {
+    if (!car || !startDate || !endDate) return null;
+    if (new Date(endDate) <= new Date(startDate)) {
+      return "Data e mbarimit duhet të jetë pas fillimit.";
+    }
+    if (car.status === "MAINTENANCE") {
+      return "Makina është në mirëmbajtje dhe nuk mund të rezervohet.";
+    }
+    const hit = (car.busyRanges || []).find((range) => {
+      return startDate <= range.endDate && endDate >= range.startDate;
+    });
+    if (hit) {
+      return `Makina është e rezervuar nga ${hit.startDate} deri ${hit.endDate}. Zgjidh data që nuk përputhen.`;
+    }
+    return null;
+  }, [car, startDate, endDate]);
+
+  const canReserve = Boolean(startDate && endDate && !dateConflict);
+
   async function onReserve(e: FormEvent) {
     e.preventDefault();
     if (!user) {
@@ -72,24 +91,12 @@ export default function CarDetailsPage() {
       return;
     }
     if (!id) return;
-
-    const form = new FormData();
-    form.append("carId", id);
-    form.append("startDate", startDate);
-    form.append("endDate", endDate);
-    form.append("pickupLocationId", pickup);
-    form.append("returnLocationId", ret);
-    form.append("paymentMethod", paymentMethod);
-    form.append("notes", notes);
-    selectedExtras.forEach((ex) => form.append("extras[]", ex));
-    // Also send JSON-friendly extras for zod body parser after multer
-    form.set("extras", JSON.stringify(selectedExtras));
-    if (documentFile) form.append("document", documentFile);
+    if (dateConflict) {
+      show(dateConflict);
+      return;
+    }
 
     try {
-      // Convert FormData fields for JSON endpoint compatibility:
-      // Our API expects JSON for extras array; with multipart we need a small adapter.
-      // Send as multipart but server validates req.body - multer puts fields as strings.
       await fetch(`${API_URL}/api/reservations`, {
         method: "POST",
         credentials: "include",
@@ -249,6 +256,18 @@ export default function CarDetailsPage() {
 
         <form className="panel booking" onSubmit={onReserve}>
           <h3>Rezervo Tani</h3>
+          {(car.busyRanges || []).length > 0 ? (
+            <div className="busy-ranges">
+              <p className="busy-ranges-title">Periudha të rezervuara</p>
+              <ul>
+                {(car.busyRanges || []).map((range) => (
+                  <li key={`${range.startDate}-${range.endDate}`}>
+                    {range.startDate} → {range.endDate}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ) : null}
           <div className="two-col">
             <label>
               Fillimi
@@ -259,7 +278,9 @@ export default function CarDetailsPage() {
               <input type="date" min={startDate || today} value={endDate} onChange={(e) => setEndDate(e.target.value)} required />
             </label>
           </div>
-          <div className="two-col">
+          {dateConflict ? (
+            <p className="booking-conflict">{dateConflict}</p>
+          ) : null}          <div className="two-col">
             <label>
               Pickup
               <select value={pickup} onChange={(e) => setPickup(e.target.value)}>
@@ -345,8 +366,8 @@ export default function CarDetailsPage() {
             <p className="total">Totali: €{summary.total}</p>
           </div>
 
-          <button className="btn" type="submit">
-            Konfirmo Rezervimin
+          <button className="btn" type="submit" disabled={!canReserve}>
+            {dateConflict ? "Data nuk janë të lira" : "Konfirmo Rezervimin"}
           </button>
         </form>
       </div>

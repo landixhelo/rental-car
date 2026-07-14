@@ -203,13 +203,16 @@ router.post(
         const overlap = await tx.reservation.findFirst({
           where: {
             carId,
-            status: { notIn: ["CANCELLED", "REJECTED"] },
+            status: { in: ["PENDING", "CONFIRMED"] },
             startDate: { lte: end },
             endDate: { gte: start },
           },
         });
         if (overlap) {
-          throw new AppError("Car is not available for these dates", 409);
+          throw new AppError(
+            "Makina është e rezervuar për këto data. Zgjidh data të tjera.",
+            409
+          );
         }
 
         const created = await tx.reservation.create({

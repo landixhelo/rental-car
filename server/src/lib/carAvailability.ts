@@ -67,6 +67,33 @@ export function currentReservationEnd(
     .slice(0, 10);
 }
 
+export function toBusyRanges(reservations: BusyReservation[]) {
+  return reservations
+    .filter((r) => ["PENDING", "CONFIRMED"].includes(r.status))
+    .map((r) => ({
+      startDate: new Date(dayStamp(new Date(r.startDate)))
+        .toISOString()
+        .slice(0, 10),
+      endDate: new Date(dayStamp(new Date(r.endDate)))
+        .toISOString()
+        .slice(0, 10),
+    }))
+    .sort((a, b) => a.startDate.localeCompare(b.startDate));
+}
+
+export function datesOverlap(
+  startA: string | Date,
+  endA: string | Date,
+  startB: string | Date,
+  endB: string | Date
+) {
+  const aStart = dayStamp(new Date(startA));
+  const aEnd = dayStamp(new Date(endA));
+  const bStart = dayStamp(new Date(startB));
+  const bEnd = dayStamp(new Date(endB));
+  return aStart <= bEnd && aEnd >= bStart;
+}
+
 const activeStatuses: ReservationStatus[] = ["PENDING", "CONFIRMED"];
 
 export const activeReservationSelect = {

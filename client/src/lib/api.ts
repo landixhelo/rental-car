@@ -44,6 +44,7 @@ export type Car = {
   imageUrl: string;
   companyName?: string | null;
   reservedUntil?: string | null;
+  busyRanges?: Array<{ startDate: string; endDate: string }>;
   ratingAvg?: number;
   ratingCount?: number;
   isFavorite?: boolean;

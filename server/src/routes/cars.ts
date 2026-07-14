@@ -8,6 +8,7 @@ import {
   activeReservationSelect,
   currentReservationEnd,
   effectiveCarStatus,
+  toBusyRanges,
 } from "../lib/carAvailability.js";
 import { Prisma } from "@prisma/client";
 import { Router } from "express";
@@ -174,6 +175,7 @@ router.get("/:id", optionalAuth, validate(idParamSchema), async (req, res, next)
         ...car,
         status: effectiveCarStatus(car.status, car.reservations),
         reservedUntil: currentReservationEnd(car.reservations),
+        busyRanges: toBusyRanges(car.reservations),
         pricePerDay: Number(car.pricePerDay),
         companyName: companyNameFromOwner(car.owner),
         ratingAvg: avg,

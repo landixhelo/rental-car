@@ -453,6 +453,42 @@ textarea { min-height: 90px; resize: vertical; }
 }
 .booking h3 { margin: 0 0 12px; }
 .booking > label { margin-top: 6px; }
+.busy-ranges {
+  margin: 0 0 14px;
+  padding: 12px 14px;
+  border-radius: 12px;
+  background: rgba(245, 158, 11, 0.1);
+  border: 1px solid rgba(245, 158, 11, 0.3);
+}
+.busy-ranges-title {
+  margin: 0 0 8px;
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #b45309;
+}
+.busy-ranges ul {
+  margin: 0;
+  padding-left: 18px;
+  display: grid;
+  gap: 4px;
+  color: var(--text);
+  font-size: 0.9rem;
+}
+.booking-conflict {
+  margin: 0 0 12px;
+  padding: 10px 12px;
+  border-radius: 10px;
+  background: rgba(220, 53, 69, 0.1);
+  border: 1px solid rgba(220, 53, 69, 0.28);
+  color: var(--danger);
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+.btn:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+  transform: none;
+}
 
 .extras { margin: 10px 0 8px; }
 .extras-title {
