@@ -3,6 +3,7 @@ import { validate } from "../middleware/validate.js";
 import { carSchema, idParamSchema } from "../validators/schemas.js";
 import { AppError } from "../middleware/error.js";
 import { prisma } from "../lib/prisma.js";
+import { carOwnerSelect, companyNameFromOwner } from "../lib/carOwner.js";
 import { Prisma } from "@prisma/client";
 import { Router } from "express";
 
@@ -29,6 +30,7 @@ router.get("/", optionalAuth, async (req, res, next) => {
         { model: { contains: search, mode: "insensitive" } },
         { location: { contains: search, mode: "insensitive" } },
         { color: { contains: search, mode: "insensitive" } },
+        { owner: { companyName: { contains: search, mode: "insensitive" } } },
       ];
     }
     if (type && type !== "all") where.type = type;
@@ -50,6 +52,7 @@ router.get("/", optionalAuth, async (req, res, next) => {
       where,
       orderBy: { createdAt: "desc" },
       include: {
+        owner: carOwnerSelect,
         reviews: { select: { rating: true } },
         favorites: req.user
           ? { where: { userId: req.user.id }, select: { id: true } }
@@ -68,11 +71,13 @@ router.get("/", optionalAuth, async (req, res, next) => {
       return {
         ...car,
         pricePerDay: Number(car.pricePerDay),
+        companyName: companyNameFromOwner(car.owner),
         ratingAvg: avg,
         ratingCount: count,
         isFavorite: Array.isArray(car.favorites) && car.favorites.length > 0,
         reviews: undefined,
         favorites: undefined,
+        owner: undefined,
       };
     });
 
@@ -126,6 +131,7 @@ router.get("/:id", optionalAuth, validate(idParamSchema), async (req, res, next)
     const car = await prisma.car.findUnique({
       where: { id: req.params.id },
       include: {
+        owner: carOwnerSelect,
         reviews: {
           include: { user: { select: { fullName: true } } },
           orderBy: { createdAt: "desc" },
@@ -149,10 +155,12 @@ router.get("/:id", optionalAuth, validate(idParamSchema), async (req, res, next)
       car: {
         ...car,
         pricePerDay: Number(car.pricePerDay),
+        companyName: companyNameFromOwner(car.owner),
         ratingAvg: avg,
         ratingCount: count,
         isFavorite: Array.isArray(car.favorites) && car.favorites.length > 0,
         favorites: undefined,
+        owner: undefined,
         reviews: car.reviews.map((r) => ({
           id: r.id,
           rating: r.rating,

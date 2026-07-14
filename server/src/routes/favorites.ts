@@ -4,6 +4,7 @@ import { AppError } from "../middleware/error.js";
 import { requireAuth } from "../middleware/auth.js";
 import { validate } from "../middleware/validate.js";
 import { idParamSchema } from "../validators/schemas.js";
+import { carOwnerSelect, companyNameFromOwner } from "../lib/carOwner.js";
 import { z } from "zod";
 
 const router = Router();
@@ -16,7 +17,11 @@ router.get("/", requireAuth, async (req, res, next) => {
   try {
     const favorites = await prisma.favorite.findMany({
       where: { userId: req.user!.id },
-      include: { car: true },
+      include: {
+        car: {
+          include: { owner: carOwnerSelect },
+        },
+      },
       orderBy: { createdAt: "desc" },
     });
 
@@ -26,7 +31,9 @@ router.get("/", requireAuth, async (req, res, next) => {
         car: {
           ...f.car,
           pricePerDay: Number(f.car.pricePerDay),
+          companyName: companyNameFromOwner(f.car.owner),
           isFavorite: true,
+          owner: undefined,
         },
       })),
     });

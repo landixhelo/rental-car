@@ -61,7 +61,8 @@ export default function HomePage() {
                   {car.brand} {car.model}
                 </h3>
                 <p>
-                  €{car.pricePerDay}/ditë · ⭐ {car.ratingAvg || "-"}
+                  {car.companyName || "AutoRent"} · €{car.pricePerDay}/ditë · ⭐{" "}
+                  {car.ratingAvg || "-"}
                 </p>
               </div>
             </Link>

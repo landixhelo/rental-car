@@ -47,6 +47,7 @@ export default function ReservationsPage() {
               <h3>
                 {r.car.brand} {r.car.model}
               </h3>
+              <p className="muted">{r.car.companyName || "AutoRent"}</p>
               <p>
                 {String(r.startDate).slice(0, 10)} → {String(r.endDate).slice(0, 10)}
               </p>

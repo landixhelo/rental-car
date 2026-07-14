@@ -29,6 +29,9 @@ router.get("/mine", requireAuth, async (req, res, next) => {
             model: true,
             year: true,
             imageUrl: true,
+            owner: {
+              select: { companyName: true, fullName: true },
+            },
           },
         },
       },
@@ -42,6 +45,14 @@ router.get("/mine", requireAuth, async (req, res, next) => {
         extrasTotal: Number(r.extrasTotal),
         locationFees: Number(r.locationFees),
         totalPrice: Number(r.totalPrice),
+        car: {
+          ...r.car,
+          companyName:
+            r.car.owner?.companyName?.trim() ||
+            r.car.owner?.fullName ||
+            "AutoRent",
+          owner: undefined,
+        },
       })),
     });
   } catch (err) {

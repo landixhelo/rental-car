@@ -188,7 +188,8 @@ export default function CarDetailsPage() {
               {car.brand} {car.model}
             </h1>
             <p className="muted">
-              {car.year} · ⭐ {car.ratingAvg || "-"} ({car.ratingCount || 0})
+              {car.companyName || "AutoRent"} · {car.year} · ⭐{" "}
+              {car.ratingAvg || "-"} ({car.ratingCount || 0})
             </p>
           </div>
           <div className="price-box">
@@ -203,6 +204,9 @@ export default function CarDetailsPage() {
 
         <form className="panel booking" onSubmit={onReserve}>
           <h3>Rezervo Tani</h3>
+          <p className="muted">
+            Kompania: <strong>{car.companyName || "AutoRent"}</strong>
+          </p>
           <div className="two-col">
             <label>
               Fillimi

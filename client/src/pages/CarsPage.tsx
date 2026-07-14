@@ -146,8 +146,8 @@ export default function CarsPage() {
                   <strong>€{car.pricePerDay}</strong>
                 </div>
                 <p className="muted">
-                  {car.year} · {car.location} · ⭐ {car.ratingAvg || "-"} (
-                  {car.ratingCount || 0})
+                  {car.companyName || "AutoRent"} · {car.year} · {car.location} ·
+                  ⭐ {car.ratingAvg || "-"} ({car.ratingCount || 0})
                 </p>
                 <p className="clamp">{car.description}</p>
               </div>
