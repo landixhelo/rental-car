@@ -187,6 +187,40 @@ export default function CarDetailsPage() {
             ))}
           </ul>
         </div>
+
+        <form className="panel reviews-panel" onSubmit={onReview}>
+          <h3>Komentet e klientëve</h3>
+          <div className="reviews">
+            {(car.reviews || []).length ? (
+              (car.reviews || []).map((r) => (
+                <div key={r.id} className="review-item">
+                  <strong>
+                    {r.userName} · ⭐ {r.rating}
+                  </strong>
+                  <p>{r.comment || "Pa koment"}</p>
+                </div>
+              ))
+            ) : (
+              <p className="muted">Nuk ka komente ende.</p>
+            )}
+          </div>
+          <h4 className="review-form-title">Lëre vlerësimin tënd</h4>
+          <select value={rating} onChange={(e) => setRating(e.target.value)}>
+            {[5, 4, 3, 2, 1].map((n) => (
+              <option key={n} value={n}>
+                {n} ⭐
+              </option>
+            ))}
+          </select>
+          <textarea
+            placeholder="Si ishte përvoja?"
+            value={comment}
+            onChange={(e) => setComment(e.target.value)}
+          />
+          <button className="btn" type="submit">
+            Dërgo Vlerësimin
+          </button>
+        </form>
       </div>
 
       <div>
@@ -314,35 +348,6 @@ export default function CarDetailsPage() {
           <button className="btn" type="submit">
             Konfirmo Rezervimin
           </button>
-        </form>
-
-        <form className="panel" onSubmit={onReview}>
-          <h3>Vlerësimet</h3>
-          <select value={rating} onChange={(e) => setRating(e.target.value)}>
-            {[5, 4, 3, 2, 1].map((n) => (
-              <option key={n} value={n}>
-                {n}
-              </option>
-            ))}
-          </select>
-          <textarea
-            placeholder="Si ishte përvoja?"
-            value={comment}
-            onChange={(e) => setComment(e.target.value)}
-          />
-          <button className="btn" type="submit">
-            Dërgo Vlerësimin
-          </button>
-          <div className="reviews">
-            {(car.reviews || []).map((r) => (
-              <div key={r.id} className="review-item">
-                <strong>
-                  {r.userName} · ⭐ {r.rating}
-                </strong>
-                <p>{r.comment || "Pa koment"}</p>
-              </div>
-            ))}
-          </div>
         </form>
       </div>
     </div>
