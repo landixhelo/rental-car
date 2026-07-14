@@ -1,5 +1,6 @@
 import { type FormEvent, useEffect, useState } from "react";
 import { api, type Car } from "../lib/api";
+import { buildCarJsonPayload, uploadCarImageFiles } from "../lib/carMedia";
 import { useToast } from "../hooks/useToast";
 
 const emptyCar = {
@@ -23,40 +24,6 @@ const emptyCar = {
   imageUrl: "",
 };
 
-function buildCarFormData(
-  form: typeof emptyCar & { featuresText: string },
-  opts: { existingImages: string[]; imageFiles: File[]; replaceImages?: boolean }
-) {
-  const fd = new FormData();
-  const features = form.featuresText
-    .split(",")
-    .map((x) => x.trim())
-    .filter(Boolean);
-
-  fd.append("brand", form.brand);
-  fd.append("model", form.model);
-  fd.append("year", String(form.year));
-  fd.append("pricePerDay", String(form.pricePerDay));
-  fd.append("seats", String(form.seats));
-  fd.append("doors", String(form.doors));
-  fd.append("luggage", String(form.luggage));
-  if (form.horsepower) fd.append("horsepower", form.horsepower);
-  if (form.color) fd.append("color", form.color);
-  if (form.mileage) fd.append("mileage", form.mileage);
-  fd.append("location", form.location || "Tiranë");
-  fd.append("fuel", form.fuel);
-  fd.append("transmission", form.transmission);
-  fd.append("type", form.type);
-  fd.append("status", form.status);
-  fd.append("description", form.description);
-  fd.append("features", JSON.stringify(features));
-  if (form.imageUrl.trim()) fd.append("imageUrl", form.imageUrl.trim());
-  fd.append("imageUrls", JSON.stringify(opts.existingImages));
-  if (opts.replaceImages) fd.append("replaceImages", "true");
-  opts.imageFiles.forEach((file) => fd.append("images", file));
-  return fd;
-}
-
 export default function AdminPage() {
   const { show, Toast } = useToast();
   const [stats, setStats] = useState<any>(null);
@@ -68,6 +35,7 @@ export default function AdminPage() {
   const [editId, setEditId] = useState<string | null>(null);
   const [existingImages, setExistingImages] = useState<string[]>([]);
   const [imageFiles, setImageFiles] = useState<File[]>([]);
+  const [saving, setSaving] = useState(false);
 
   async function load() {
     const [s, c, r, u, m] = await Promise.all([
@@ -101,15 +69,20 @@ export default function AdminPage() {
       show("Shto të paktën një foto (upload ose URL)");
       return;
     }
+    setSaving(true);
     try {
-      const fd = buildCarFormData(form, { existingImages, imageFiles });
-      if (editId) await api.updateCar(editId, fd);
-      else await api.createCar(fd);
+      const uploaded = await uploadCarImageFiles(imageFiles);
+      const images = [...existingImages, ...uploaded].slice(0, 8);
+      const payload = buildCarJsonPayload(form, images);
+      if (editId) await api.updateCar(editId, payload);
+      else await api.createCar(payload);
       resetForm();
       show("Makina u ruajt");
       await load();
     } catch (err) {
       show(err instanceof Error ? err.message : "Error");
+    } finally {
+      setSaving(false);
     }
   }
 
@@ -202,7 +175,9 @@ export default function AdminPage() {
           required
         />
         <div style={{ display: "flex", gap: 10, flexWrap: "wrap" }}>
-          <button className="btn" type="submit">Ruaj</button>
+          <button className="btn" type="submit" disabled={saving}>
+            {saving ? "Duke ngarkuar..." : "Ruaj"}
+          </button>
           {editId ? (
             <button type="button" className="btn ghost" onClick={resetForm}>
               Anulo

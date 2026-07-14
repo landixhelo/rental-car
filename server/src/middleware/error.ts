@@ -44,6 +44,15 @@ export function errorHandler(
   }
 
   // Multer file filter / size errors
+  const multerErr = err as { code?: string; message?: string };
+  if (multerErr?.code === "LIMIT_FILE_SIZE") {
+    return res.status(400).json({
+      message: "Foto shumë e madhe (max 3MB për skedar). Kompreso ose zgjidh foto më të vogël.",
+    });
+  }
+  if (multerErr?.code === "LIMIT_FILE_COUNT" || multerErr?.code === "LIMIT_UNEXPECTED_FILE") {
+    return res.status(400).json({ message: "Shumë skedarë. Maksimumi është 8 foto." });
+  }
   if (err instanceof Error && /File too large|Only JPG|Unexpected field/i.test(err.message)) {
     return res.status(400).json({ message: err.message });
   }

@@ -180,6 +180,26 @@ router.get("/mine", requireAuth, requireContractorOrAdmin, async (req, res, next
   }
 });
 
+router.post(
+  "/images",
+  requireAuth,
+  requireContractorOrAdmin,
+  (req, res, next) => {
+    uploadCarImages.single("image")(req, res, (err) => {
+      if (err) return next(err);
+      next();
+    });
+  },
+  async (req, res, next) => {
+    try {
+      if (!req.file) throw new AppError("Ngarko një foto", 400);
+      res.status(201).json({ url: `/uploads/${req.file.filename}` });
+    } catch (err) {
+      next(err);
+    }
+  }
+);
+
 router.get("/:id", optionalAuth, validate(idParamSchema), async (req, res, next) => {
   try {
     const car = await prisma.car.findUnique({
@@ -239,6 +259,7 @@ router.post(
   requireAuth,
   requireContractorOrAdmin,
   (req, res, next) => {
+    if (!req.is("multipart/form-data")) return next();
     uploadCarImages.array("images", 8)(req, res, (err) => {
       if (err) return next(err);
       next();
@@ -297,6 +318,7 @@ router.patch(
   requireContractorOrAdmin,
   validate(idParamSchema),
   (req, res, next) => {
+    if (!req.is("multipart/form-data")) return next();
     uploadCarImages.array("images", 8)(req, res, (err) => {
       if (err) return next(err);
       next();

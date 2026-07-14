@@ -62,20 +62,32 @@ async function request<T>(
   path: string,
   options: RequestInit = {}
 ): Promise<T> {
-  const res = await fetch(`${API_URL}${path}`, {
-    credentials: "include",
-    ...options,
-    headers: {
-      ...(options.body instanceof FormData
-        ? {}
-        : { "Content-Type": "application/json" }),
-      ...(options.headers || {}),
-    },
-  });
+  let res: Response;
+  try {
+    res = await fetch(`${API_URL}${path}`, {
+      credentials: "include",
+      ...options,
+      headers: {
+        ...(options.body instanceof FormData
+          ? {}
+          : { "Content-Type": "application/json" }),
+        ...(options.headers || {}),
+      },
+    });
+  } catch {
+    throw new Error("Nuk u lidh me serverin. Kontrollo internetin.");
+  }
 
-  const data = await res.json().catch(() => ({}));
+  const data = await res.json().catch(() => ({} as { message?: string }));
   if (!res.ok) {
-    throw new Error(data.message || "Request failed");
+    if (res.status === 413) {
+      throw new Error(
+        "Fotot janë shumë të mëdha për upload. Provo foto më të vogla."
+      );
+    }
+    throw new Error(
+      data.message || `Request failed (${res.status})`
+    );
   }
   return data as T;
 }
@@ -138,6 +150,11 @@ export const api = {
   },
   myCars: () => request<{ cars: Car[] }>("/api/cars/mine"),
   car: (id: string) => request<{ car: Car }>(`/api/cars/${id}`),
+  uploadCarImage: (body: FormData) =>
+    request<{ url: string }>("/api/cars/images", {
+      method: "POST",
+      body,
+    }),
   createCar: (body: FormData | Record<string, unknown>) =>
     request<{ car: Car }>("/api/cars", {
       method: "POST",
