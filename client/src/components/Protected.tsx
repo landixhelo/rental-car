@@ -5,10 +5,12 @@ export function Protected({
   children,
   admin,
   superAdmin,
+  contractor,
 }: {
   children: React.ReactNode;
   admin?: boolean;
   superAdmin?: boolean;
+  contractor?: boolean;
 }) {
   const { user, loading } = useAuth();
   if (loading) return <div className="page">Duke u ngarkuar...</div>;
@@ -18,6 +20,14 @@ export function Protected({
   }
   if (
     admin &&
+    user.role !== "ADMIN" &&
+    user.role !== "SUPER_ADMIN"
+  ) {
+    return <Navigate to="/" replace />;
+  }
+  if (
+    contractor &&
+    user.role !== "CONTRACTOR" &&
     user.role !== "ADMIN" &&
     user.role !== "SUPER_ADMIN"
   ) {

@@ -1,4 +1,5 @@
 import { type FormEvent, useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import { api } from "../lib/api";
 import { useAuth } from "../context/AuthContext";
 import { useToast } from "../hooks/useToast";
@@ -33,10 +34,28 @@ export default function ProfilePage() {
     }
   }
 
+  const canManageFleet =
+    user?.role === "CONTRACTOR" ||
+    user?.role === "ADMIN" ||
+    user?.role === "SUPER_ADMIN";
+
   return (
     <div className="section narrow">
       {Toast}
       <h1>Profili Im</h1>
+
+      {canManageFleet ? (
+        <div className="panel" style={{ marginBottom: 20 }}>
+          <h2>Paneli i flotës</h2>
+          <p className="muted">
+            Shto, edito ose fshi makinat e tua dhe menaxho rezervimet e tyre.
+          </p>
+          <Link to="/contractor" className="btn">
+            Hap panelin e kontraktorit
+          </Link>
+        </div>
+      ) : null}
+
       <form className="panel" onSubmit={onSubmit}>
         <input value={fullName} onChange={(e) => setFullName(e.target.value)} required />
         <input value={user?.email || ""} disabled />

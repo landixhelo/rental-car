@@ -70,6 +70,13 @@ export default function Layout() {
               <NavLink to="/profile" onClick={closeMenu}>
                 Profili
               </NavLink>
+              {user.role === "CONTRACTOR" ||
+              user.role === "ADMIN" ||
+              user.role === "SUPER_ADMIN" ? (
+                <NavLink to="/contractor" onClick={closeMenu}>
+                  Flota ime
+                </NavLink>
+              ) : null}
               {user.role === "ADMIN" || user.role === "SUPER_ADMIN" ? (
                 <NavLink to="/admin" onClick={closeMenu}>
                   Admin

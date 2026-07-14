@@ -1,7 +1,7 @@
 import { PaymentStatus } from "@prisma/client";
 import { prisma } from "../lib/prisma.js";
 import { AppError } from "../middleware/error.js";
-import { requireAuth, requireAdmin } from "../middleware/auth.js";
+import { requireAuth, requireAdmin, requireContractorOrAdmin } from "../middleware/auth.js";
 import { upload } from "../middleware/upload.js";
 import { idParamSchema, reservationSchema } from "../validators/schemas.js";
 import { EXTRAS, calcDays, getLocation } from "../lib/pricing.js";
@@ -31,6 +31,36 @@ router.get("/mine", requireAuth, async (req, res, next) => {
             imageUrl: true,
           },
         },
+      },
+      orderBy: { createdAt: "desc" },
+    });
+
+    res.json({
+      reservations: reservations.map((r) => ({
+        ...r,
+        carSubtotal: Number(r.carSubtotal),
+        extrasTotal: Number(r.extrasTotal),
+        locationFees: Number(r.locationFees),
+        totalPrice: Number(r.totalPrice),
+      })),
+    });
+  } catch (err) {
+    next(err);
+  }
+});
+
+router.get("/fleet", requireAuth, requireContractorOrAdmin, async (req, res, next) => {
+  try {
+    const where =
+      req.user!.role === "CONTRACTOR"
+        ? { car: { ownerId: req.user!.id } }
+        : {};
+
+    const reservations = await prisma.reservation.findMany({
+      where,
+      include: {
+        user: { select: { fullName: true, email: true, phone: true } },
+        car: { select: { brand: true, model: true, year: true, ownerId: true } },
       },
       orderBy: { createdAt: "desc" },
     });
@@ -240,12 +270,25 @@ router.patch(
 router.patch(
   "/:id/status",
   requireAuth,
-  requireAdmin,
+  requireContractorOrAdmin,
   validate(statusSchema),
   async (req, res, next) => {
     try {
-      const updated = await prisma.reservation.update({
+      const reservation = await prisma.reservation.findUnique({
         where: { id: req.params.id },
+        include: { car: { select: { ownerId: true } } },
+      });
+      if (!reservation) throw new AppError("Reservation not found", 404);
+
+      if (
+        req.user!.role === "CONTRACTOR" &&
+        reservation.car.ownerId !== req.user!.id
+      ) {
+        throw new AppError("Forbidden", 403);
+      }
+
+      const updated = await prisma.reservation.update({
+        where: { id: reservation.id },
         data: { status: req.body.status },
       });
       res.json({ reservation: updated });

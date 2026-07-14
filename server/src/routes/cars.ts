@@ -82,6 +82,45 @@ router.get("/", optionalAuth, async (req, res, next) => {
   }
 });
 
+router.get("/mine", requireAuth, requireContractorOrAdmin, async (req, res, next) => {
+  try {
+    const where: Prisma.CarWhereInput =
+      req.user!.role === "CONTRACTOR" ? { ownerId: req.user!.id } : {};
+
+    const cars = await prisma.car.findMany({
+      where,
+      orderBy: { createdAt: "desc" },
+      include: {
+        reviews: { select: { rating: true } },
+        _count: { select: { reservations: true } },
+      },
+    });
+
+    res.json({
+      cars: cars.map((car) => {
+        const count = car.reviews.length;
+        const avg =
+          count === 0
+            ? 0
+            : Math.round(
+                (car.reviews.reduce((s, r) => s + r.rating, 0) / count) * 10
+              ) / 10;
+        return {
+          ...car,
+          pricePerDay: Number(car.pricePerDay),
+          ratingAvg: avg,
+          ratingCount: count,
+          reservationsCount: car._count.reservations,
+          reviews: undefined,
+          _count: undefined,
+        };
+      }),
+    });
+  } catch (err) {
+    next(err);
+  }
+});
+
 router.get("/:id", optionalAuth, validate(idParamSchema), async (req, res, next) => {
   try {
     const car = await prisma.car.findUnique({

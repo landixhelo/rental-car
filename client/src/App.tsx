@@ -16,6 +16,7 @@ import FaqPage from "./pages/FaqPage";
 import TermsPage from "./pages/TermsPage";
 import AdminPage from "./pages/AdminPage";
 import SuperAdminPage from "./pages/SuperAdminPage";
+import ContractorPage from "./pages/ContractorPage";
 
 export default function App() {
   return (
@@ -53,6 +54,14 @@ export default function App() {
                 element={
                   <Protected>
                     <ProfilePage />
+                  </Protected>
+                }
+              />
+              <Route
+                path="contractor"
+                element={
+                  <Protected contractor>
+                    <ContractorPage />
                   </Protected>
                 }
               />

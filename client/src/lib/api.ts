@@ -125,6 +125,7 @@ export const api = {
     const q = new URLSearchParams(params || {}).toString();
     return request<{ cars: Car[] }>(`/api/cars${q ? `?${q}` : ""}`);
   },
+  myCars: () => request<{ cars: Car[] }>("/api/cars/mine"),
   car: (id: string) => request<{ car: Car }>(`/api/cars/${id}`),
   createCar: (body: Partial<Car>) =>
     request<{ car: Car }>("/api/cars", {
@@ -146,6 +147,8 @@ export const api = {
     }),
   myReservations: () =>
     request<{ reservations: any[] }>("/api/reservations/mine"),
+  fleetReservations: () =>
+    request<{ reservations: any[] }>("/api/reservations/fleet"),
   allReservations: () =>
     request<{ reservations: any[] }>("/api/reservations"),
   cancelReservation: (id: string) =>
