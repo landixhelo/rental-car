@@ -118,9 +118,16 @@ export const api = {
         id: string;
         title: string;
         message: string;
+        read?: boolean;
         createdAt: string;
       }>;
     }>("/api/auth/notifications"),
+  unreadReservationCount: () =>
+    request<{ count: number }>("/api/auth/notifications/unread-count"),
+  markReservationNotificationsRead: () =>
+    request<{ ok: boolean }>("/api/auth/notifications/read", {
+      method: "PATCH",
+    }),
 
   cars: (params?: Record<string, string>) => {
     const q = new URLSearchParams(params || {}).toString();

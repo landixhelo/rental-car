@@ -1,12 +1,31 @@
 import { useEffect, useState } from "react";
-import { Link, NavLink, Outlet } from "react-router-dom";
+import { Link, NavLink, Outlet, useLocation } from "react-router-dom";
+import { api } from "../lib/api";
 import { useAuth } from "../context/AuthContext";
 import { useTheme } from "../context/ThemeContext";
 
 export default function Layout() {
   const { user, logout } = useAuth();
   const { theme, toggleTheme } = useTheme();
+  const location = useLocation();
   const [menuOpen, setMenuOpen] = useState(false);
+  const [reservationBadge, setReservationBadge] = useState(0);
+
+  const showReservationBadge =
+    user?.role === "CONTRACTOR" || user?.role === "SUPER_ADMIN";
+
+  async function refreshBadge() {
+    if (!showReservationBadge) {
+      setReservationBadge(0);
+      return;
+    }
+    try {
+      const res = await api.unreadReservationCount();
+      setReservationBadge(res.count || 0);
+    } catch {
+      // ignore badge errors
+    }
+  }
 
   useEffect(() => {
     const close = () => setMenuOpen(false);
@@ -14,9 +33,33 @@ export default function Layout() {
     return () => window.removeEventListener("resize", close);
   }, []);
 
+  useEffect(() => {
+    refreshBadge();
+    if (!showReservationBadge) return;
+
+    const onFocus = () => refreshBadge();
+    const onSeen = () => setReservationBadge(0);
+    const interval = window.setInterval(refreshBadge, 30000);
+
+    window.addEventListener("focus", onFocus);
+    window.addEventListener("autorent:reservations-seen", onSeen);
+    return () => {
+      window.clearInterval(interval);
+      window.removeEventListener("focus", onFocus);
+      window.removeEventListener("autorent:reservations-seen", onSeen);
+    };
+  }, [user?.id, user?.role, showReservationBadge]);
+
+  useEffect(() => {
+    closeMenu();
+  }, [location.pathname]);
+
   function closeMenu() {
     setMenuOpen(false);
   }
+
+  const badgeLabel =
+    reservationBadge > 9 ? "9+" : String(reservationBadge);
 
   return (
     <div className="app-shell">
@@ -31,7 +74,9 @@ export default function Layout() {
               type="button"
               className="icon-btn"
               onClick={toggleTheme}
-              aria-label={theme === "dark" ? "Switch to light mode" : "Switch to dark mode"}
+              aria-label={
+                theme === "dark" ? "Switch to light mode" : "Switch to dark mode"
+              }
               title={theme === "dark" ? "Light mode" : "Dark mode"}
             >
               {theme === "dark" ? "☀" : "☾"}
@@ -64,8 +109,19 @@ export default function Layout() {
               <NavLink to="/favorites" onClick={closeMenu}>
                 Favoritet
               </NavLink>
-              <NavLink to="/reservations" onClick={closeMenu}>
+              <NavLink
+                to="/reservations"
+                onClick={closeMenu}
+                className={({ isActive }) =>
+                  `nav-item-badge${isActive ? " active" : ""}`
+                }
+              >
                 Rezervimet
+                {showReservationBadge && reservationBadge > 0 ? (
+                  <span className="nav-badge" aria-label={`${reservationBadge} njoftime`}>
+                    {badgeLabel}
+                  </span>
+                ) : null}
               </NavLink>
               <NavLink to="/profile" onClick={closeMenu}>
                 Profili

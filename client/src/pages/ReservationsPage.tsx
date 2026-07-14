@@ -18,6 +18,9 @@ export default function ReservationsPage() {
   const [loading, setLoading] = useState(true);
   const { show, Toast } = useToast();
 
+  const showReservationAlerts =
+    user?.role === "CONTRACTOR" || user?.role === "SUPER_ADMIN";
+
   const isFleetManager =
     user?.role === "CONTRACTOR" ||
     user?.role === "ADMIN" ||
@@ -32,6 +35,11 @@ export default function ReservationsPage() {
       } else {
         const res = await api.myReservations();
         setItems(res.reservations || []);
+      }
+
+      if (showReservationAlerts) {
+        await api.markReservationNotificationsRead().catch(() => {});
+        window.dispatchEvent(new Event("autorent:reservations-seen"));
       }
     } finally {
       setLoading(false);

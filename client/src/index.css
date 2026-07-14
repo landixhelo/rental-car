@@ -110,6 +110,28 @@ main { flex: 1; width: 100%; }
 }
 .nav-links a.active { color: var(--accent); font-weight: 600; }
 
+.nav-item-badge {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+.nav-badge {
+  min-width: 18px;
+  height: 18px;
+  padding: 0 5px;
+  border-radius: 999px;
+  background: var(--accent);
+  color: #fff;
+  font-size: 0.68rem;
+  font-weight: 700;
+  line-height: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 0 0 2px var(--bg-nav);
+}
+
 .icon-btn,
 .link-btn {
   background: transparent;

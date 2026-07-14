@@ -143,4 +143,35 @@ router.get("/notifications", requireAuth, async (req, res, next) => {
   }
 });
 
+router.get("/notifications/unread-count", requireAuth, async (req, res, next) => {
+  try {
+    const count = await prisma.notification.count({
+      where: {
+        userId: req.user!.id,
+        read: false,
+        title: { contains: "Rezervim", mode: "insensitive" },
+      },
+    });
+    res.json({ count });
+  } catch (err) {
+    next(err);
+  }
+});
+
+router.patch("/notifications/read", requireAuth, async (req, res, next) => {
+  try {
+    await prisma.notification.updateMany({
+      where: {
+        userId: req.user!.id,
+        read: false,
+        title: { contains: "Rezervim", mode: "insensitive" },
+      },
+      data: { read: true },
+    });
+    res.json({ ok: true });
+  } catch (err) {
+    next(err);
+  }
+});
+
 export default router;

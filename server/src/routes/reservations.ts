@@ -264,6 +264,23 @@ router.post(
           });
         }
 
+        const superAdmins = await tx.user.findMany({
+          where: { role: "SUPER_ADMIN", isActive: true },
+          select: { id: true },
+        });
+        for (const admin of superAdmins) {
+          if (admin.id === req.user!.id || admin.id === created.car.ownerId) {
+            continue;
+          }
+          await tx.notification.create({
+            data: {
+              userId: admin.id,
+              title: "Rezervim i ri",
+              message: `${created.user.fullName} rezervoi ${created.car.brand} ${created.car.model} (${startDate} → ${endDate}). Totali: €${Number(created.totalPrice)}.`,
+            },
+          });
+        }
+
         return created;
       });
 
