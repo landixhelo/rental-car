@@ -5,6 +5,7 @@ export class AppError extends Error {
   statusCode: number;
   constructor(message: string, statusCode = 400) {
     super(message);
+    this.name = "AppError";
     this.statusCode = statusCode;
   }
 }
@@ -13,30 +14,42 @@ export function notFound(_req: Request, _res: Response, next: NextFunction) {
   next(new AppError("Route not found", 404));
 }
 
+function isAppError(err: unknown): err is AppError {
+  return (
+    err instanceof AppError ||
+    (typeof err === "object" &&
+      err !== null &&
+      (err as { name?: string }).name === "AppError" &&
+      typeof (err as { statusCode?: unknown }).statusCode === "number" &&
+      typeof (err as { message?: unknown }).message === "string")
+  );
+}
+
 export function errorHandler(
   err: unknown,
   _req: Request,
   res: Response,
   _next: NextFunction
 ) {
-  if (err instanceof ZodError) {
+  if (err instanceof ZodError || (err as { name?: string })?.name === "ZodError") {
+    const zodErr = err as ZodError;
     return res.status(400).json({
       message: "Validation failed",
-      errors: err.flatten(),
+      errors: typeof zodErr.flatten === "function" ? zodErr.flatten() : undefined,
     });
   }
 
-  if (err instanceof AppError) {
+  if (isAppError(err)) {
     return res.status(err.statusCode).json({ message: err.message });
+  }
+
+  // Multer file filter / size errors
+  if (err instanceof Error && /File too large|Only JPG|Unexpected field/i.test(err.message)) {
+    return res.status(400).json({ message: err.message });
   }
 
   console.error(err);
   return res.status(500).json({
-    message:
-      process.env.NODE_ENV === "production"
-        ? "Internal server error"
-        : err instanceof Error
-          ? err.message
-          : "Internal server error",
+    message: err instanceof Error ? err.message : "Internal server error",
   });
 }

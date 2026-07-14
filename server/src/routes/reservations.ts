@@ -11,6 +11,15 @@ import { Router } from "express";
 
 const router = Router();
 
+function parseDateOnly(value: string) {
+  const match = /^(\d{4})-(\d{2})-(\d{2})$/.exec(value);
+  if (!match) throw new AppError("Invalid date format");
+  const year = Number(match[1]);
+  const month = Number(match[2]);
+  const day = Number(match[3]);
+  return new Date(Date.UTC(year, month - 1, day));
+}
+
 const statusSchema = z.object({
   body: z.object({
     status: z.enum(["PENDING", "CONFIRMED", "COMPLETED", "CANCELLED", "REJECTED"]),
@@ -135,7 +144,12 @@ router.get("/", requireAuth, requireAdmin, async (_req, res, next) => {
 router.post(
   "/",
   requireAuth,
-  upload.single("document"),
+  (req, res, next) => {
+    upload.single("document")(req, res, (err) => {
+      if (err) return next(err);
+      next();
+    });
+  },
   async (req, res, next) => {
     try {
       const raw = req.body || {};
@@ -143,7 +157,14 @@ router.post(
       const extras = Array.isArray(extrasRaw)
         ? extrasRaw
         : typeof extrasRaw === "string" && extrasRaw
-          ? [extrasRaw]
+          ? (() => {
+              try {
+                const parsed = JSON.parse(extrasRaw);
+                return Array.isArray(parsed) ? parsed : [extrasRaw];
+              } catch {
+                return [extrasRaw];
+              }
+            })()
           : [];
 
       const body = reservationSchema.shape.body.parse({
@@ -167,22 +188,48 @@ router.post(
         notes,
       } = body;
 
-      const start = new Date(startDate);
-      const end = new Date(endDate);
-      const today = new Date();
-      today.setHours(0, 0, 0, 0);
+      // Parse YYYY-MM-DD as UTC date-only to match Prisma @db.Date
+      const start = parseDateOnly(startDate);
+      const end = parseDateOnly(endDate);
+      const today = parseDateOnly(
+        new Intl.DateTimeFormat("en-CA", {
+          timeZone: "Europe/Tirane",
+          year: "numeric",
+          month: "2-digit",
+          day: "2-digit",
+        }).format(new Date())
+      );
 
-      if (start < today) throw new AppError("Start date cannot be in the past");
+      if (start < today) {
+        throw new AppError("Data e fillimit nuk mund të jetë në të kaluarën");
+      }
       const totalDays = calcDays(start, end);
-      if (totalDays <= 0) throw new AppError("Invalid date range");
+      if (totalDays <= 0) throw new AppError("Intervali i datave është i pavlefshëm");
 
       const car = await prisma.car.findUnique({ where: { id: carId } });
       if (!car) throw new AppError("Car not found", 404);
       if (car.status === "MAINTENANCE") {
-        throw new AppError("Car is under maintenance");
+        throw new AppError("Makina është në mirëmbajtje");
       }
 
-      const selectedExtras = EXTRAS.filter((e) => body.extras.includes(e.id));
+      const overlap = await prisma.reservation.findFirst({
+        where: {
+          carId,
+          status: { in: ["PENDING", "CONFIRMED"] },
+          startDate: { lte: end },
+          endDate: { gte: start },
+        },
+      });
+      if (overlap) {
+        throw new AppError(
+          "Makina është e rezervuar për këto data. Zgjidh data të tjera.",
+          409
+        );
+      }
+
+      const selectedExtras = EXTRAS.filter((e) => body.extras.includes(e.id)).map(
+        (e) => ({ id: e.id, name: e.name, price: e.price })
+      );
       const pickup = getLocation(pickupLocationId);
       const ret = getLocation(returnLocationId);
       const carSubtotal = totalDays * Number(car.pricePerDay);
@@ -199,57 +246,43 @@ router.post(
         paymentStatus = PaymentStatus.AWAITING_TRANSFER;
       } else paymentStatus = PaymentStatus.PAY_ON_PICKUP;
 
-      const reservation = await prisma.$transaction(async (tx) => {
-        const overlap = await tx.reservation.findFirst({
-          where: {
-            carId,
-            status: { in: ["PENDING", "CONFIRMED"] },
-            startDate: { lte: end },
-            endDate: { gte: start },
-          },
-        });
-        if (overlap) {
-          throw new AppError(
-            "Makina është e rezervuar për këto data. Zgjidh data të tjera.",
-            409
-          );
-        }
-
-        const created = await tx.reservation.create({
-          data: {
-            userId: req.user!.id,
-            carId,
-            startDate: start,
-            endDate: end,
-            totalDays,
-            carSubtotal,
-            extras: selectedExtras,
-            extrasTotal,
-            pickupLocation: pickup.name,
-            returnLocation: ret.name,
-            locationFees,
-            totalPrice,
-            notes,
-            paymentMethod,
-            paymentStatus,
-            documentUrl: req.file ? `/uploads/${req.file.filename}` : null,
-            status: "CONFIRMED",
-          },
-          include: {
-            car: {
-              select: {
-                brand: true,
-                model: true,
-                imageUrl: true,
-                year: true,
-                ownerId: true,
-              },
+      const created = await prisma.reservation.create({
+        data: {
+          userId: req.user!.id,
+          carId,
+          startDate: start,
+          endDate: end,
+          totalDays,
+          carSubtotal,
+          extras: selectedExtras,
+          extrasTotal,
+          pickupLocation: pickup.name,
+          returnLocation: ret.name,
+          locationFees,
+          totalPrice,
+          notes,
+          paymentMethod,
+          paymentStatus,
+          documentUrl: req.file ? `/uploads/${req.file.filename}` : null,
+          status: "CONFIRMED",
+        },
+        include: {
+          car: {
+            select: {
+              brand: true,
+              model: true,
+              imageUrl: true,
+              year: true,
+              ownerId: true,
             },
-            user: { select: { fullName: true, email: true, phone: true } },
           },
-        });
+          user: { select: { fullName: true, email: true, phone: true } },
+        },
+      });
 
-        await tx.notification.create({
+      // Notifications are best-effort (reservation already saved)
+      try {
+        await prisma.notification.create({
           data: {
             userId: req.user!.id,
             title: "Rezervimi u konfirmua",
@@ -258,7 +291,7 @@ router.post(
         });
 
         if (created.car.ownerId && created.car.ownerId !== req.user!.id) {
-          await tx.notification.create({
+          await prisma.notification.create({
             data: {
               userId: created.car.ownerId,
               title: "Rezervim i ri nga klienti",
@@ -267,7 +300,7 @@ router.post(
           });
         }
 
-        const superAdmins = await tx.user.findMany({
+        const superAdmins = await prisma.user.findMany({
           where: { role: "SUPER_ADMIN", isActive: true },
           select: { id: true },
         });
@@ -275,7 +308,7 @@ router.post(
           if (admin.id === req.user!.id || admin.id === created.car.ownerId) {
             continue;
           }
-          await tx.notification.create({
+          await prisma.notification.create({
             data: {
               userId: admin.id,
               title: "Rezervim i ri",
@@ -283,17 +316,17 @@ router.post(
             },
           });
         }
-
-        return created;
-      });
+      } catch (notifyErr) {
+        console.error("Notification failed after reservation:", notifyErr);
+      }
 
       res.status(201).json({
         reservation: {
-          ...reservation,
-          carSubtotal: Number(reservation.carSubtotal),
-          extrasTotal: Number(reservation.extrasTotal),
-          locationFees: Number(reservation.locationFees),
-          totalPrice: Number(reservation.totalPrice),
+          ...created,
+          carSubtotal: Number(created.carSubtotal),
+          extrasTotal: Number(created.extrasTotal),
+          locationFees: Number(created.locationFees),
+          totalPrice: Number(created.totalPrice),
         },
       });
     } catch (err) {
