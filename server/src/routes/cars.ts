@@ -1,6 +1,6 @@
 import { optionalAuth, requireAuth, requireContractorOrAdmin } from "../middleware/auth.js";
 import { validate } from "../middleware/validate.js";
-import { carSchema, idParamSchema } from "../validators/schemas.js";
+import { carBodyObject, carSchema, idParamSchema } from "../validators/schemas.js";
 import { AppError } from "../middleware/error.js";
 import { prisma } from "../lib/prisma.js";
 import { carOwnerSelect, companyNameFromOwner } from "../lib/carOwner.js";
@@ -10,10 +10,46 @@ import {
   effectiveCarStatus,
   toBusyRanges,
 } from "../lib/carAvailability.js";
+import {
+  carImagesFromRecord,
+  normalizeCarImages,
+  asStringArray,
+} from "../lib/carImages.js";
+import { uploadCarImages } from "../middleware/upload.js";
 import { Prisma } from "@prisma/client";
 import { Router } from "express";
 
 const router = Router();
+
+function parseFeatures(raw: unknown): string[] {
+  if (Array.isArray(raw)) {
+    return raw.map(String).map((s) => s.trim()).filter(Boolean);
+  }
+  if (typeof raw === "string" && raw.trim()) {
+    try {
+      const parsed = JSON.parse(raw);
+      if (Array.isArray(parsed)) {
+        return parsed.map(String).map((s) => s.trim()).filter(Boolean);
+      }
+    } catch {
+      return raw.split(",").map((s) => s.trim()).filter(Boolean);
+    }
+  }
+  return [];
+}
+
+function uploadedPaths(files: Express.Multer.File[] | undefined) {
+  return (files || []).map((f) => `/uploads/${f.filename}`);
+}
+
+function withImages<T extends { imageUrl: string; images?: unknown }>(car: T) {
+  const images = carImagesFromRecord(car);
+  return {
+    ...car,
+    images,
+    imageUrl: images[0] || car.imageUrl,
+  };
+}
 
 router.get("/", optionalAuth, async (req, res, next) => {
   try {
@@ -75,7 +111,7 @@ router.get("/", optionalAuth, async (req, res, next) => {
                 (car.reviews.reduce((s, r) => s + r.rating, 0) / count) * 10
               ) / 10;
         const liveStatus = effectiveCarStatus(car.status, car.reservations);
-        return {
+        return withImages({
           ...car,
           status: liveStatus,
           reservedUntil: currentReservationEnd(car.reservations),
@@ -88,7 +124,7 @@ router.get("/", optionalAuth, async (req, res, next) => {
           favorites: undefined,
           owner: undefined,
           reservations: undefined,
-        };
+        });
       })
       .filter((car) => {
         if (!status || status === "all") return true;
@@ -125,7 +161,7 @@ router.get("/mine", requireAuth, requireContractorOrAdmin, async (req, res, next
             : Math.round(
                 (car.reviews.reduce((s, r) => s + r.rating, 0) / count) * 10
               ) / 10;
-        return {
+        return withImages({
           ...car,
           status: effectiveCarStatus(car.status, car.reservations),
           reservedUntil: currentReservationEnd(car.reservations),
@@ -136,7 +172,7 @@ router.get("/mine", requireAuth, requireContractorOrAdmin, async (req, res, next
           reviews: undefined,
           reservations: undefined,
           _count: undefined,
-        };
+        });
       }),
     });
   } catch (err) {
@@ -171,7 +207,7 @@ router.get("/:id", optionalAuth, validate(idParamSchema), async (req, res, next)
           ) / 10;
 
     res.json({
-      car: {
+      car: withImages({
         ...car,
         status: effectiveCarStatus(car.status, car.reservations),
         reservedUntil: currentReservationEnd(car.reservations),
@@ -191,7 +227,7 @@ router.get("/:id", optionalAuth, validate(idParamSchema), async (req, res, next)
           userName: r.user.fullName,
           createdAt: r.createdAt,
         })),
-      },
+      }),
     });
   } catch (err) {
     next(err);
@@ -202,16 +238,53 @@ router.post(
   "/",
   requireAuth,
   requireContractorOrAdmin,
-  validate(carSchema),
+  (req, res, next) => {
+    uploadCarImages.array("images", 8)(req, res, (err) => {
+      if (err) return next(err);
+      next();
+    });
+  },
   async (req, res, next) => {
     try {
-      const ownerId =
-        req.user!.role === "CONTRACTOR" ? req.user!.id : req.body.ownerId || null;
-
-      const car = await prisma.car.create({
-        data: { ...req.body, ownerId },
+      const raw = req.body || {};
+      const media = normalizeCarImages({
+        imageUrl: raw.imageUrl,
+        images: raw.imageUrls ?? raw.images,
+        uploadedPaths: uploadedPaths(req.files as Express.Multer.File[]),
       });
-      res.status(201).json({ car: { ...car, pricePerDay: Number(car.pricePerDay) } });
+      if (!media.images.length) {
+        throw new AppError("Ngarko të paktën një foto ose vendos Image URL", 400);
+      }
+
+      const body = carSchema.shape.body.parse({
+        ...raw,
+        year: raw.year,
+        pricePerDay: raw.pricePerDay,
+        seats: raw.seats || 5,
+        doors: raw.doors || 4,
+        luggage: raw.luggage || 2,
+        features: parseFeatures(raw.features),
+        imageUrl: media.imageUrl,
+        images: media.images,
+        status: raw.status || "AVAILABLE",
+        location: raw.location || "Tiranë",
+      });
+
+      const ownerId =
+        req.user!.role === "CONTRACTOR" ? req.user!.id : raw.ownerId || null;
+
+      const { images: _bodyImages, imageUrl: _bodyUrl, ...carFields } = body;
+      const car = await prisma.car.create({
+        data: {
+          ...carFields,
+          imageUrl: media.imageUrl,
+          images: media.images,
+          ownerId,
+        },
+      });
+      res.status(201).json({
+        car: withImages({ ...car, pricePerDay: Number(car.pricePerDay) }),
+      });
     } catch (err) {
       next(err);
     }
@@ -223,9 +296,17 @@ router.patch(
   requireAuth,
   requireContractorOrAdmin,
   validate(idParamSchema),
+  (req, res, next) => {
+    uploadCarImages.array("images", 8)(req, res, (err) => {
+      if (err) return next(err);
+      next();
+    });
+  },
   async (req, res, next) => {
     try {
-      const existing = await prisma.car.findUnique({ where: { id: req.params.id } });
+      const existing = await prisma.car.findUnique({
+        where: { id: req.params.id },
+      });
       if (!existing) throw new AppError("Car not found", 404);
 
       if (
@@ -235,12 +316,46 @@ router.patch(
         throw new AppError("Forbidden", 403);
       }
 
-      const parsed = carSchema.shape.body.partial().parse(req.body);
+      const raw = req.body || {};
+      const replaceImages = String(raw.replaceImages || "") === "true";
+      const clientSentImageList = raw.imageUrls !== undefined;
+      const media = normalizeCarImages({
+        imageUrl: raw.imageUrl,
+        images: raw.imageUrls ?? raw.images,
+        uploadedPaths: uploadedPaths(req.files as Express.Multer.File[]),
+        existingImages: existing.images,
+        // Prefer the client's kept list (imageUrls) so removals stick.
+        keepExisting: !replaceImages && !clientSentImageList,
+      });
+
+      const parsed = carBodyObject.partial().parse({
+        ...raw,
+        features:
+          raw.features !== undefined ? parseFeatures(raw.features) : undefined,
+        imageUrl: media.imageUrl || existing.imageUrl,
+        images: media.images.length
+          ? media.images
+          : asStringArray(existing.images),
+      });
+
+      const nextImages =
+        media.images.length > 0
+          ? media.images
+          : carImagesFromRecord(existing);
+      const nextCover = nextImages[0] || existing.imageUrl;
+
+      const { images: _ignoredImages, imageUrl: _ignoredUrl, ...rest } = parsed;
       const car = await prisma.car.update({
         where: { id: req.params.id },
-        data: parsed,
+        data: {
+          ...rest,
+          imageUrl: nextCover,
+          images: nextImages,
+        },
       });
-      res.json({ car: { ...car, pricePerDay: Number(car.pricePerDay) } });
+      res.json({
+        car: withImages({ ...car, pricePerDay: Number(car.pricePerDay) }),
+      });
     } catch (err) {
       next(err);
     }

@@ -233,6 +233,101 @@ main { flex: 1; width: 100%; }
 }
 .car-card img { height: 200px; }
 .detail-image { height: min(420px, 55vw); border-radius: 18px; }
+
+.carousel {
+  position: relative;
+  overflow: hidden;
+  border-radius: 18px;
+  background: var(--bg-soft);
+}
+.carousel.detail-carousel { margin-bottom: 4px; }
+.carousel.empty {
+  min-height: 240px;
+  display: grid;
+  place-items: center;
+  color: var(--text-muted);
+}
+.carousel-image {
+  width: 100%;
+  height: min(420px, 55vw);
+  object-fit: cover;
+  display: block;
+}
+.carousel-nav {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 40px;
+  height: 40px;
+  border: none;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.45);
+  color: #fff;
+  font-size: 1.4rem;
+  cursor: pointer;
+  display: grid;
+  place-items: center;
+}
+.carousel-nav.prev { left: 12px; }
+.carousel-nav.next { right: 12px; }
+.carousel-dots {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 12px;
+  display: flex;
+  justify-content: center;
+  gap: 6px;
+}
+.carousel-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  border: none;
+  background: rgba(255, 255, 255, 0.45);
+  cursor: pointer;
+  padding: 0;
+}
+.carousel-dot.active { background: #fff; }
+
+.image-picker {
+  display: grid;
+  gap: 12px;
+  margin: 8px 0 14px;
+}
+.image-picker-label {
+  display: grid;
+  gap: 8px;
+  font-weight: 600;
+  font-size: 0.92rem;
+}
+.image-thumbs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+.image-thumb {
+  position: relative;
+  width: 96px;
+}
+.image-thumb img {
+  width: 96px;
+  height: 72px;
+  object-fit: cover;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  display: block;
+}
+.image-thumb .btn {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  border-radius: 8px;
+  font-size: 1rem;
+}
 .car-card-body {
   padding: 18px 18px 20px;
   display: flex;

@@ -34,26 +34,46 @@ export const updateProfileSchema = z.object({
   }),
 });
 
+export const carBodyObject = z.object({
+  brand: z.string().trim().min(1).max(80),
+  model: z.string().trim().min(1).max(80),
+  year: z.coerce.number().int().min(1990).max(2100),
+  pricePerDay: z.coerce.number().positive().max(10000),
+  seats: z.coerce.number().int().min(1).max(20),
+  doors: z.coerce.number().int().min(2).max(6).default(4),
+  luggage: z.coerce.number().int().min(0).max(10).default(2),
+  horsepower: z.string().trim().max(40).optional(),
+  color: z.string().trim().max(40).optional(),
+  mileage: z.string().trim().max(40).optional(),
+  location: z.string().trim().max(80).default("Tiranë"),
+  fuel: z.string().trim().min(1).max(40),
+  transmission: z.string().trim().min(1).max(40),
+  type: z.string().trim().min(1).max(40),
+  status: z.enum(["AVAILABLE", "RESERVED", "MAINTENANCE"]).default("AVAILABLE"),
+  description: z.string().trim().min(10).max(2000),
+  features: z.array(z.string().trim().max(80)).max(30).default([]),
+  imageUrl: z.string().trim().max(500).optional().or(z.literal("")),
+  images: z.array(z.string().trim().max(500)).max(8).default([]),
+});
+
 export const carSchema = z.object({
-  body: z.object({
-    brand: z.string().trim().min(1).max(80),
-    model: z.string().trim().min(1).max(80),
-    year: z.coerce.number().int().min(1990).max(2100),
-    pricePerDay: z.coerce.number().positive().max(10000),
-    seats: z.coerce.number().int().min(1).max(20),
-    doors: z.coerce.number().int().min(2).max(6).default(4),
-    luggage: z.coerce.number().int().min(0).max(10).default(2),
-    horsepower: z.string().trim().max(40).optional(),
-    color: z.string().trim().max(40).optional(),
-    mileage: z.string().trim().max(40).optional(),
-    location: z.string().trim().max(80).default("Tiranë"),
-    fuel: z.string().trim().min(1).max(40),
-    transmission: z.string().trim().min(1).max(40),
-    type: z.string().trim().min(1).max(40),
-    status: z.enum(["AVAILABLE", "RESERVED", "MAINTENANCE"]).default("AVAILABLE"),
-    description: z.string().trim().min(10).max(2000),
-    features: z.array(z.string().trim().max(80)).max(30).default([]),
-    imageUrl: z.string().url().max(500),
+  body: carBodyObject.superRefine((data, ctx) => {
+    const hasImages = (data.images?.length || 0) > 0;
+    const hasUrl = Boolean(data.imageUrl && String(data.imageUrl).trim());
+    if (!hasImages && !hasUrl) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ["imageUrl"],
+        message: "At least one image URL or uploaded image is required",
+      });
+    }
+    if (hasUrl && data.imageUrl && !/^https?:\/\/|^\//.test(data.imageUrl)) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ["imageUrl"],
+        message: "Invalid image URL",
+      });
+    }
   }),
 });
 

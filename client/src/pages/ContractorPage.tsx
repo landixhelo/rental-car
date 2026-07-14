@@ -22,9 +22,41 @@ const emptyCar = {
   status: "AVAILABLE" as Car["status"],
   description: "Makinë premium në gjendje të shkëlqyer për qira.",
   features: [] as string[],
-  imageUrl:
-    "https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?w=800&q=80",
+  imageUrl: "",
 };
+
+function buildContractorCarFormData(
+  form: typeof emptyCar & { featuresText: string },
+  opts: { existingImages: string[]; imageFiles: File[] }
+) {
+  const fd = new FormData();
+  const features = form.featuresText
+    .split(",")
+    .map((x) => x.trim())
+    .filter(Boolean);
+
+  fd.append("brand", form.brand);
+  fd.append("model", form.model);
+  fd.append("year", String(form.year));
+  fd.append("pricePerDay", String(form.pricePerDay));
+  fd.append("seats", String(form.seats));
+  fd.append("doors", String(form.doors));
+  fd.append("luggage", String(form.luggage));
+  if (form.horsepower) fd.append("horsepower", form.horsepower);
+  if (form.color) fd.append("color", form.color);
+  if (form.mileage) fd.append("mileage", form.mileage);
+  fd.append("location", form.location || "Tiranë");
+  fd.append("fuel", form.fuel);
+  fd.append("transmission", form.transmission);
+  fd.append("type", form.type);
+  fd.append("status", form.status);
+  fd.append("description", form.description);
+  fd.append("features", JSON.stringify(features));
+  if (form.imageUrl.trim()) fd.append("imageUrl", form.imageUrl.trim());
+  fd.append("imageUrls", JSON.stringify(opts.existingImages));
+  opts.imageFiles.forEach((file) => fd.append("images", file));
+  return fd;
+}
 
 export default function ContractorPage() {
   const { user } = useAuth();
@@ -33,6 +65,8 @@ export default function ContractorPage() {
   const [reservations, setReservations] = useState<any[]>([]);
   const [form, setForm] = useState({ ...emptyCar, featuresText: "" });
   const [editId, setEditId] = useState<string | null>(null);
+  const [existingImages, setExistingImages] = useState<string[]>([]);
+  const [imageFiles, setImageFiles] = useState<File[]>([]);
 
   async function load() {
     const carsRes = await api.myCars().catch((e) => {
@@ -68,20 +102,18 @@ export default function ContractorPage() {
 
   async function saveCar(e: FormEvent) {
     e.preventDefault();
-    const payload = {
-      ...form,
-      features: form.featuresText
-        .split(",")
-        .map((x) => x.trim())
-        .filter(Boolean),
-    };
-    delete (payload as any).featuresText;
-
+    if (!existingImages.length && !imageFiles.length && !form.imageUrl.trim()) {
+      show("Shto të paktën një foto (upload ose URL)");
+      return;
+    }
     try {
-      if (editId) await api.updateCar(editId, payload);
-      else await api.createCar(payload);
+      const fd = buildContractorCarFormData(form, { existingImages, imageFiles });
+      if (editId) await api.updateCar(editId, fd);
+      else await api.createCar(fd);
       setForm({ ...emptyCar, featuresText: "" });
       setEditId(null);
+      setExistingImages([]);
+      setImageFiles([]);
       show(editId ? "Makina u përditësua" : "Makina u shtua");
       await load();
     } catch (err) {
@@ -210,17 +242,52 @@ export default function ContractorPage() {
             <option value="MAINTENANCE">MAINTENANCE</option>
           </select>
           <input
-            placeholder="Image URL"
-            value={form.imageUrl}
-            onChange={(e) => setForm({ ...form, imageUrl: e.target.value })}
-            required
-          />
-          <input
             placeholder="Features (ndara me presje)"
             value={form.featuresText}
             onChange={(e) => setForm({ ...form, featuresText: e.target.value })}
           />
         </div>
+
+        <div className="image-picker">
+          <label className="image-picker-label">
+            Foto (deri 8) — zgjidh nga pajisja
+            <input
+              type="file"
+              accept="image/jpeg,image/png,image/webp"
+              multiple
+              onChange={(e) =>
+                setImageFiles(Array.from(e.target.files || []).slice(0, 8))
+              }
+            />
+          </label>
+          <input
+            placeholder="ose Image URL (opsionale)"
+            value={form.imageUrl}
+            onChange={(e) => setForm({ ...form, imageUrl: e.target.value })}
+          />
+          <div className="image-thumbs">
+            {existingImages.map((src) => (
+              <div key={src} className="image-thumb">
+                <img src={src} alt="" />
+                <button
+                  type="button"
+                  className="btn danger"
+                  onClick={() =>
+                    setExistingImages((prev) => prev.filter((x) => x !== src))
+                  }
+                >
+                  ×
+                </button>
+              </div>
+            ))}
+            {imageFiles.map((file) => (
+              <div key={file.name + file.size} className="image-thumb">
+                <img src={URL.createObjectURL(file)} alt="" />
+              </div>
+            ))}
+          </div>
+        </div>
+
         <textarea
           placeholder="Përshkrimi"
           value={form.description}
@@ -238,6 +305,8 @@ export default function ContractorPage() {
               onClick={() => {
                 setEditId(null);
                 setForm({ ...emptyCar, featuresText: "" });
+                setExistingImages([]);
+                setImageFiles([]);
               }}
             >
               Anulo editimin
@@ -281,7 +350,16 @@ export default function ContractorPage() {
                           ...emptyCar,
                           ...c,
                           featuresText: (c.features || []).join(", "),
+                          imageUrl: "",
                         } as any);
+                        setExistingImages(
+                          c.images?.length
+                            ? c.images
+                            : c.imageUrl
+                              ? [c.imageUrl]
+                              : []
+                        );
+                        setImageFiles([]);
                         window.scrollTo({ top: 0, behavior: "smooth" });
                       }}
                     >

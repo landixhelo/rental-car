@@ -17,19 +17,36 @@ const storage = multer.diskStorage({
   },
 });
 
-const allowed = new Set([
+const allowedDocs = new Set([
   "image/jpeg",
   "image/png",
   "image/webp",
   "application/pdf",
 ]);
 
+const allowedImages = new Set(["image/jpeg", "image/png", "image/webp"]);
+
 export const upload = multer({
   storage,
   limits: { fileSize: 2 * 1024 * 1024 },
   fileFilter: (_req, file, cb) => {
-    if (!allowed.has(file.mimetype)) {
-      return cb(new AppError("Only JPG, PNG, WEBP or PDF allowed", 400) as unknown as Error);
+    if (!allowedDocs.has(file.mimetype)) {
+      return cb(
+        new AppError("Only JPG, PNG, WEBP or PDF allowed", 400) as unknown as Error
+      );
+    }
+    cb(null, true);
+  },
+});
+
+export const uploadCarImages = multer({
+  storage,
+  limits: { fileSize: 3 * 1024 * 1024, files: 8 },
+  fileFilter: (_req, file, cb) => {
+    if (!allowedImages.has(file.mimetype)) {
+      return cb(
+        new AppError("Only JPG, PNG or WEBP images allowed", 400) as unknown as Error
+      );
     }
     cb(null, true);
   },

@@ -20,8 +20,42 @@ const emptyCar = {
   status: "AVAILABLE" as const,
   description: "Makinë premium në gjendje të shkëlqyer për qira.",
   features: [] as string[],
-  imageUrl: "https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?w=800&q=80",
+  imageUrl: "",
 };
+
+function buildCarFormData(
+  form: typeof emptyCar & { featuresText: string },
+  opts: { existingImages: string[]; imageFiles: File[]; replaceImages?: boolean }
+) {
+  const fd = new FormData();
+  const features = form.featuresText
+    .split(",")
+    .map((x) => x.trim())
+    .filter(Boolean);
+
+  fd.append("brand", form.brand);
+  fd.append("model", form.model);
+  fd.append("year", String(form.year));
+  fd.append("pricePerDay", String(form.pricePerDay));
+  fd.append("seats", String(form.seats));
+  fd.append("doors", String(form.doors));
+  fd.append("luggage", String(form.luggage));
+  if (form.horsepower) fd.append("horsepower", form.horsepower);
+  if (form.color) fd.append("color", form.color);
+  if (form.mileage) fd.append("mileage", form.mileage);
+  fd.append("location", form.location || "Tiranë");
+  fd.append("fuel", form.fuel);
+  fd.append("transmission", form.transmission);
+  fd.append("type", form.type);
+  fd.append("status", form.status);
+  fd.append("description", form.description);
+  fd.append("features", JSON.stringify(features));
+  if (form.imageUrl.trim()) fd.append("imageUrl", form.imageUrl.trim());
+  fd.append("imageUrls", JSON.stringify(opts.existingImages));
+  if (opts.replaceImages) fd.append("replaceImages", "true");
+  opts.imageFiles.forEach((file) => fd.append("images", file));
+  return fd;
+}
 
 export default function AdminPage() {
   const { show, Toast } = useToast();
@@ -32,6 +66,8 @@ export default function AdminPage() {
   const [messages, setMessages] = useState<any[]>([]);
   const [form, setForm] = useState({ ...emptyCar, featuresText: "" });
   const [editId, setEditId] = useState<string | null>(null);
+  const [existingImages, setExistingImages] = useState<string[]>([]);
+  const [imageFiles, setImageFiles] = useState<File[]>([]);
 
   async function load() {
     const [s, c, r, u, m] = await Promise.all([
@@ -52,22 +88,24 @@ export default function AdminPage() {
     load().catch((e) => show(e.message));
   }, []);
 
+  function resetForm() {
+    setForm({ ...emptyCar, featuresText: "" });
+    setEditId(null);
+    setExistingImages([]);
+    setImageFiles([]);
+  }
+
   async function saveCar(e: FormEvent) {
     e.preventDefault();
-    const payload = {
-      ...form,
-      features: form.featuresText
-        .split(",")
-        .map((x) => x.trim())
-        .filter(Boolean),
-    };
-    delete (payload as any).featuresText;
-
+    if (!existingImages.length && !imageFiles.length && !form.imageUrl.trim()) {
+      show("Shto të paktën një foto (upload ose URL)");
+      return;
+    }
     try {
-      if (editId) await api.updateCar(editId, payload);
-      else await api.createCar(payload);
-      setForm({ ...emptyCar, featuresText: "" });
-      setEditId(null);
+      const fd = buildCarFormData(form, { existingImages, imageFiles });
+      if (editId) await api.updateCar(editId, fd);
+      else await api.createCar(fd);
+      resetForm();
       show("Makina u ruajt");
       await load();
     } catch (err) {
@@ -113,16 +151,64 @@ export default function AdminPage() {
             <option value="RESERVED">RESERVED</option>
             <option value="MAINTENANCE">MAINTENANCE</option>
           </select>
-          <input placeholder="Image URL" value={form.imageUrl} onChange={(e) => setForm({ ...form, imageUrl: e.target.value })} />
           <input placeholder="Features (comma)" value={form.featuresText} onChange={(e) => setForm({ ...form, featuresText: e.target.value })} />
         </div>
+
+        <div className="image-picker">
+          <label className="image-picker-label">
+            Foto (deri 8) — zgjidh nga pajisja
+            <input
+              type="file"
+              accept="image/jpeg,image/png,image/webp"
+              multiple
+              onChange={(e) =>
+                setImageFiles(Array.from(e.target.files || []).slice(0, 8))
+              }
+            />
+          </label>
+          <input
+            placeholder="ose Image URL (opsionale)"
+            value={form.imageUrl}
+            onChange={(e) => setForm({ ...form, imageUrl: e.target.value })}
+          />
+          <div className="image-thumbs">
+            {existingImages.map((src) => (
+              <div key={src} className="image-thumb">
+                <img src={src} alt="" />
+                <button
+                  type="button"
+                  className="btn danger"
+                  onClick={() =>
+                    setExistingImages((prev) => prev.filter((x) => x !== src))
+                  }
+                >
+                  ×
+                </button>
+              </div>
+            ))}
+            {imageFiles.map((file) => (
+              <div key={file.name + file.size} className="image-thumb">
+                <img src={URL.createObjectURL(file)} alt="" />
+                <span className="muted">{file.name}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+
         <textarea
           placeholder="Description"
           value={form.description}
           onChange={(e) => setForm({ ...form, description: e.target.value })}
           required
         />
-        <button className="btn" type="submit">Ruaj</button>
+        <div style={{ display: "flex", gap: 10, flexWrap: "wrap" }}>
+          <button className="btn" type="submit">Ruaj</button>
+          {editId ? (
+            <button type="button" className="btn ghost" onClick={resetForm}>
+              Anulo
+            </button>
+          ) : null}
+        </div>
       </form>
 
       <div className="panel">
@@ -142,9 +228,15 @@ export default function AdminPage() {
                   <button className="btn ghost" onClick={() => {
                     setEditId(c.id);
                     setForm({
+                      ...emptyCar,
                       ...c,
                       featuresText: (c.features || []).join(", "),
+                      imageUrl: "",
                     } as any);
+                    setExistingImages(
+                      c.images?.length ? c.images : c.imageUrl ? [c.imageUrl] : []
+                    );
+                    setImageFiles([]);
                   }}>Edit</button>
                   <button className="btn danger" onClick={async () => {
                     if (!confirm("Fshi?")) return;
@@ -164,14 +256,14 @@ export default function AdminPage() {
         <div className="table-wrap">
         <table>
           <thead>
-            <tr><th>Klient</th><th>Makina</th><th>Data</th><th>Total</th><th>Status</th><th></th></tr>
+            <tr><th>User</th><th>Makina</th><th>Data</th><th>Total</th><th>Status</th></tr>
           </thead>
           <tbody>
             {reservations.map((r) => (
               <tr key={r.id}>
                 <td>{r.user?.fullName}</td>
                 <td>{r.car?.brand} {r.car?.model}</td>
-                <td>{String(r.startDate).slice(0,10)} → {String(r.endDate).slice(0,10)}</td>
+                <td>{String(r.startDate).slice(0, 10)} → {String(r.endDate).slice(0, 10)}</td>
                 <td>€{r.totalPrice}</td>
                 <td>
                   <select
@@ -181,16 +273,10 @@ export default function AdminPage() {
                       await load();
                     }}
                   >
-                    {["PENDING","CONFIRMED","COMPLETED","CANCELLED","REJECTED"].map((s) => (
+                    {["PENDING", "CONFIRMED", "COMPLETED", "CANCELLED", "REJECTED"].map((s) => (
                       <option key={s}>{s}</option>
                     ))}
                   </select>
-                </td>
-                <td>
-                  <button className="btn danger" onClick={async () => {
-                    await api.deleteReservation(r.id);
-                    await load();
-                  }}>Fshi</button>
                 </td>
               </tr>
             ))}
@@ -200,10 +286,12 @@ export default function AdminPage() {
       </div>
 
       <div className="panel">
-        <h2>Përdorues</h2>
+        <h2>Users</h2>
         <div className="table-wrap">
         <table>
-          <thead><tr><th>Emri</th><th>Email</th><th>Role</th><th></th></tr></thead>
+          <thead>
+            <tr><th>Emri</th><th>Email</th><th>Roli</th><th></th></tr>
+          </thead>
           <tbody>
             {users.map((u) => (
               <tr key={u.id}>
@@ -213,9 +301,10 @@ export default function AdminPage() {
                 <td>
                   {u.role !== "ADMIN" && (
                     <button className="btn danger" onClick={async () => {
+                      if (!confirm("Fshi user?")) return;
                       await api.deleteUser(u.id);
                       await load();
-                    }}>Fshi</button>
+                    }}>Delete</button>
                   )}
                 </td>
               </tr>
@@ -227,34 +316,14 @@ export default function AdminPage() {
 
       <div className="panel">
         <h2>Mesazhet</h2>
-        <div className="table-wrap">
-        <table>
-          <thead><tr><th>Emri</th><th>Subjekti</th><th>Email</th><th>Mesazhi</th></tr></thead>
-          <tbody>
-            {messages.map((m) => (
-              <tr key={m.id}>
-                <td>{m.name}</td>
-                <td>{m.subject}</td>
-                <td>{m.email}</td>
-                <td>{m.message}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-        </div>
+        {messages.map((m) => (
+          <div key={m.id} className="review-item">
+            <strong>{m.name} · {m.email}</strong>
+            <p>{m.subject}</p>
+            <p>{m.message}</p>
+          </div>
+        ))}
       </div>
-
-      {stats?.upcoming && (
-        <div className="panel">
-          <h2>Kalendari</h2>
-          {stats.upcoming.map((u: any) => (
-            <div key={u.id} className="review-item">
-              <strong>{u.car}</strong>
-              <p>{String(u.startDate).slice(0,10)} → {String(u.endDate).slice(0,10)}</p>
-            </div>
-          ))}
-        </div>
-      )}
     </div>
   );
 }

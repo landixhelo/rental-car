@@ -3,6 +3,6 @@ builder = "DOCKERFILE"
 dockerfilePath = "Dockerfile"
 
 [deploy]
-# Schema already applied; start API directly so logs show boot clearly.
-startCommand = "node dist/index.js"
+# Apply schema then start API
+startCommand = "npx prisma db push --skip-generate && node dist/index.js"
 restartPolicyType = "ON_FAILURE"

@@ -1,9 +1,9 @@
 import { type FormEvent, useEffect, useMemo, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { api, type Car } from "../lib/api";
+import { api, type Car, API_URL } from "../lib/api";
 import { useAuth } from "../context/AuthContext";
 import { useToast } from "../hooks/useToast";
-import { API_URL } from "../lib/api";
+import ImageCarousel from "../components/ImageCarousel";
 
 export default function CarDetailsPage() {
   const { id } = useParams();
@@ -163,7 +163,17 @@ export default function CarDetailsPage() {
     <div className="section details-grid">
       {Toast}
       <div>
-        <img className="detail-image" src={car.imageUrl} alt={car.brand} />
+        <ImageCarousel
+          className="detail-carousel"
+          images={
+            car.images?.length
+              ? car.images
+              : car.imageUrl
+                ? [car.imageUrl]
+                : []
+          }
+          alt={`${car.brand} ${car.model}`}
+        />
         <div className="specs">
           <div><strong>{car.seats}</strong><span>Vende</span></div>
           <div><strong>{car.fuel}</strong><span>Karburant</span></div>

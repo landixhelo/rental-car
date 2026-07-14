@@ -10,6 +10,7 @@ import {
   currentReservationEnd,
   effectiveCarStatus,
 } from "../lib/carAvailability.js";
+import { carImagesFromRecord } from "../lib/carImages.js";
 import { z } from "zod";
 
 const router = Router();
@@ -34,19 +35,24 @@ router.get("/", requireAuth, async (req, res, next) => {
     });
 
     res.json({
-      favorites: favorites.map((f) => ({
-        id: f.id,
-        car: {
-          ...f.car,
-          status: effectiveCarStatus(f.car.status, f.car.reservations),
-          reservedUntil: currentReservationEnd(f.car.reservations),
-          pricePerDay: Number(f.car.pricePerDay),
-          companyName: companyNameFromOwner(f.car.owner),
-          isFavorite: true,
-          owner: undefined,
-          reservations: undefined,
-        },
-      })),
+      favorites: favorites.map((f) => {
+        const images = carImagesFromRecord(f.car);
+        return {
+          id: f.id,
+          car: {
+            ...f.car,
+            status: effectiveCarStatus(f.car.status, f.car.reservations),
+            reservedUntil: currentReservationEnd(f.car.reservations),
+            images,
+            imageUrl: images[0] || f.car.imageUrl,
+            pricePerDay: Number(f.car.pricePerDay),
+            companyName: companyNameFromOwner(f.car.owner),
+            isFavorite: true,
+            owner: undefined,
+            reservations: undefined,
+          },
+        };
+      }),
     });
   } catch (err) {
     next(err);

@@ -42,6 +42,7 @@ export type Car = {
   description: string;
   features: string[];
   imageUrl: string;
+  images?: string[];
   companyName?: string | null;
   reservedUntil?: string | null;
   busyRanges?: Array<{ startDate: string; endDate: string }>;
@@ -137,15 +138,15 @@ export const api = {
   },
   myCars: () => request<{ cars: Car[] }>("/api/cars/mine"),
   car: (id: string) => request<{ car: Car }>(`/api/cars/${id}`),
-  createCar: (body: Partial<Car>) =>
+  createCar: (body: FormData | Record<string, unknown>) =>
     request<{ car: Car }>("/api/cars", {
       method: "POST",
-      body: JSON.stringify(body),
+      body: body instanceof FormData ? body : JSON.stringify(body),
     }),
-  updateCar: (id: string, body: Partial<Car>) =>
+  updateCar: (id: string, body: FormData | Record<string, unknown>) =>
     request<{ car: Car }>(`/api/cars/${id}`, {
       method: "PATCH",
-      body: JSON.stringify(body),
+      body: body instanceof FormData ? body : JSON.stringify(body),
     }),
   deleteCar: (id: string) =>
     request<{ message: string }>(`/api/cars/${id}`, { method: "DELETE" }),

@@ -234,6 +234,7 @@ async function main() {
     await prisma.car.createMany({
       data: cars.map((car) => ({
         ...car,
+        images: [car.imageUrl],
         ownerId: contractor?.id,
       })),
     });
