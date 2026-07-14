@@ -14,15 +14,25 @@ const router = Router();
 router.use(requireAuth, requireSuperAdmin);
 
 const createAccountSchema = z.object({
-  body: z.object({
-    fullName: z.string().trim().min(2).max(100),
-    email: z.string().trim().email(),
-    password: strongPassword,
-    phone: z.string().trim().max(30).optional(),
-    companyName: z.string().trim().max(120).optional(),
-    role: z.enum(["USER", "CONTRACTOR", "ADMIN"]),
-    notes: z.string().trim().max(1000).optional(),
-  }),
+  body: z
+    .object({
+      fullName: z.string().trim().min(2).max(100),
+      email: z.string().trim().email(),
+      password: strongPassword,
+      phone: z.string().trim().max(30).optional(),
+      companyName: z.string().trim().max(120).optional(),
+      role: z.enum(["USER", "CONTRACTOR", "ADMIN"]),
+      notes: z.string().trim().max(1000).optional(),
+    })
+    .superRefine((data, ctx) => {
+      if (data.role === "CONTRACTOR" && !data.companyName?.trim()) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: ["companyName"],
+          message: "Company name is required for contractors",
+        });
+      }
+    }),
 });
 
 const updateAccountSchema = z.object({

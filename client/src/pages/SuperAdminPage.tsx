@@ -56,10 +56,24 @@ export default function SuperAdminPage() {
 
   async function createAccount(e: FormEvent) {
     e.preventDefault();
+    if (form.role === "CONTRACTOR" && !form.companyName.trim()) {
+      show("Për kontraktorin, emri i kompanisë është i detyrueshëm");
+      return;
+    }
     try {
-      await api.createAccount(form);
+      await api.createAccount({
+        ...form,
+        companyName: form.companyName.trim() || undefined,
+        phone: form.phone.trim() || undefined,
+        notes: form.notes.trim() || undefined,
+      });
       setForm(emptyForm);
-      show("Llogaria u krijua");
+      show(
+        form.role === "CONTRACTOR"
+          ? "Kontraktori u krijua"
+          : "Llogaria u krijua"
+      );
+      setFilter(form.role === "CONTRACTOR" ? "contractors" : filter);
       await load();
     } catch (err) {
       show(err instanceof Error ? err.message : "Error");
@@ -92,6 +106,11 @@ export default function SuperAdminPage() {
 
       <form className="panel" onSubmit={createAccount}>
         <h2>Krijo llogari (klient / kontraktor / admin)</h2>
+        <p className="muted" style={{ marginTop: 0 }}>
+          Për kontraktor: zgjidh rolin <strong>Kontraktor</strong> dhe plotëso
+          emrin e kompanisë. Password: min. 10 karaktere, shkronjë e madhe/e vogël,
+          numër dhe simbol (p.sh. <code>Contractor@123</code>).
+        </p>
         <div className="filters">
           <input
             placeholder="Emri"
@@ -119,9 +138,10 @@ export default function SuperAdminPage() {
             onChange={(e) => setForm({ ...form, phone: e.target.value })}
           />
           <input
-            placeholder="Kompania (për kontraktor)"
+            placeholder="Kompania (e detyrueshme për kontraktor)"
             value={form.companyName}
             onChange={(e) => setForm({ ...form, companyName: e.target.value })}
+            required={form.role === "CONTRACTOR"}
           />
           <select
             value={form.role}
@@ -139,9 +159,24 @@ export default function SuperAdminPage() {
           value={form.notes}
           onChange={(e) => setForm({ ...form, notes: e.target.value })}
         />
-        <button className="btn" type="submit">
-          Krijo
-        </button>
+        <div style={{ display: "flex", gap: 10, flexWrap: "wrap" }}>
+          <button className="btn" type="submit">
+            {form.role === "CONTRACTOR" ? "Shto kontraktor" : "Krijo llogari"}
+          </button>
+          <button
+            type="button"
+            className="btn ghost"
+            onClick={() =>
+              setForm({
+                ...emptyForm,
+                role: "CONTRACTOR",
+                companyName: form.companyName || "",
+              })
+            }
+          >
+            Formë për kontraktor
+          </button>
+        </div>
       </form>
 
       <div className="panel">
