@@ -43,6 +43,7 @@ export type Car = {
   features: string[];
   imageUrl: string;
   companyName?: string | null;
+  reservedUntil?: string | null;
   ratingAvg?: number;
   ratingCount?: number;
   isFavorite?: boolean;

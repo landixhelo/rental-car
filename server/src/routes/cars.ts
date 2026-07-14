@@ -1,9 +1,14 @@
-import { optionalAuth, requireAuth, requireAdmin, requireContractorOrAdmin } from "../middleware/auth.js";
+import { optionalAuth, requireAuth, requireContractorOrAdmin } from "../middleware/auth.js";
 import { validate } from "../middleware/validate.js";
 import { carSchema, idParamSchema } from "../validators/schemas.js";
 import { AppError } from "../middleware/error.js";
 import { prisma } from "../lib/prisma.js";
 import { carOwnerSelect, companyNameFromOwner } from "../lib/carOwner.js";
+import {
+  activeReservationSelect,
+  currentReservationEnd,
+  effectiveCarStatus,
+} from "../lib/carAvailability.js";
 import { Prisma } from "@prisma/client";
 import { Router } from "express";
 
@@ -34,9 +39,7 @@ router.get("/", optionalAuth, async (req, res, next) => {
       ];
     }
     if (type && type !== "all") where.type = type;
-    if (status && status !== "all") {
-      where.status = status as "AVAILABLE" | "RESERVED" | "MAINTENANCE";
-    }
+    // Status filter applied after computing live availability from reservations.
     if (fuel && fuel !== "all") where.fuel = fuel;
     if (transmission && transmission !== "all") where.transmission = transmission;
     if (location && location !== "all") {
@@ -54,32 +57,42 @@ router.get("/", optionalAuth, async (req, res, next) => {
       include: {
         owner: carOwnerSelect,
         reviews: { select: { rating: true } },
+        reservations: activeReservationSelect,
         favorites: req.user
           ? { where: { userId: req.user.id }, select: { id: true } }
           : false,
       },
     });
 
-    const data = cars.map((car) => {
-      const count = car.reviews.length;
-      const avg =
-        count === 0
-          ? 0
-          : Math.round(
-              (car.reviews.reduce((s, r) => s + r.rating, 0) / count) * 10
-            ) / 10;
-      return {
-        ...car,
-        pricePerDay: Number(car.pricePerDay),
-        companyName: companyNameFromOwner(car.owner),
-        ratingAvg: avg,
-        ratingCount: count,
-        isFavorite: Array.isArray(car.favorites) && car.favorites.length > 0,
-        reviews: undefined,
-        favorites: undefined,
-        owner: undefined,
-      };
-    });
+    const data = cars
+      .map((car) => {
+        const count = car.reviews.length;
+        const avg =
+          count === 0
+            ? 0
+            : Math.round(
+                (car.reviews.reduce((s, r) => s + r.rating, 0) / count) * 10
+              ) / 10;
+        const liveStatus = effectiveCarStatus(car.status, car.reservations);
+        return {
+          ...car,
+          status: liveStatus,
+          reservedUntil: currentReservationEnd(car.reservations),
+          pricePerDay: Number(car.pricePerDay),
+          companyName: companyNameFromOwner(car.owner),
+          ratingAvg: avg,
+          ratingCount: count,
+          isFavorite: Array.isArray(car.favorites) && car.favorites.length > 0,
+          reviews: undefined,
+          favorites: undefined,
+          owner: undefined,
+          reservations: undefined,
+        };
+      })
+      .filter((car) => {
+        if (!status || status === "all") return true;
+        return car.status === status;
+      });
 
     res.json({ cars: data });
   } catch (err) {
@@ -97,6 +110,7 @@ router.get("/mine", requireAuth, requireContractorOrAdmin, async (req, res, next
       orderBy: { createdAt: "desc" },
       include: {
         reviews: { select: { rating: true } },
+        reservations: activeReservationSelect,
         _count: { select: { reservations: true } },
       },
     });
@@ -112,11 +126,14 @@ router.get("/mine", requireAuth, requireContractorOrAdmin, async (req, res, next
               ) / 10;
         return {
           ...car,
+          status: effectiveCarStatus(car.status, car.reservations),
+          reservedUntil: currentReservationEnd(car.reservations),
           pricePerDay: Number(car.pricePerDay),
           ratingAvg: avg,
           ratingCount: count,
           reservationsCount: car._count.reservations,
           reviews: undefined,
+          reservations: undefined,
           _count: undefined,
         };
       }),
@@ -132,6 +149,7 @@ router.get("/:id", optionalAuth, validate(idParamSchema), async (req, res, next)
       where: { id: req.params.id },
       include: {
         owner: carOwnerSelect,
+        reservations: activeReservationSelect,
         reviews: {
           include: { user: { select: { fullName: true } } },
           orderBy: { createdAt: "desc" },
@@ -154,6 +172,8 @@ router.get("/:id", optionalAuth, validate(idParamSchema), async (req, res, next)
     res.json({
       car: {
         ...car,
+        status: effectiveCarStatus(car.status, car.reservations),
+        reservedUntil: currentReservationEnd(car.reservations),
         pricePerDay: Number(car.pricePerDay),
         companyName: companyNameFromOwner(car.owner),
         ratingAvg: avg,
@@ -161,6 +181,7 @@ router.get("/:id", optionalAuth, validate(idParamSchema), async (req, res, next)
         isFavorite: Array.isArray(car.favorites) && car.favorites.length > 0,
         favorites: undefined,
         owner: undefined,
+        reservations: undefined,
         reviews: car.reviews.map((r) => ({
           id: r.id,
           rating: r.rating,

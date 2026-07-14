@@ -169,7 +169,15 @@ export default function CarDetailsPage() {
           <span>Ngjyra: {car.color || "-"}</span>
           <span>Km: {car.mileage || "-"}</span>
           <span>Vendndodhja: {car.location}</span>
-          <span>Statusi: {car.status}</span>
+          <span
+            className={`status-chip status-${(car.status || "AVAILABLE").toLowerCase()}`}
+          >
+            {car.status === "RESERVED"
+              ? car.reservedUntil
+                ? `RESERVED · deri ${car.reservedUntil}`
+                : "RESERVED"
+              : car.status || "AVAILABLE"}
+          </span>
         </div>
         <div className="panel">
           <h3>Pajisjet</h3>

@@ -149,6 +149,17 @@ export default function CarsPage() {
                   <strong className="car-price">€{car.pricePerDay}</strong>
                 </div>
                 <span className="company-chip">{car.companyName || "AutoRent"}</span>
+                <span
+                  className={`status-chip status-${(car.status || "AVAILABLE").toLowerCase()}`}
+                >
+                  {car.status === "RESERVED"
+                    ? car.reservedUntil
+                      ? `RESERVED · deri ${car.reservedUntil}`
+                      : "RESERVED"
+                    : car.status === "MAINTENANCE"
+                      ? "MAINTENANCE"
+                      : "AVAILABLE"}
+                </span>
                 <p className="muted car-meta">
                   {car.year} · {car.location} · ⭐ {car.ratingAvg || "-"} (
                   {car.ratingCount || 0})
