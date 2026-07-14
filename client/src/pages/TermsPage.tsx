@@ -1,9 +1,22 @@
-import { useT } from "../context/LocaleContext";
+import { useLocale, useT } from "../context/LocaleContext";
+import Seo from "../seo/Seo";
+import { breadcrumbJsonLd } from "../seo/jsonLd";
 
 export default function TermsPage() {
   const t = useT();
+  const { locale } = useLocale();
   return (
     <div className="section narrow">
+      <Seo
+        title={t("terms.title")}
+        description={t("terms.intro")}
+        path="/terms"
+        locale={locale}
+        jsonLd={breadcrumbJsonLd([
+          { name: "AutoRent", path: "/" },
+          { name: t("terms.title"), path: "/terms" },
+        ])}
+      />
       <h1>{t("terms.title")}</h1>
       <div className="panel">
         <h3>{t("terms.s1")}</h3>

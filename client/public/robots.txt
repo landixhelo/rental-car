@@ -1,0 +1,12 @@
+User-agent: *
+Allow: /
+Disallow: /admin
+Disallow: /super-admin
+Disallow: /profile
+Disallow: /reservations
+Disallow: /favorites
+Disallow: /contractor
+Disallow: /login
+Disallow: /register
+
+Sitemap: https://www.landixhelo.me/sitemap.xml

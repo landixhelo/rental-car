@@ -2,15 +2,19 @@ import { type FormEvent, useEffect, useMemo, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { api, type Car, API_URL } from "../lib/api";
 import { useAuth } from "../context/AuthContext";
-import { useT } from "../context/LocaleContext";
+import { useLocale, useT } from "../context/LocaleContext";
 import { useToast } from "../hooks/useToast";
 import ImageCarousel from "../components/ImageCarousel";
+import Seo from "../seo/Seo";
+import { breadcrumbJsonLd, carProductJsonLd } from "../seo/jsonLd";
+import { mediaUrl } from "../lib/mediaUrl";
 
 export default function CarDetailsPage() {
   const { id } = useParams();
   const { user } = useAuth();
   const navigate = useNavigate();
   const t = useT();
+  const { locale } = useLocale();
   const { show, Toast } = useToast();
   const [car, setCar] = useState<Car | null>(null);
   const [meta, setMeta] = useState<{
@@ -174,6 +178,25 @@ export default function CarDetailsPage() {
 
   return (
     <div className="section details-grid">
+      <Seo
+        title={`${car.brand} ${car.model} — €${car.pricePerDay}${t("common.perDay")}`}
+        description={car.description}
+        path={`/cars/${car.id}`}
+        locale={locale}
+        type="product"
+        image={mediaUrl(car.imageUrl) || undefined}
+        jsonLd={[
+          breadcrumbJsonLd([
+            { name: "AutoRent", path: "/" },
+            { name: t("nav.cars"), path: "/cars" },
+            {
+              name: `${car.brand} ${car.model}`,
+              path: `/cars/${car.id}`,
+            },
+          ]),
+          carProductJsonLd(car),
+        ]}
+      />
       {Toast}
       <div>
         <ImageCarousel

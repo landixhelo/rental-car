@@ -2,10 +2,14 @@ import { Link } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { api, type Car } from "../lib/api";
 import { mediaUrl } from "../lib/mediaUrl";
-import { useT } from "../context/LocaleContext";
+import { useLocale, useT } from "../context/LocaleContext";
+import Seo from "../seo/Seo";
+import { SITE } from "../seo/site";
+import { organizationJsonLd, websiteJsonLd, itemListCarsJsonLd } from "../seo/jsonLd";
 
 export default function HomePage() {
   const t = useT();
+  const { locale } = useLocale();
   const [cars, setCars] = useState<Car[]>([]);
 
   useEffect(() => {
@@ -14,6 +18,23 @@ export default function HomePage() {
 
   return (
     <div>
+      <Seo
+        title={
+          locale === "en"
+            ? "Premium Car Rental in Albania"
+            : locale === "it"
+              ? "Noleggio Auto Premium in Albania"
+              : "Qira Makinash Premium në Shqipëri"
+        }
+        description={SITE.description[locale]}
+        path="/"
+        locale={locale}
+        jsonLd={[
+          organizationJsonLd(),
+          websiteJsonLd(),
+          itemListCarsJsonLd(cars),
+        ]}
+      />
       <section className="hero">
         <div className="hero-inner">
           <span className="eyebrow">{t("home.eyebrow")}</span>

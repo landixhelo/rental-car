@@ -1,14 +1,16 @@
 import { type FormEvent, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
-import { useT } from "../context/LocaleContext";
+import { useLocale, useT } from "../context/LocaleContext";
 import { useToast } from "../hooks/useToast";
+import Seo from "../seo/Seo";
 
 export default function LoginPage() {
   const { login } = useAuth();
   const navigate = useNavigate();
   const { show, Toast } = useToast();
   const t = useT();
+  const { locale } = useLocale();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
@@ -25,6 +27,7 @@ export default function LoginPage() {
 
   return (
     <div className="auth-page">
+      <Seo title={t("auth.loginTitle")} path="/login" locale={locale} noindex />
       {Toast}
       <form className="panel" onSubmit={onSubmit}>
         <h1>{t("auth.loginTitle")}</h1>

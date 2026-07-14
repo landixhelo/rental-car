@@ -3,8 +3,11 @@ import { Link } from "react-router-dom";
 import { api, type Car } from "../lib/api";
 import { mediaUrl } from "../lib/mediaUrl";
 import { useAuth } from "../context/AuthContext";
-import { useT } from "../context/LocaleContext";
+import { useLocale, useT } from "../context/LocaleContext";
 import { useToast } from "../hooks/useToast";
+import Seo from "../seo/Seo";
+import { SITE } from "../seo/site";
+import { breadcrumbJsonLd, itemListCarsJsonLd } from "../seo/jsonLd";
 
 const emptyFilters = {
   search: "",
@@ -23,6 +26,7 @@ export default function CarsPage() {
   const { user } = useAuth();
   const { show, Toast } = useToast();
   const t = useT();
+  const { locale } = useLocale();
 
   async function load(next = filters) {
     const params: Record<string, string> = {};
@@ -63,6 +67,20 @@ export default function CarsPage() {
 
   return (
     <div className="section">
+      <Seo
+        title={t("cars.title")}
+        description={SITE.description[locale]}
+        path="/cars"
+        locale={locale}
+        keywords={SITE.keywords[locale]}
+        jsonLd={[
+          breadcrumbJsonLd([
+            { name: "AutoRent", path: "/" },
+            { name: t("cars.title"), path: "/cars" },
+          ]),
+          itemListCarsJsonLd(cars),
+        ]}
+      />
       {Toast}
       <h1>{t("cars.title")}</h1>
       <div className="filters">

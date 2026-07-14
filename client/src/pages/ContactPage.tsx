@@ -1,11 +1,15 @@
 import { type FormEvent, useState } from "react";
 import { api } from "../lib/api";
-import { useT } from "../context/LocaleContext";
+import { useLocale, useT } from "../context/LocaleContext";
 import { useToast } from "../hooks/useToast";
+import Seo from "../seo/Seo";
+import { SITE } from "../seo/site";
+import { breadcrumbJsonLd } from "../seo/jsonLd";
 
 export default function ContactPage() {
   const { show, Toast } = useToast();
   const t = useT();
+  const { locale } = useLocale();
   const [form, setForm] = useState({
     name: "",
     email: "",
@@ -33,6 +37,16 @@ export default function ContactPage() {
 
   return (
     <div className="section">
+      <Seo
+        title={t("contact.title")}
+        description={SITE.description[locale]}
+        path="/contact"
+        locale={locale}
+        jsonLd={breadcrumbJsonLd([
+          { name: "AutoRent", path: "/" },
+          { name: t("contact.title"), path: "/contact" },
+        ])}
+      />
       {Toast}
       <h1>{t("contact.title")}</h1>
       <div className="contact-grid">
