@@ -3,10 +3,13 @@ import { Link, NavLink, Outlet, useLocation } from "react-router-dom";
 import { api } from "../lib/api";
 import { useAuth } from "../context/AuthContext";
 import { useTheme } from "../context/ThemeContext";
+import { useLocale } from "../context/LocaleContext";
+import type { Locale } from "../i18n";
 
 export default function Layout() {
   const { user, logout } = useAuth();
   const { theme, toggleTheme } = useTheme();
+  const { t, locale, setLocale, locales, labels } = useLocale();
   const location = useLocation();
   const [menuOpen, setMenuOpen] = useState(false);
   const [reservationBadge, setReservationBadge] = useState(0);
@@ -70,14 +73,29 @@ export default function Layout() {
           </Link>
 
           <div className="nav-actions">
+            <label className="lang-switch" title={t("nav.language")}>
+              <span className="sr-only">{t("nav.language")}</span>
+              <select
+                value={locale}
+                onChange={(e) => setLocale(e.target.value as Locale)}
+                aria-label={t("nav.language")}
+              >
+                {locales.map((code) => (
+                  <option key={code} value={code}>
+                    {labels[code]}
+                  </option>
+                ))}
+              </select>
+            </label>
+
             <button
               type="button"
               className="icon-btn"
               onClick={toggleTheme}
               aria-label={
-                theme === "dark" ? "Switch to light mode" : "Switch to dark mode"
+                theme === "dark" ? t("nav.switchLight") : t("nav.switchDark")
               }
-              title={theme === "dark" ? "Light mode" : "Dark mode"}
+              title={theme === "dark" ? t("nav.lightMode") : t("nav.darkMode")}
             >
               {theme === "dark" ? "☀" : "☾"}
             </button>
@@ -87,7 +105,7 @@ export default function Layout() {
               className="icon-btn menu-toggle"
               onClick={() => setMenuOpen((v) => !v)}
               aria-expanded={menuOpen}
-              aria-label="Toggle menu"
+              aria-label={t("nav.toggleMenu")}
             >
               {menuOpen ? "✕" : "☰"}
             </button>
@@ -96,18 +114,18 @@ export default function Layout() {
 
         <div className={`nav-links ${menuOpen ? "open" : ""}`}>
           <NavLink to="/cars" onClick={closeMenu}>
-            Makinat
+            {t("nav.cars")}
           </NavLink>
           <NavLink to="/contact" onClick={closeMenu}>
-            Kontakt
+            {t("nav.contact")}
           </NavLink>
           <NavLink to="/faq" onClick={closeMenu}>
-            FAQ
+            {t("nav.faq")}
           </NavLink>
           {user ? (
             <>
               <NavLink to="/favorites" onClick={closeMenu}>
-                Favoritet
+                {t("nav.favorites")}
               </NavLink>
               <NavLink
                 to="/reservations"
@@ -116,31 +134,34 @@ export default function Layout() {
                   `nav-item-badge${isActive ? " active" : ""}`
                 }
               >
-                Rezervimet
+                {t("nav.reservations")}
                 {showReservationBadge && reservationBadge > 0 ? (
-                  <span className="nav-badge" aria-label={`${reservationBadge} njoftime`}>
+                  <span
+                    className="nav-badge"
+                    aria-label={`${reservationBadge} ${t("nav.notifications")}`}
+                  >
                     {badgeLabel}
                   </span>
                 ) : null}
               </NavLink>
               <NavLink to="/profile" onClick={closeMenu}>
-                Profili
+                {t("nav.profile")}
               </NavLink>
               {user.role === "CONTRACTOR" ||
               user.role === "ADMIN" ||
               user.role === "SUPER_ADMIN" ? (
                 <NavLink to="/contractor" onClick={closeMenu}>
-                  Flota ime
+                  {t("nav.fleet")}
                 </NavLink>
               ) : null}
               {user.role === "ADMIN" || user.role === "SUPER_ADMIN" ? (
                 <NavLink to="/admin" onClick={closeMenu}>
-                  Admin
+                  {t("nav.admin")}
                 </NavLink>
               ) : null}
               {user.role === "SUPER_ADMIN" && (
                 <NavLink to="/super-admin" onClick={closeMenu}>
-                  Super Admin
+                  {t("nav.superAdmin")}
                 </NavLink>
               )}
               <button
@@ -150,16 +171,16 @@ export default function Layout() {
                   logout();
                 }}
               >
-                Dil
+                {t("nav.logout")}
               </button>
             </>
           ) : (
             <>
               <NavLink to="/login" onClick={closeMenu}>
-                Hyr
+                {t("nav.login")}
               </NavLink>
               <NavLink to="/register" className="btn" onClick={closeMenu}>
-                Regjistrohu
+                {t("nav.register")}
               </NavLink>
             </>
           )}
@@ -173,12 +194,12 @@ export default function Layout() {
       <footer className="footer">
         <strong>AutoRent</strong>
         <div className="footer-links">
-          <Link to="/contact">Kontakt</Link>
-          <Link to="/faq">FAQ</Link>
-          <Link to="/terms">Kushtet</Link>
-          <Link to="/cars">Makinat</Link>
+          <Link to="/contact">{t("nav.contact")}</Link>
+          <Link to="/faq">{t("nav.faq")}</Link>
+          <Link to="/terms">{t("footer.terms")}</Link>
+          <Link to="/cars">{t("nav.cars")}</Link>
         </div>
-        <p>© 2026 AutoRent. Të gjitha të drejtat e rezervuara.</p>
+        <p>{t("footer.rights")}</p>
       </footer>
     </div>
   );

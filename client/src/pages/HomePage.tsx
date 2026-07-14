@@ -1,8 +1,10 @@
 import { Link } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { api, type Car } from "../lib/api";
+import { useT } from "../context/LocaleContext";
 
 export default function HomePage() {
+  const t = useT();
   const [cars, setCars] = useState<Car[]>([]);
 
   useEffect(() => {
@@ -13,45 +15,42 @@ export default function HomePage() {
     <div>
       <section className="hero">
         <div className="hero-inner">
-          <span className="eyebrow">PREMIUM CAR RENTAL</span>
+          <span className="eyebrow">{t("home.eyebrow")}</span>
           <h1>
-            Përvoja e Drejtimit <span>Premium</span>
+            {t("home.titleBefore")} <span>{t("home.titleAccent")}</span>
           </h1>
-          <p>
-            Zbuloni koleksionin tonë të makinave luksoze. Nga sedan elegante deri
-            te SUV të fuqishme.
-          </p>
+          <p>{t("home.subtitle")}</p>
           <div className="hero-actions">
             <Link to="/cars" className="btn">
-              Eksploro Makinat
+              {t("home.explore")}
             </Link>
             <Link to="/register" className="btn ghost">
-              Krijo Llogari
+              {t("home.createAccount")}
             </Link>
           </div>
         </div>
       </section>
 
       <section className="section">
-        <h2>Pse AutoRent?</h2>
+        <h2>{t("home.why")}</h2>
         <div className="feature-grid">
           <div className="card">
-            <h3>Flota Premium</h3>
-            <p>Makina luksoze të modeleve të fundit</p>
+            <h3>{t("home.feature1Title")}</h3>
+            <p>{t("home.feature1Text")}</p>
           </div>
           <div className="card">
-            <h3>Rezervim i Lehtë</h3>
-            <p>Proces i thjeshtë online me extras dhe pagesë</p>
+            <h3>{t("home.feature2Title")}</h3>
+            <p>{t("home.feature2Text")}</p>
           </div>
           <div className="card">
-            <h3>Siguri e Plotë</h3>
-            <p>Auth i fortë, DB e mbrojtur dhe validim i plotë</p>
+            <h3>{t("home.feature3Title")}</h3>
+            <p>{t("home.feature3Text")}</p>
           </div>
         </div>
       </section>
 
       <section className="section">
-        <h2>Makinat tona</h2>
+        <h2>{t("home.ourCars")}</h2>
         <div className="cars-grid">
           {cars.map((car) => (
             <Link key={car.id} to={`/cars/${car.id}`} className="car-card">
@@ -62,7 +61,8 @@ export default function HomePage() {
                 </h3>
                 <span className="company-chip">{car.companyName || "AutoRent"}</span>
                 <p className="muted">
-                  €{car.pricePerDay}/ditë · ⭐ {car.ratingAvg || "-"}
+                  €{car.pricePerDay}
+                  {t("common.perDay")} · ⭐ {car.ratingAvg || "-"}
                 </p>
               </div>
             </Link>

@@ -2,6 +2,7 @@ import { type FormEvent, useEffect, useMemo, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { api, type Car, API_URL } from "../lib/api";
 import { useAuth } from "../context/AuthContext";
+import { useT } from "../context/LocaleContext";
 import { useToast } from "../hooks/useToast";
 import ImageCarousel from "../components/ImageCarousel";
 
@@ -9,6 +10,7 @@ export default function CarDetailsPage() {
   const { id } = useParams();
   const { user } = useAuth();
   const navigate = useNavigate();
+  const t = useT();
   const { show, Toast } = useToast();
   const [car, setCar] = useState<Car | null>(null);
   const [meta, setMeta] = useState<{
@@ -67,26 +69,26 @@ export default function CarDetailsPage() {
   const dateConflict = useMemo(() => {
     if (!car || !startDate || !endDate) return null;
     if (new Date(endDate) <= new Date(startDate)) {
-      return "Data e mbarimit duhet të jetë pas fillimit.";
+      return t("details.conflict");
     }
     if (car.status === "MAINTENANCE") {
-      return "Makina është në mirëmbajtje dhe nuk mund të rezervohet.";
+      return t("status.MAINTENANCE");
     }
     const hit = (car.busyRanges || []).find((range) => {
       return startDate <= range.endDate && endDate >= range.startDate;
     });
     if (hit) {
-      return `Makina është e rezervuar nga ${hit.startDate} deri ${hit.endDate}. Zgjidh data që nuk përputhen.`;
+      return `${t("details.conflict")} (${hit.startDate} – ${hit.endDate})`;
     }
     return null;
-  }, [car, startDate, endDate]);
+  }, [car, startDate, endDate, t]);
 
   const canReserve = Boolean(startDate && endDate && !dateConflict);
 
   async function onReserve(e: FormEvent) {
     e.preventDefault();
     if (!user) {
-      show("Duhet të identifikoheni");
+      show(t("common.requiredLogin"));
       navigate("/login");
       return;
     }
@@ -118,10 +120,10 @@ export default function CarDetailsPage() {
         if (!res.ok) throw new Error(data.message || "Reservation failed");
         return data;
       });
-      show("Rezervimi u krye!");
+      show(t("details.success"));
       navigate("/reservations");
     } catch (err) {
-      show(err instanceof Error ? err.message : "Error");
+      show(err instanceof Error ? err.message : t("common.error"));
     }
   }
 
@@ -137,16 +139,16 @@ export default function CarDetailsPage() {
       const refreshed = await api.car(id);
       setCar(refreshed.car);
       setComment("");
-      show("Vlerësimi u shtua!");
+      show(t("details.submitReview"));
     } catch (err) {
-      show(err instanceof Error ? err.message : "Error");
+      show(err instanceof Error ? err.message : t("common.error"));
     }
   }
 
   async function toggleFavorite() {
     if (!car) return;
     if (!user) {
-      show("Duhet të identifikoheni");
+      show(t("common.requiredLogin"));
       return;
     }
     if (car.isFavorite) await api.removeFavorite(car.id);
@@ -155,7 +157,18 @@ export default function CarDetailsPage() {
     setCar(refreshed.car);
   }
 
-  if (!car || !meta) return <div className="section">Duke u ngarkuar...</div>;
+  function statusLabel(status: string) {
+    if (status === "RESERVED") {
+      return car?.reservedUntil
+        ? `${t("status.RESERVED")} · ${t("details.until")} ${car.reservedUntil}`
+        : t("status.RESERVED");
+    }
+    if (status === "MAINTENANCE") return t("status.MAINTENANCE");
+    if (status === "AVAILABLE") return t("status.AVAILABLE");
+    return status || t("status.AVAILABLE");
+  }
+
+  if (!car || !meta) return <div className="section">{t("common.loading")}</div>;
 
   const today = new Date().toISOString().slice(0, 10);
 
@@ -175,29 +188,25 @@ export default function CarDetailsPage() {
           alt={`${car.brand} ${car.model}`}
         />
         <div className="specs">
-          <div><strong>{car.seats}</strong><span>Vende</span></div>
-          <div><strong>{car.fuel}</strong><span>Karburant</span></div>
-          <div><strong>{car.transmission}</strong><span>Transmision</span></div>
-          <div><strong>{car.doors}</strong><span>Dyer</span></div>
-          <div><strong>{car.luggage}</strong><span>Bagazhe</span></div>
-          <div><strong>{car.horsepower || "-"}</strong><span>HP</span></div>
+          <div><strong>{car.seats}</strong><span>{t("details.seats")}</span></div>
+          <div><strong>{car.fuel}</strong><span>{t("details.fuel")}</span></div>
+          <div><strong>{car.transmission}</strong><span>{t("details.transmission")}</span></div>
+          <div><strong>{car.doors}</strong><span>{t("details.doors")}</span></div>
+          <div><strong>{car.luggage}</strong><span>{t("details.luggage")}</span></div>
+          <div><strong>{car.horsepower || "-"}</strong><span>{t("details.hp")}</span></div>
         </div>
         <div className="chips">
-          <span>Ngjyra: {car.color || "-"}</span>
-          <span>Km: {car.mileage || "-"}</span>
-          <span>Vendndodhja: {car.location}</span>
+          <span>{t("details.color")}: {car.color || "-"}</span>
+          <span>{t("details.km")}: {car.mileage || "-"}</span>
+          <span>{t("details.location")}: {car.location}</span>
           <span
             className={`status-chip status-${(car.status || "AVAILABLE").toLowerCase()}`}
           >
-            {car.status === "RESERVED"
-              ? car.reservedUntil
-                ? `RESERVED · deri ${car.reservedUntil}`
-                : "RESERVED"
-              : car.status || "AVAILABLE"}
+            {statusLabel(car.status || "AVAILABLE")}
           </span>
         </div>
         <div className="panel">
-          <h3>Pajisjet</h3>
+          <h3>{t("details.features")}</h3>
           <ul className="features-list">
             {(car.features || []).map((f) => (
               <li key={f}>✓ {f}</li>
@@ -206,7 +215,7 @@ export default function CarDetailsPage() {
         </div>
 
         <form className="panel reviews-panel" onSubmit={onReview}>
-          <h3>Komentet e klientëve</h3>
+          <h3>{t("details.reviews")}</h3>
           <div className="reviews">
             {(car.reviews || []).length ? (
               (car.reviews || []).map((r) => (
@@ -214,28 +223,31 @@ export default function CarDetailsPage() {
                   <strong>
                     {r.userName} · ⭐ {r.rating}
                   </strong>
-                  <p>{r.comment || "Pa koment"}</p>
+                  <p>{r.comment || t("details.comment")}</p>
                 </div>
               ))
             ) : (
-              <p className="muted">Nuk ka komente ende.</p>
+              <p className="muted">—</p>
             )}
           </div>
-          <h4 className="review-form-title">Lëre vlerësimin tënd</h4>
-          <select value={rating} onChange={(e) => setRating(e.target.value)}>
-            {[5, 4, 3, 2, 1].map((n) => (
-              <option key={n} value={n}>
-                {n} ⭐
-              </option>
-            ))}
-          </select>
+          <h4 className="review-form-title">{t("details.writeReview")}</h4>
+          <label>
+            {t("details.yourRating")}
+            <select value={rating} onChange={(e) => setRating(e.target.value)}>
+              {[5, 4, 3, 2, 1].map((n) => (
+                <option key={n} value={n}>
+                  {n} ⭐
+                </option>
+              ))}
+            </select>
+          </label>
           <textarea
-            placeholder="Si ishte përvoja?"
+            placeholder={t("details.comment")}
             value={comment}
             onChange={(e) => setComment(e.target.value)}
           />
           <button className="btn" type="submit">
-            Dërgo Vlerësimin
+            {t("details.submitReview")}
           </button>
         </form>
       </div>
@@ -247,7 +259,7 @@ export default function CarDetailsPage() {
               {car.brand} {car.model}
             </h1>
             <div className="company-badge">
-              <span className="company-badge-label">Kompania</span>
+              <span className="company-badge-label">{t("profile.company")}</span>
               <strong>{car.companyName || "AutoRent"}</strong>
             </div>
             <p className="muted">
@@ -259,16 +271,16 @@ export default function CarDetailsPage() {
               ♥
             </button>
             <h2>€{car.pricePerDay}</h2>
-            <span>/ditë</span>
+            <span>{t("common.perDay")}</span>
           </div>
         </div>
         <p className="detail-desc">{car.description}</p>
 
         <form className="panel booking" onSubmit={onReserve}>
-          <h3>Rezervo Tani</h3>
+          <h3>{t("details.book")}</h3>
           {(car.busyRanges || []).length > 0 ? (
             <div className="busy-ranges">
-              <p className="busy-ranges-title">Periudha të rezervuara</p>
+              <p className="busy-ranges-title">{t("status.RESERVED")}</p>
               <ul>
                 {(car.busyRanges || []).map((range) => (
                   <li key={`${range.startDate}-${range.endDate}`}>
@@ -280,11 +292,11 @@ export default function CarDetailsPage() {
           ) : null}
           <div className="two-col">
             <label>
-              Fillimi
+              {t("details.startDate")}
               <input type="date" min={today} value={startDate} onChange={(e) => setStartDate(e.target.value)} required />
             </label>
             <label>
-              Mbarimi
+              {t("details.endDate")}
               <input type="date" min={startDate || today} value={endDate} onChange={(e) => setEndDate(e.target.value)} required />
             </label>
           </div>
@@ -292,7 +304,7 @@ export default function CarDetailsPage() {
             <p className="booking-conflict">{dateConflict}</p>
           ) : null}          <div className="two-col">
             <label>
-              Pickup
+              {t("details.pickup")}
               <select value={pickup} onChange={(e) => setPickup(e.target.value)}>
                 {meta.locations.map((l) => (
                   <option key={l.id} value={l.id}>
@@ -302,7 +314,7 @@ export default function CarDetailsPage() {
               </select>
             </label>
             <label>
-              Return
+              {t("details.dropoff")}
               <select value={ret} onChange={(e) => setRet(e.target.value)}>
                 {meta.locations.map((l) => (
                   <option key={l.id} value={l.id}>
@@ -314,7 +326,7 @@ export default function CarDetailsPage() {
           </div>
 
           <div className="extras">
-            <h4 className="extras-title">Opsione shtesë</h4>
+            <h4 className="extras-title">{t("details.extras")}</h4>
             <div className="extras-grid">
               {meta.extras.map((ex) => {
                 const checked = selectedExtras.includes(ex.id);
@@ -337,7 +349,7 @@ export default function CarDetailsPage() {
                     <span className="extra-check" aria-hidden="true" />
                     <span className="extra-copy">
                       <span className="extra-name">{ex.name}</span>
-                      <span className="extra-price">+€{ex.price}/ditë</span>
+                      <span className="extra-price">+€{ex.price}{t("common.perDay")}</span>
                     </span>
                   </label>
                 );
@@ -346,7 +358,7 @@ export default function CarDetailsPage() {
           </div>
 
           <label>
-            Pagesa
+            {t("details.payment")}
             <select value={paymentMethod} onChange={(e) => setPaymentMethod(e.target.value)}>
               <option value="CASH">Cash në marrje</option>
               <option value="BANK_TRANSFER">Transfer bankar</option>
@@ -355,7 +367,7 @@ export default function CarDetailsPage() {
           </label>
 
           <label>
-            Dokumente (patentë/ID)
+            {t("details.document")}
             <input
               type="file"
               accept="image/*,.pdf"
@@ -364,20 +376,24 @@ export default function CarDetailsPage() {
           </label>
 
           <label>
-            Shënime
+            {t("details.notes")}
             <textarea value={notes} onChange={(e) => setNotes(e.target.value)} />
           </label>
 
           <div className="summary">
-            <p>Ditë: {summary.days}</p>
-            <p>Makina: €{summary.carSubtotal}</p>
-            <p>Extras: €{summary.extrasTotal}</p>
-            <p>Lokacione: €{summary.locationFees}</p>
-            <p className="total">Totali: €{summary.total}</p>
+            <p>{t("reservations.dates")}: {summary.days}</p>
+            <p>{t("reservations.car")}: €{summary.carSubtotal}</p>
+            <p>{t("details.extras")}: €{summary.extrasTotal}</p>
+            <p>{t("details.location")}: €{summary.locationFees}</p>
+            <p className="total">{t("details.total")}: €{summary.total}</p>
           </div>
 
           <button className="btn" type="submit" disabled={!canReserve}>
-            {dateConflict ? "Data nuk janë të lira" : "Konfirmo Rezervimin"}
+            {!user
+              ? t("details.loginToBook")
+              : dateConflict
+                ? t("details.conflict")
+                : t("details.book")}
           </button>
         </form>
       </div>

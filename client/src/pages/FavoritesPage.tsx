@@ -1,11 +1,13 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { api, type Car } from "../lib/api";
+import { useT } from "../context/LocaleContext";
 import { useToast } from "../hooks/useToast";
 
 export default function FavoritesPage() {
   const [cars, setCars] = useState<Car[]>([]);
   const { show, Toast } = useToast();
+  const t = useT();
 
   async function load() {
     const res = await api.favorites();
@@ -24,12 +26,12 @@ export default function FavoritesPage() {
   return (
     <div className="section">
       {Toast}
-      <h1>Favoritet</h1>
+      <h1>{t("favorites.title")}</h1>
       {!cars.length && (
         <div className="panel">
-          <p>Nuk ke favoritet.</p>
+          <p>{t("favorites.empty")}</p>
           <Link className="btn" to="/cars">
-            Shiko Makinat
+            {t("favorites.browse")}
           </Link>
         </div>
       )}
@@ -43,7 +45,10 @@ export default function FavoritesPage() {
                   {car.brand} {car.model}
                 </h3>
                 <span className="company-chip">{car.companyName || "AutoRent"}</span>
-                <p className="muted">€{car.pricePerDay}/ditë</p>
+                <p className="muted">
+                  €{car.pricePerDay}
+                  {t("common.perDay")}
+                </p>
               </div>
             </Link>
             <button className="fav-btn active" onClick={() => remove(car.id)}>

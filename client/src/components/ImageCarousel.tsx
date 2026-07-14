@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useT } from "../context/LocaleContext";
 
 type Props = {
   images: string[];
@@ -7,12 +8,15 @@ type Props = {
 };
 
 export default function ImageCarousel({ images, alt, className = "" }: Props) {
+  const t = useT();
   const slides = images.length ? images : [];
   const [index, setIndex] = useState(0);
   const safeIndex = slides.length ? Math.min(index, slides.length - 1) : 0;
 
   if (!slides.length) {
-    return <div className={`carousel empty ${className}`}>Pa foto</div>;
+    return (
+      <div className={`carousel empty ${className}`}>{t("details.noPhoto")}</div>
+    );
   }
 
   const current = slides[safeIndex];
@@ -30,10 +34,20 @@ export default function ImageCarousel({ images, alt, className = "" }: Props) {
       <img src={current} alt={alt} className="carousel-image" />
       {slides.length > 1 ? (
         <>
-          <button type="button" className="carousel-nav prev" onClick={prev} aria-label="Previous">
+          <button
+            type="button"
+            className="carousel-nav prev"
+            onClick={prev}
+            aria-label="Previous"
+          >
             ‹
           </button>
-          <button type="button" className="carousel-nav next" onClick={next} aria-label="Next">
+          <button
+            type="button"
+            className="carousel-nav next"
+            onClick={next}
+            aria-label="Next"
+          >
             ›
           </button>
           <div className="carousel-dots">

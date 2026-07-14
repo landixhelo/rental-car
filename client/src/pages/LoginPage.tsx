@@ -1,12 +1,14 @@
 import { type FormEvent, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
+import { useT } from "../context/LocaleContext";
 import { useToast } from "../hooks/useToast";
 
 export default function LoginPage() {
   const { login } = useAuth();
   const navigate = useNavigate();
   const { show, Toast } = useToast();
+  const t = useT();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
@@ -14,10 +16,10 @@ export default function LoginPage() {
     e.preventDefault();
     try {
       await login(email, password);
-      show("Mirësevini!");
+      show(t("auth.welcome"));
       navigate("/");
     } catch (err) {
-      show(err instanceof Error ? err.message : "Login failed");
+      show(err instanceof Error ? err.message : t("common.error"));
     }
   }
 
@@ -25,26 +27,26 @@ export default function LoginPage() {
     <div className="auth-page">
       {Toast}
       <form className="panel" onSubmit={onSubmit}>
-        <h1>Hyr</h1>
+        <h1>{t("auth.loginTitle")}</h1>
         <input
           type="email"
-          placeholder="Email"
+          placeholder={t("auth.email")}
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           required
         />
         <input
           type="password"
-          placeholder="Fjalëkalimi"
+          placeholder={t("auth.password")}
           value={password}
           onChange={(e) => setPassword(e.target.value)}
           required
         />
         <button className="btn" type="submit">
-          Hyr
+          {t("auth.loginBtn")}
         </button>
         <p>
-          Nuk ke llogari? <Link to="/register">Regjistrohu</Link>
+          {t("auth.noAccount")} <Link to="/register">{t("nav.register")}</Link>
         </p>
       </form>
     </div>

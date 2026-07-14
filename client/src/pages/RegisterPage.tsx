@@ -1,12 +1,14 @@
 import { type FormEvent, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
+import { useT } from "../context/LocaleContext";
 import { useToast } from "../hooks/useToast";
 
 export default function RegisterPage() {
   const { register } = useAuth();
   const navigate = useNavigate();
   const { show, Toast } = useToast();
+  const t = useT();
   const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
@@ -16,10 +18,10 @@ export default function RegisterPage() {
     e.preventDefault();
     try {
       await register({ fullName, email, password, phone });
-      show("Llogaria u krijua!");
+      show(t("auth.accountCreated"));
       navigate("/");
     } catch (err) {
-      show(err instanceof Error ? err.message : "Register failed");
+      show(err instanceof Error ? err.message : t("common.error"));
     }
   }
 
@@ -27,37 +29,37 @@ export default function RegisterPage() {
     <div className="auth-page">
       {Toast}
       <form className="panel" onSubmit={onSubmit}>
-        <h1>Regjistrohu</h1>
+        <h1>{t("auth.registerTitle")}</h1>
         <input
-          placeholder="Emri i plotë"
+          placeholder={t("auth.fullName")}
           value={fullName}
           onChange={(e) => setFullName(e.target.value)}
           required
         />
         <input
           type="email"
-          placeholder="Email"
+          placeholder={t("auth.email")}
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           required
         />
         <input
-          placeholder="Telefon"
+          placeholder={t("auth.phone")}
           value={phone}
           onChange={(e) => setPhone(e.target.value)}
         />
         <input
           type="password"
-          placeholder="Fjalëkalimi (min 8, shkronja+numër)"
+          placeholder={t("auth.passwordHint")}
           value={password}
           onChange={(e) => setPassword(e.target.value)}
           required
         />
         <button className="btn" type="submit">
-          Krijo Llogari
+          {t("auth.registerBtn")}
         </button>
         <p>
-          Ke llogari? <Link to="/login">Hyr</Link>
+          {t("auth.hasAccount")} <Link to="/login">{t("nav.login")}</Link>
         </p>
       </form>
     </div>

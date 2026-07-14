@@ -1,5 +1,6 @@
 import { Navigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
+import { useT } from "../context/LocaleContext";
 
 export function Protected({
   children,
@@ -13,16 +14,13 @@ export function Protected({
   contractor?: boolean;
 }) {
   const { user, loading } = useAuth();
-  if (loading) return <div className="page">Duke u ngarkuar...</div>;
+  const t = useT();
+  if (loading) return <div className="page">{t("common.loading")}</div>;
   if (!user) return <Navigate to="/login" replace />;
   if (superAdmin && user.role !== "SUPER_ADMIN") {
     return <Navigate to="/" replace />;
   }
-  if (
-    admin &&
-    user.role !== "ADMIN" &&
-    user.role !== "SUPER_ADMIN"
-  ) {
+  if (admin && user.role !== "ADMIN" && user.role !== "SUPER_ADMIN") {
     return <Navigate to="/" replace />;
   }
   if (

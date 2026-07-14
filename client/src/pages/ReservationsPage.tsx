@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { api } from "../lib/api";
 import { useAuth } from "../context/AuthContext";
+import { useT } from "../context/LocaleContext";
 import { useToast } from "../hooks/useToast";
 
 const STATUSES = [
@@ -14,6 +15,7 @@ const STATUSES = [
 
 export default function ReservationsPage() {
   const { user } = useAuth();
+  const t = useT();
   const [items, setItems] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const { show, Toast } = useToast();
@@ -52,23 +54,36 @@ export default function ReservationsPage() {
   }, [user?.id, user?.role]);
 
   async function cancel(id: string) {
-    if (!confirm("Anulo rezervimin?")) return;
+    if (!confirm(t("reservations.cancel") + "?")) return;
     try {
       await api.cancelReservation(id);
-      show("U anulua");
+      show(t("status.CANCELLED"));
       await load();
     } catch (e) {
-      show(e instanceof Error ? e.message : "Error");
+      show(e instanceof Error ? e.message : t("common.error"));
     }
+  }
+
+  function statusText(status: string) {
+    if (
+      status === "PENDING" ||
+      status === "CONFIRMED" ||
+      status === "COMPLETED" ||
+      status === "CANCELLED" ||
+      status === "REJECTED"
+    ) {
+      return t(`status.${status}`);
+    }
+    return status;
   }
 
   async function updateStatus(id: string, status: string) {
     try {
       await api.updateReservationStatus(id, status);
-      show("Statusi u ndryshua");
+      show(statusText(status));
       await load();
     } catch (e) {
-      show(e instanceof Error ? e.message : "Error");
+      show(e instanceof Error ? e.message : t("common.error"));
     }
   }
 
@@ -79,23 +94,20 @@ export default function ReservationsPage() {
         <>
           <div className="row-between" style={{ alignItems: "center" }}>
             <div>
-              <h1 style={{ marginBottom: 6 }}>Rezervimet e klientëve</h1>
-              <p className="muted" style={{ margin: 0 }}>
-                Rezervimet për makinat e flotës sate
-              </p>
+              <h1 style={{ marginBottom: 6 }}>{t("reservations.fleet")}</h1>
             </div>
             <button className="btn ghost" type="button" onClick={() => load()}>
-              Rifresko
+              ↻
             </button>
           </div>
 
           {loading ? (
-            <p className="muted">Duke u ngarkuar...</p>
+            <p className="muted">{t("common.loading")}</p>
           ) : !items.length ? (
             <div className="panel" style={{ marginTop: 18 }}>
-              <p>Nuk ka ende rezervime nga klientët për makinat e tua.</p>
+              <p>{t("reservations.empty")}</p>
               <Link className="btn" to="/contractor">
-                Menaxho flotën
+                {t("nav.fleet")}
               </Link>
             </div>
           ) : (
@@ -113,7 +125,7 @@ export default function ReservationsPage() {
                         {r.car?.brand} {r.car?.model}
                       </h3>
                       <span className={`badge status-${r.status}`}>
-                        {r.status}
+                        {statusText(r.status)}
                       </span>
                     </div>
                     <p>
@@ -130,14 +142,14 @@ export default function ReservationsPage() {
                     </p>
                     <p className="total">€{r.totalPrice}</p>
                     <label className="fleet-status-label">
-                      Ndrysho statusin
+                      {t("reservations.status")}
                       <select
                         value={r.status}
                         onChange={(e) => updateStatus(r.id, e.target.value)}
                       >
                         {STATUSES.map((s) => (
                           <option key={s} value={s}>
-                            {s}
+                            {t(`status.${s}`)}
                           </option>
                         ))}
                       </select>
@@ -150,21 +162,21 @@ export default function ReservationsPage() {
         </>
       ) : (
         <>
-          <h1>Rezervimet e Mia</h1>
+          <h1>{t("reservations.mine")}</h1>
           {loading ? (
-            <p className="muted">Duke u ngarkuar...</p>
+            <p className="muted">{t("common.loading")}</p>
           ) : !items.length ? (
             <div className="panel">
-              <p>Nuk ke rezervime.</p>
+              <p>{t("reservations.empty")}</p>
               <Link className="btn" to="/cars">
-                Shiko Makinat
+                {t("nav.cars")}
               </Link>
             </div>
           ) : (
             <div className="reservation-list">
               {items.map((r) => (
                 <div key={r.id} className="reservation-card">
-                  <img src={r.car.imageUrl} alt="" />
+                  <img src={r.car.imageUrl} alt={t("details.noPhoto")} />
                   <div>
                     <h3>
                       {r.car.brand} {r.car.model}
@@ -183,7 +195,9 @@ export default function ReservationsPage() {
                       {r.paymentMethod} · {r.paymentStatus}
                     </p>
                     <p className="total">€{r.totalPrice}</p>
-                    <span className={`badge status-${r.status}`}>{r.status}</span>
+                    <span className={`badge status-${r.status}`}>
+                      {statusText(r.status)}
+                    </span>
                     {!["CANCELLED", "COMPLETED", "REJECTED"].includes(
                       r.status
                     ) && (
@@ -191,7 +205,7 @@ export default function ReservationsPage() {
                         className="btn danger"
                         onClick={() => cancel(r.id)}
                       >
-                        Anulo
+                        {t("reservations.cancel")}
                       </button>
                     )}
                   </div>
