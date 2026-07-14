@@ -19,7 +19,7 @@ const emptyCar = {
   fuel: "Petrol",
   transmission: "Automatic",
   type: "Sedan",
-  status: "AVAILABLE" as const,
+  status: "AVAILABLE" as Car["status"],
   description: "Makinë premium në gjendje të shkëlqyer për qira.",
   features: [] as string[],
   imageUrl:
