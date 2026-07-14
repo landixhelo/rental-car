@@ -48,19 +48,12 @@ app.use(cookieParser());
 
 const globalLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
-  max: isProd ? 300 : 1000,
+  max: isProd ? 600 : 2000,
   standardHeaders: true,
   legacyHeaders: false,
 });
 app.use(globalLimiter);
 
-const authLimiter = rateLimit({
-  windowMs: 15 * 60 * 1000,
-  max: isProd ? 10 : 40,
-  standardHeaders: true,
-  legacyHeaders: false,
-  message: { message: "Too many auth attempts, try again later" },
-});
 app.get("/api/health", (_req, res) => {
   res.json({ ok: true, service: "autorent-api" });
 });
@@ -77,7 +70,7 @@ app.use(
   })
 );
 
-app.use("/api/auth", authLimiter, authRoutes);
+app.use("/api/auth", authRoutes);
 app.use("/api/cars", carRoutes);
 app.use("/api/reservations", reservationRoutes);
 app.use("/api/reviews", reviewRoutes);

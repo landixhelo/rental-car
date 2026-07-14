@@ -1,7 +1,8 @@
 import { Router } from "express";
 import bcrypt from "bcryptjs";
+import rateLimit from "express-rate-limit";
 import { prisma } from "../lib/prisma.js";
-import { env } from "../config/env.js";
+import { env, isProd } from "../config/env.js";
 import { AppError } from "../middleware/error.js";
 import {
   clearAuthCookie,
@@ -17,6 +18,15 @@ import {
 } from "../validators/schemas.js";
 
 const router = Router();
+
+// Only login/register — not /me or notifications (those are used constantly)
+const authAttemptLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: isProd ? 30 : 100,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { message: "Too many auth attempts, try again later" },
+});
 
 function publicUser(user: {
   id: string;
@@ -40,7 +50,11 @@ function publicUser(user: {
   };
 }
 
-router.post("/register", validate(registerSchema), async (req, res, next) => {
+router.post(
+  "/register",
+  authAttemptLimiter,
+  validate(registerSchema),
+  async (req, res, next) => {
   try {
     const { fullName, email, password, phone } = req.body;
     const exists = await prisma.user.findUnique({ where: { email } });
@@ -64,7 +78,11 @@ router.post("/register", validate(registerSchema), async (req, res, next) => {
   }
 });
 
-router.post("/login", validate(loginSchema), async (req, res, next) => {
+router.post(
+  "/login",
+  authAttemptLimiter,
+  validate(loginSchema),
+  async (req, res, next) => {
   try {
     const { email, password } = req.body;
     const user = await prisma.user.findUnique({ where: { email } });
