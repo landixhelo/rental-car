@@ -118,18 +118,21 @@ export default function CarsPage() {
           value={filters.maxPrice}
           onChange={(e) => setFilters({ ...filters, maxPrice: e.target.value })}
         />
-        <button className="btn" onClick={() => load()}>
-          Filtro
-        </button>
-        <button
-          className="btn ghost"
-          onClick={() => {
-            setFilters(emptyFilters);
-            load(emptyFilters);
-          }}
-        >
-          Pastro
-        </button>
+        <div className="filters-actions">
+          <button className="btn" type="button" onClick={() => load()}>
+            Filtro
+          </button>
+          <button
+            className="btn ghost"
+            type="button"
+            onClick={() => {
+              setFilters(emptyFilters);
+              load(emptyFilters);
+            }}
+          >
+            Pastro
+          </button>
+        </div>
       </div>
 
       <p>{cars.length} makina të gjetura</p>
