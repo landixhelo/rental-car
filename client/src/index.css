@@ -905,6 +905,19 @@ th { color: var(--text-muted); font-weight: 600; }
   .reservation-card {
     grid-template-columns: 1fr;
   }
+  .specs {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+  }
+  .specs > div {
+    padding: 10px 8px;
+  }
+  .specs > div strong {
+    font-size: 0.95rem;
+  }
+  .specs > div span {
+    font-size: 0.75rem;
+  }
 }
 
 @media (max-width: 860px) {
@@ -970,13 +983,29 @@ th { color: var(--text-muted); font-weight: 600; }
 }
 
 @media (max-width: 560px) {
-  .specs,
   .chips,
   .features-list,
   .two-col,
   .filters,
   .extras-grid {
     grid-template-columns: 1fr;
+  }
+
+  .specs {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+    margin: 14px 0;
+  }
+  .specs > div {
+    padding: 10px 6px;
+    border-radius: 10px;
+  }
+  .specs > div strong {
+    font-size: 0.9rem;
+    line-height: 1.2;
+  }
+  .specs > div span {
+    font-size: 0.72rem;
   }
 
   .row-between,
