@@ -1,20 +1,47 @@
 import { Link } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { api, type Car } from "../lib/api";
-import { mediaUrl } from "../lib/mediaUrl";
+import { useAuth } from "../context/AuthContext";
 import { useLocale, useT } from "../context/LocaleContext";
+import { useToast } from "../hooks/useToast";
+import CarCard from "../components/CarCard";
 import Seo from "../seo/Seo";
 import { SITE } from "../seo/site";
-import { organizationJsonLd, websiteJsonLd, itemListCarsJsonLd } from "../seo/jsonLd";
+import {
+  organizationJsonLd,
+  websiteJsonLd,
+  itemListCarsJsonLd,
+} from "../seo/jsonLd";
 
 export default function HomePage() {
   const t = useT();
   const { locale } = useLocale();
+  const { user } = useAuth();
+  const { show, Toast } = useToast();
   const [cars, setCars] = useState<Car[]>([]);
 
+  async function load() {
+    const res = await api.cars();
+    setCars(res.cars.slice(0, 6));
+  }
+
   useEffect(() => {
-    api.cars().then((r) => setCars(r.cars.slice(0, 6))).catch(() => {});
+    load().catch(() => {});
   }, []);
+
+  async function toggleFavorite(car: Car) {
+    if (!user) {
+      show(t("common.requiredLogin"));
+      return;
+    }
+    try {
+      if (car.isFavorite) await api.removeFavorite(car.id);
+      else await api.addFavorite(car.id);
+      await load();
+    } catch (e) {
+      show(e instanceof Error ? e.message : t("common.error"));
+    }
+  }
 
   return (
     <div>
@@ -35,6 +62,7 @@ export default function HomePage() {
           itemListCarsJsonLd(cars),
         ]}
       />
+      {Toast}
       <section className="hero">
         <div className="hero-inner">
           <span className="eyebrow">{t("home.eyebrow")}</span>
@@ -75,21 +103,18 @@ export default function HomePage() {
         <h2>{t("home.ourCars")}</h2>
         <div className="cars-grid">
           {cars.map((car) => (
-            <Link key={car.id} to={`/cars/${car.id}`} className="car-card">
-              <img src={mediaUrl(car.imageUrl)} alt={`${car.brand} ${car.model}`} />
-              <div className="car-card-body">
-                <h3>
-                  {car.brand} {car.model}
-                </h3>
-                <span className="company-chip">{car.companyName || "AutoRent"}</span>
-                <p className="muted">
-                  €{car.pricePerDay}
-                  {t("common.perDay")} · ⭐ {car.ratingAvg || "-"}
-                </p>
-              </div>
-            </Link>
+            <CarCard
+              key={car.id}
+              car={car}
+              onToggleFavorite={toggleFavorite}
+            />
           ))}
         </div>
+        <p style={{ marginTop: 20 }}>
+          <Link to="/cars" className="btn ghost">
+            {t("home.explore")}
+          </Link>
+        </p>
       </section>
     </div>
   );

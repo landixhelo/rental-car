@@ -1,10 +1,9 @@
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
 import { api, type Car } from "../lib/api";
-import { mediaUrl } from "../lib/mediaUrl";
 import { useAuth } from "../context/AuthContext";
 import { useLocale, useT } from "../context/LocaleContext";
 import { useToast } from "../hooks/useToast";
+import CarCard from "../components/CarCard";
 import Seo from "../seo/Seo";
 import { SITE } from "../seo/site";
 import { breadcrumbJsonLd, itemListCarsJsonLd } from "../seo/jsonLd";
@@ -53,16 +52,6 @@ export default function CarsPage() {
     } catch (e) {
       show(e instanceof Error ? e.message : t("common.error"));
     }
-  }
-
-  function statusLabel(car: Car) {
-    if (car.status === "RESERVED") {
-      return car.reservedUntil
-        ? `${t("status.RESERVED")} · ${t("details.until")} ${car.reservedUntil}`
-        : t("status.RESERVED");
-    }
-    if (car.status === "MAINTENANCE") return t("status.MAINTENANCE");
-    return t("status.AVAILABLE");
   }
 
   return (
@@ -170,38 +159,7 @@ export default function CarsPage() {
       {!cars.length ? <p className="muted">{t("cars.noResults")}</p> : null}
       <div className="cars-grid">
         {cars.map((car) => (
-          <div key={car.id} className="car-card-wrap">
-            <Link to={`/cars/${car.id}`} className="car-card">
-              <img src={mediaUrl(car.imageUrl)} alt={`${car.brand} ${car.model}`} />
-              <div className="car-card-body">
-                <div className="row-between">
-                  <h3>
-                    {car.brand} {car.model}
-                  </h3>
-                  <strong className="car-price">€{car.pricePerDay}</strong>
-                </div>
-                <span className="company-chip">
-                  {car.companyName || "AutoRent"}
-                </span>
-                <span
-                  className={`status-chip status-${(car.status || "AVAILABLE").toLowerCase()}`}
-                >
-                  {statusLabel(car)}
-                </span>
-                <p className="muted car-meta">
-                  {car.year} · {car.location} · ⭐ {car.ratingAvg || "-"} (
-                  {car.ratingCount || 0})
-                </p>
-                <p className="clamp">{car.description}</p>
-              </div>
-            </Link>
-            <button
-              className={`fav-btn ${car.isFavorite ? "active" : ""}`}
-              onClick={() => toggleFavorite(car)}
-            >
-              ♥
-            </button>
-          </div>
+          <CarCard key={car.id} car={car} onToggleFavorite={toggleFavorite} />
         ))}
       </div>
     </div>

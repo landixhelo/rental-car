@@ -1,0 +1,64 @@
+import { Link } from "react-router-dom";
+import type { Car } from "../lib/api";
+import { mediaUrl } from "../lib/mediaUrl";
+import { useT } from "../context/LocaleContext";
+
+type Props = {
+  car: Car;
+  onToggleFavorite?: (car: Car) => void;
+};
+
+export default function CarCard({ car, onToggleFavorite }: Props) {
+  const t = useT();
+
+  function statusLabel() {
+    if (car.status === "RESERVED") {
+      return car.reservedUntil
+        ? `${t("status.RESERVED")} · ${t("details.until")} ${car.reservedUntil}`
+        : t("status.RESERVED");
+    }
+    if (car.status === "MAINTENANCE") return t("status.MAINTENANCE");
+    return t("status.AVAILABLE");
+  }
+
+  return (
+    <div className="car-card-wrap">
+      <Link to={`/cars/${car.id}`} className="car-card">
+        <img
+          src={mediaUrl(car.imageUrl)}
+          alt={`${car.brand} ${car.model}`}
+        />
+        <div className="car-card-body">
+          <div className="row-between">
+            <h3>
+              {car.brand} {car.model}
+            </h3>
+            <strong className="car-price">€{car.pricePerDay}</strong>
+          </div>
+          <span className="company-chip">
+            {car.companyName || "AutoRent"}
+          </span>
+          <span
+            className={`status-chip status-${(car.status || "AVAILABLE").toLowerCase()}`}
+          >
+            {statusLabel()}
+          </span>
+          <p className="muted car-meta">
+            {car.year} · {car.location} · ⭐ {car.ratingAvg || "-"} (
+            {car.ratingCount || 0})
+          </p>
+          <p className="clamp">{car.description}</p>
+        </div>
+      </Link>
+      {onToggleFavorite ? (
+        <button
+          type="button"
+          className={`fav-btn ${car.isFavorite ? "active" : ""}`}
+          onClick={() => onToggleFavorite(car)}
+        >
+          ♥
+        </button>
+      ) : null}
+    </div>
+  );
+}
