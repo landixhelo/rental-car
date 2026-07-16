@@ -2,6 +2,7 @@ import { type FormEvent, useEffect, useState } from "react";
 import { api, type Car } from "../lib/api";
 import { buildCarJsonPayload, uploadCarImageFiles } from "../lib/carMedia";
 import { mediaUrl } from "../lib/mediaUrl";
+import FeatureCheckboxes from "../components/FeatureCheckboxes";
 import { useToast } from "../hooks/useToast";
 
 const emptyCar = {
@@ -32,7 +33,7 @@ export default function AdminPage() {
   const [reservations, setReservations] = useState<any[]>([]);
   const [users, setUsers] = useState<any[]>([]);
   const [messages, setMessages] = useState<any[]>([]);
-  const [form, setForm] = useState({ ...emptyCar, featuresText: "" });
+  const [form, setForm] = useState({ ...emptyCar });
   const [editId, setEditId] = useState<string | null>(null);
   const [existingImages, setExistingImages] = useState<string[]>([]);
   const [imageFiles, setImageFiles] = useState<File[]>([]);
@@ -58,7 +59,7 @@ export default function AdminPage() {
   }, []);
 
   function resetForm() {
-    setForm({ ...emptyCar, featuresText: "" });
+    setForm({ ...emptyCar });
     setEditId(null);
     setExistingImages([]);
     setImageFiles([]);
@@ -125,8 +126,12 @@ export default function AdminPage() {
             <option value="RESERVED">RESERVED</option>
             <option value="MAINTENANCE">MAINTENANCE</option>
           </select>
-          <input placeholder="Features (comma)" value={form.featuresText} onChange={(e) => setForm({ ...form, featuresText: e.target.value })} />
         </div>
+
+        <FeatureCheckboxes
+          value={form.features}
+          onChange={(features) => setForm({ ...form, features })}
+        />
 
         <div className="image-picker">
           <label className="image-picker-label">
@@ -206,7 +211,7 @@ export default function AdminPage() {
                     setForm({
                       ...emptyCar,
                       ...c,
-                      featuresText: (c.features || []).join(", "),
+                      features: c.features || [],
                       imageUrl: "",
                     } as any);
                     setExistingImages(

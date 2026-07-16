@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { api, type Car } from "../lib/api";
 import { buildCarJsonPayload, uploadCarImageFiles } from "../lib/carMedia";
 import { mediaUrl } from "../lib/mediaUrl";
+import FeatureCheckboxes from "../components/FeatureCheckboxes";
 import { useAuth } from "../context/AuthContext";
 import { useToast } from "../hooks/useToast";
 
@@ -32,7 +33,7 @@ export default function ContractorPage() {
   const { show, Toast } = useToast();
   const [cars, setCars] = useState<Car[]>([]);
   const [reservations, setReservations] = useState<any[]>([]);
-  const [form, setForm] = useState({ ...emptyCar, featuresText: "" });
+  const [form, setForm] = useState({ ...emptyCar });
   const [editId, setEditId] = useState<string | null>(null);
   const [existingImages, setExistingImages] = useState<string[]>([]);
   const [imageFiles, setImageFiles] = useState<File[]>([]);
@@ -83,7 +84,7 @@ export default function ContractorPage() {
       const payload = buildCarJsonPayload(form, images);
       if (editId) await api.updateCar(editId, payload);
       else await api.createCar(payload);
-      setForm({ ...emptyCar, featuresText: "" });
+      setForm({ ...emptyCar });
       setEditId(null);
       setExistingImages([]);
       setImageFiles([]);
@@ -216,12 +217,12 @@ export default function ContractorPage() {
             <option value="RESERVED">RESERVED</option>
             <option value="MAINTENANCE">MAINTENANCE</option>
           </select>
-          <input
-            placeholder="Features (ndara me presje)"
-            value={form.featuresText}
-            onChange={(e) => setForm({ ...form, featuresText: e.target.value })}
-          />
         </div>
+
+        <FeatureCheckboxes
+          value={form.features}
+          onChange={(features) => setForm({ ...form, features })}
+        />
 
         <div className="image-picker">
           <label className="image-picker-label">
@@ -283,7 +284,7 @@ export default function ContractorPage() {
               className="btn ghost"
               onClick={() => {
                 setEditId(null);
-                setForm({ ...emptyCar, featuresText: "" });
+                setForm({ ...emptyCar });
                 setExistingImages([]);
                 setImageFiles([]);
               }}
@@ -328,7 +329,7 @@ export default function ContractorPage() {
                         setForm({
                           ...emptyCar,
                           ...c,
-                          featuresText: (c.features || []).join(", "),
+                          features: c.features || [],
                           imageUrl: "",
                         } as any);
                         setExistingImages(

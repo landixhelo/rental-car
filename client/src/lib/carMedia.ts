@@ -79,13 +79,12 @@ export function buildCarJsonPayload(
     type: string;
     status: string;
     description: string;
-    featuresText: string;
+    features: string[];
     imageUrl: string;
   },
   images: string[]
 ) {
-  const features = form.featuresText
-    .split(",")
+  const features = (form.features || [])
     .map((x) => x.trim())
     .filter(Boolean);
 

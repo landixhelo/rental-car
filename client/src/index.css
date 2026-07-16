@@ -404,6 +404,66 @@ main { flex: 1; width: 100%; }
 }
 .carousel-dot.active { background: #fff; }
 
+.feature-picker {
+  margin: 8px 0 16px;
+}
+.feature-picker-title {
+  margin: 0 0 10px;
+  font-size: 0.95rem;
+}
+.feature-picker-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 8px;
+}
+.feature-pick {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  background: var(--bg-soft);
+  cursor: pointer;
+  font-size: 0.88rem;
+  user-select: none;
+}
+.feature-pick:hover {
+  border-color: color-mix(in srgb, var(--accent) 45%, var(--border));
+}
+.feature-pick.selected {
+  border-color: var(--accent);
+  background: var(--accent-soft);
+}
+.feature-pick input {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+.feature-pick-check {
+  width: 18px;
+  height: 18px;
+  border-radius: 6px;
+  border: 1.5px solid var(--border-strong, var(--border));
+  background: var(--bg-elevated);
+  flex-shrink: 0;
+  position: relative;
+}
+.feature-pick.selected .feature-pick-check {
+  background: var(--accent);
+  border-color: var(--accent);
+}
+.feature-pick.selected .feature-pick-check::after {
+  content: "";
+  position: absolute;
+  left: 5px;
+  top: 1px;
+  width: 5px;
+  height: 9px;
+  border: solid #fff;
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg);
+}
 .image-picker {
   display: grid;
   gap: 12px;
