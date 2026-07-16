@@ -198,7 +198,7 @@ export default function CarDetailsPage() {
         ]}
       />
       {Toast}
-      <div>
+      <div className="details-media">
         <ImageCarousel
           className="detail-carousel"
           images={
@@ -210,72 +210,9 @@ export default function CarDetailsPage() {
           }
           alt={`${car.brand} ${car.model}`}
         />
-        <div className="specs">
-          <div><strong>{car.seats}</strong><span>{t("details.seats")}</span></div>
-          <div><strong>{car.fuel}</strong><span>{t("details.fuel")}</span></div>
-          <div><strong>{car.transmission}</strong><span>{t("details.transmission")}</span></div>
-          <div><strong>{car.doors}</strong><span>{t("details.doors")}</span></div>
-          <div><strong>{car.luggage}</strong><span>{t("details.luggage")}</span></div>
-          <div><strong>{car.horsepower || "-"}</strong><span>{t("details.hp")}</span></div>
-        </div>
-        <div className="chips">
-          <span>{t("details.color")}: {car.color || "-"}</span>
-          <span>{t("details.km")}: {car.mileage || "-"}</span>
-          <span>{t("details.location")}: {car.location}</span>
-          <span
-            className={`status-chip status-${(car.status || "AVAILABLE").toLowerCase()}`}
-          >
-            {statusLabel(car.status || "AVAILABLE")}
-          </span>
-        </div>
-        <div className="panel">
-          <h3>{t("details.features")}</h3>
-          <ul className="features-list">
-            {(car.features || []).map((f) => (
-              <li key={f}>✓ {f}</li>
-            ))}
-          </ul>
-        </div>
-
-        <form className="panel reviews-panel" onSubmit={onReview}>
-          <h3>{t("details.reviews")}</h3>
-          <div className="reviews">
-            {(car.reviews || []).length ? (
-              (car.reviews || []).map((r) => (
-                <div key={r.id} className="review-item">
-                  <strong>
-                    {r.userName} · ⭐ {r.rating}
-                  </strong>
-                  <p>{r.comment || t("details.comment")}</p>
-                </div>
-              ))
-            ) : (
-              <p className="muted">—</p>
-            )}
-          </div>
-          <h4 className="review-form-title">{t("details.writeReview")}</h4>
-          <label>
-            {t("details.yourRating")}
-            <select value={rating} onChange={(e) => setRating(e.target.value)}>
-              {[5, 4, 3, 2, 1].map((n) => (
-                <option key={n} value={n}>
-                  {n} ⭐
-                </option>
-              ))}
-            </select>
-          </label>
-          <textarea
-            placeholder={t("details.comment")}
-            value={comment}
-            onChange={(e) => setComment(e.target.value)}
-          />
-          <button className="btn" type="submit">
-            {t("details.submitReview")}
-          </button>
-        </form>
       </div>
 
-      <div>
+      <div className="details-booking">
         <div className="row-between">
           <div>
             <h1>
@@ -417,6 +354,72 @@ export default function CarDetailsPage() {
               : dateConflict
                 ? t("details.conflict")
                 : t("details.book")}
+          </button>
+        </form>
+      </div>
+
+      <div className="details-info">
+        <div className="specs">
+          <div><strong>{car.seats}</strong><span>{t("details.seats")}</span></div>
+          <div><strong>{car.fuel}</strong><span>{t("details.fuel")}</span></div>
+          <div><strong>{car.transmission}</strong><span>{t("details.transmission")}</span></div>
+          <div><strong>{car.doors}</strong><span>{t("details.doors")}</span></div>
+          <div><strong>{car.luggage}</strong><span>{t("details.luggage")}</span></div>
+          <div><strong>{car.horsepower || "-"}</strong><span>{t("details.hp")}</span></div>
+        </div>
+        <div className="chips">
+          <span>{t("details.color")}: {car.color || "-"}</span>
+          <span>{t("details.km")}: {car.mileage || "-"}</span>
+          <span>{t("details.location")}: {car.location}</span>
+          <span
+            className={`status-chip status-${(car.status || "AVAILABLE").toLowerCase()}`}
+          >
+            {statusLabel(car.status || "AVAILABLE")}
+          </span>
+        </div>
+        <div className="panel">
+          <h3>{t("details.features")}</h3>
+          <ul className="features-list">
+            {(car.features || []).map((f) => (
+              <li key={f}>✓ {f}</li>
+            ))}
+          </ul>
+        </div>
+
+        <form className="panel reviews-panel" onSubmit={onReview}>
+          <h3>{t("details.reviews")}</h3>
+          <div className="reviews">
+            {(car.reviews || []).length ? (
+              (car.reviews || []).map((r) => (
+                <div key={r.id} className="review-item">
+                  <strong>
+                    {r.userName} · ⭐ {r.rating}
+                  </strong>
+                  <p>{r.comment || t("details.comment")}</p>
+                </div>
+              ))
+            ) : (
+              <p className="muted">—</p>
+            )}
+          </div>
+          <h4 className="review-form-title">{t("details.writeReview")}</h4>
+          <label>
+            {t("details.yourRating")}
+            <select value={rating} onChange={(e) => setRating(e.target.value)}>
+              {[5, 4, 3, 2, 1].map((n) => (
+                <option key={n} value={n}>
+                  {n} ⭐
+                </option>
+              ))}
+            </select>
+          </label>
+          <textarea
+            placeholder={t("details.comment")}
+            value={comment}
+            onChange={(e) => setComment(e.target.value)}
+          />
+          <button className="btn" type="submit">
+            {t("details.submitReview")}
           </button>
         </form>
       </div>

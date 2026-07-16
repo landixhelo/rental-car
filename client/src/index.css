@@ -607,10 +607,16 @@ textarea { min-height: 90px; resize: vertical; }
 
 .details-grid {
   display: grid;
-  grid-template-columns: 1.05fr .95fr;
+  grid-template-columns: 1.05fr 0.95fr;
   gap: 32px;
   align-items: start;
+  grid-template-areas:
+    "media booking"
+    "info booking";
 }
+.details-media { grid-area: media; }
+.details-booking { grid-area: booking; }
+.details-info { grid-area: info; }
 .detail-desc { margin: 0 0 22px; line-height: 1.65; color: var(--text-muted); }
 .specs {
   display: grid;
@@ -882,7 +888,13 @@ th { color: var(--text-muted); font-weight: 600; }
 }
 
 @media (max-width: 980px) {
-  .details-grid,
+  .details-grid {
+    grid-template-columns: 1fr;
+    grid-template-areas:
+      "media"
+      "booking"
+      "info";
+  }
   .contact-grid,
   .reservation-card {
     grid-template-columns: 1fr;
