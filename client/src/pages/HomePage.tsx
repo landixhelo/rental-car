@@ -13,15 +13,34 @@ import {
   itemListCarsJsonLd,
 } from "../seo/jsonLd";
 
+const CATEGORIES = [
+  { type: "SUV", titleKey: "home.catSuv", textKey: "home.catSuvText" },
+  { type: "Sedan", titleKey: "home.catSedan", textKey: "home.catSedanText" },
+  { type: "Sports", titleKey: "home.catSports", textKey: "home.catSportsText" },
+  {
+    type: "Luxury",
+    titleKey: "home.catLuxury",
+    textKey: "home.catLuxuryText",
+  },
+] as const;
+
+const CITIES = [
+  { location: "Tiranë", titleKey: "home.cityTirana" },
+  { location: "Durrës", titleKey: "home.cityDurres" },
+  { location: "Vlorë", titleKey: "home.cityVlora" },
+] as const;
+
 export default function HomePage() {
   const t = useT();
   const { locale } = useLocale();
   const { user } = useAuth();
   const { show, Toast } = useToast();
   const [cars, setCars] = useState<Car[]>([]);
+  const [fleetCount, setFleetCount] = useState(0);
 
   async function load() {
     const res = await api.cars();
+    setFleetCount(res.cars.length);
     setCars(res.cars.slice(0, 6));
   }
 
@@ -44,7 +63,7 @@ export default function HomePage() {
   }
 
   return (
-    <div>
+    <div className="home-page">
       <Seo
         title={
           locale === "en"
@@ -81,26 +100,82 @@ export default function HomePage() {
         </div>
       </section>
 
-      <section className="section">
+      <section className="section home-reveal">
         <h2>{t("home.why")}</h2>
         <div className="feature-grid">
-          <div className="card">
+          <div className="home-point">
             <h3>{t("home.feature1Title")}</h3>
             <p>{t("home.feature1Text")}</p>
           </div>
-          <div className="card">
+          <div className="home-point">
             <h3>{t("home.feature2Title")}</h3>
             <p>{t("home.feature2Text")}</p>
           </div>
-          <div className="card">
+          <div className="home-point">
             <h3>{t("home.feature3Title")}</h3>
             <p>{t("home.feature3Text")}</p>
           </div>
         </div>
       </section>
 
-      <section className="section">
-        <h2>{t("home.ourCars")}</h2>
+      <section className="section home-reveal">
+        <div className="section-head">
+          <h2>{t("home.howTitle")}</h2>
+          <p className="section-sub">{t("home.howSub")}</p>
+        </div>
+        <ol className="home-steps">
+          <li>
+            <span className="home-step-num">01</span>
+            <div>
+              <h3>{t("home.how1Title")}</h3>
+              <p>{t("home.how1Text")}</p>
+            </div>
+          </li>
+          <li>
+            <span className="home-step-num">02</span>
+            <div>
+              <h3>{t("home.how2Title")}</h3>
+              <p>{t("home.how2Text")}</p>
+            </div>
+          </li>
+          <li>
+            <span className="home-step-num">03</span>
+            <div>
+              <h3>{t("home.how3Title")}</h3>
+              <p>{t("home.how3Text")}</p>
+            </div>
+          </li>
+        </ol>
+      </section>
+
+      <section className="section home-reveal">
+        <div className="section-head">
+          <h2>{t("home.categoriesTitle")}</h2>
+          <p className="section-sub">{t("home.categoriesSub")}</p>
+        </div>
+        <div className="home-categories">
+          {CATEGORIES.map((cat) => (
+            <Link
+              key={cat.type}
+              to={`/cars?type=${encodeURIComponent(cat.type)}`}
+              className="home-category"
+            >
+              <strong>{t(cat.titleKey)}</strong>
+              <span>{t(cat.textKey)}</span>
+            </Link>
+          ))}
+        </div>
+      </section>
+
+      <section className="section home-reveal">
+        <div className="section-head row-between">
+          <div>
+            <h2>{t("home.ourCars")}</h2>
+          </div>
+          <Link to="/cars" className="btn ghost">
+            {t("home.explore")}
+          </Link>
+        </div>
         <div className="cars-grid">
           {cars.map((car) => (
             <CarCard
@@ -110,11 +185,63 @@ export default function HomePage() {
             />
           ))}
         </div>
-        <p style={{ marginTop: 20 }}>
-          <Link to="/cars" className="btn ghost">
-            {t("home.explore")}
-          </Link>
-        </p>
+      </section>
+
+      <section className="home-band home-reveal">
+        <div className="section">
+          <div className="section-head">
+            <h2>{t("home.citiesTitle")}</h2>
+            <p className="section-sub">{t("home.citiesSub")}</p>
+          </div>
+          <div className="home-cities">
+            {CITIES.map((city) => (
+              <Link
+                key={city.location}
+                to={`/cars?location=${encodeURIComponent(city.location)}`}
+                className="home-city"
+              >
+                <strong>{t(city.titleKey)}</strong>
+                <span>{t("home.cityHint")}</span>
+              </Link>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section className="section home-reveal">
+        <div className="section-head">
+          <h2>{t("home.trustTitle")}</h2>
+          <p className="section-sub">{t("home.trustSub")}</p>
+        </div>
+        <div className="home-trust">
+          <div>
+            <strong>{fleetCount || "—"}</strong>
+            <span>{t("home.trustCars")}</span>
+          </div>
+          <div>
+            <strong>3</strong>
+            <span>{t("home.trustCities")}</span>
+          </div>
+          <div>
+            <strong>{t("home.trustHours")}</strong>
+            <span>{t("home.trustSupport")}</span>
+          </div>
+        </div>
+      </section>
+
+      <section className="home-cta home-reveal">
+        <div className="home-cta-inner">
+          <h2>{t("home.ctaTitle")}</h2>
+          <p>{t("home.ctaText")}</p>
+          <div className="hero-actions">
+            <Link to="/cars" className="btn">
+              {t("home.ctaCars")}
+            </Link>
+            <Link to="/contact" className="btn ghost">
+              {t("home.ctaContact")}
+            </Link>
+          </div>
+        </div>
       </section>
     </div>
   );

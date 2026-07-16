@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useSearchParams } from "react-router-dom";
 import { api, type Car } from "../lib/api";
 import { useAuth } from "../context/AuthContext";
 import { useLocale, useT } from "../context/LocaleContext";
@@ -20,8 +21,13 @@ const emptyFilters = {
 };
 
 export default function CarsPage() {
+  const [searchParams] = useSearchParams();
   const [cars, setCars] = useState<Car[]>([]);
-  const [filters, setFilters] = useState(emptyFilters);
+  const [filters, setFilters] = useState(() => ({
+    ...emptyFilters,
+    type: searchParams.get("type") || "all",
+    location: searchParams.get("location") || "all",
+  }));
   const { user } = useAuth();
   const { show, Toast } = useToast();
   const t = useT();
@@ -37,9 +43,14 @@ export default function CarsPage() {
   }
 
   useEffect(() => {
-    load().catch((e) => show(e.message));
-  }, []);
-
+    const next = {
+      ...emptyFilters,
+      type: searchParams.get("type") || "all",
+      location: searchParams.get("location") || "all",
+    };
+    setFilters(next);
+    load(next).catch((e) => show(e.message));
+  }, [searchParams]);
   async function toggleFavorite(car: Car) {
     if (!user) {
       show(t("common.requiredLogin"));
