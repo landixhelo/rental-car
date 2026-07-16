@@ -102,16 +102,16 @@ export default function HomePage() {
 
       <section className="section home-reveal">
         <h2>{t("home.why")}</h2>
-        <div className="feature-grid">
-          <div className="home-point">
+        <div className="feature-grid home-cards">
+          <div className="home-card home-card--rose">
             <h3>{t("home.feature1Title")}</h3>
             <p>{t("home.feature1Text")}</p>
           </div>
-          <div className="home-point">
+          <div className="home-card home-card--amber">
             <h3>{t("home.feature2Title")}</h3>
             <p>{t("home.feature2Text")}</p>
           </div>
-          <div className="home-point">
+          <div className="home-card home-card--teal">
             <h3>{t("home.feature3Title")}</h3>
             <p>{t("home.feature3Text")}</p>
           </div>
@@ -123,22 +123,22 @@ export default function HomePage() {
           <h2>{t("home.howTitle")}</h2>
           <p className="section-sub">{t("home.howSub")}</p>
         </div>
-        <ol className="home-steps">
-          <li>
+        <ol className="home-steps home-cards">
+          <li className="home-card home-card--coral">
             <span className="home-step-num">01</span>
             <div>
               <h3>{t("home.how1Title")}</h3>
               <p>{t("home.how1Text")}</p>
             </div>
           </li>
-          <li>
+          <li className="home-card home-card--gold">
             <span className="home-step-num">02</span>
             <div>
               <h3>{t("home.how2Title")}</h3>
               <p>{t("home.how2Text")}</p>
             </div>
           </li>
-          <li>
+          <li className="home-card home-card--mint">
             <span className="home-step-num">03</span>
             <div>
               <h3>{t("home.how3Title")}</h3>
@@ -153,12 +153,12 @@ export default function HomePage() {
           <h2>{t("home.categoriesTitle")}</h2>
           <p className="section-sub">{t("home.categoriesSub")}</p>
         </div>
-        <div className="home-categories">
-          {CATEGORIES.map((cat) => (
+        <div className="home-categories home-cards">
+          {CATEGORIES.map((cat, i) => (
             <Link
               key={cat.type}
               to={`/cars?type=${encodeURIComponent(cat.type)}`}
-              className="home-category"
+              className={`home-card home-category home-card--cat-${i + 1}`}
             >
               <strong>{t(cat.titleKey)}</strong>
               <span>{t(cat.textKey)}</span>
