@@ -95,7 +95,7 @@ router.get("/", optionalAuth, async (req, res, next) => {
       include: {
         owner: carOwnerSelect,
         reviews: { select: { rating: true } },
-        reservations: activeReservationSelect,
+        reservations: activeReservationSelect(),
         favorites: req.user
           ? { where: { userId: req.user.id }, select: { id: true } }
           : false,
@@ -148,7 +148,7 @@ router.get("/mine", requireAuth, requireContractorOrAdmin, async (req, res, next
       orderBy: { createdAt: "desc" },
       include: {
         reviews: { select: { rating: true } },
-        reservations: activeReservationSelect,
+        reservations: activeReservationSelect(),
         _count: { select: { reservations: true } },
       },
     });
@@ -219,7 +219,7 @@ router.get("/:id", optionalAuth, validate(idParamSchema), async (req, res, next)
       where: { id: req.params.id },
       include: {
         owner: carOwnerSelect,
-        reservations: activeReservationSelect,
+        reservations: activeReservationSelect(),
         reviews: {
           include: { user: { select: { fullName: true } } },
           orderBy: { createdAt: "desc" },

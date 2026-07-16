@@ -29,6 +29,19 @@ export function todayStamp() {
   return Date.UTC(year, month - 1, day);
 }
 
+function isActiveOrUpcoming(r: BusyReservation, day = todayStamp()) {
+  if (!["PENDING", "CONFIRMED"].includes(r.status)) return false;
+  // Ended before today → ignore (e.g. 14→15 when today is 16)
+  return dayStamp(new Date(r.endDate)) >= day;
+}
+
+function coversToday(r: BusyReservation, day = todayStamp()) {
+  if (!isActiveOrUpcoming(r, day)) return false;
+  const start = dayStamp(new Date(r.startDate));
+  const end = dayStamp(new Date(r.endDate));
+  return start <= day && day <= end;
+}
+
 export function effectiveCarStatus(
   storedStatus: "AVAILABLE" | "RESERVED" | "MAINTENANCE",
   reservations: BusyReservation[]
@@ -36,12 +49,7 @@ export function effectiveCarStatus(
   if (storedStatus === "MAINTENANCE") return "MAINTENANCE";
 
   const day = todayStamp();
-  const busy = reservations.some((r) => {
-    if (!["PENDING", "CONFIRMED"].includes(r.status)) return false;
-    const start = dayStamp(new Date(r.startDate));
-    const end = dayStamp(new Date(r.endDate));
-    return start <= day && day <= end;
-  });
+  const busy = reservations.some((r) => coversToday(r, day));
 
   return busy ? "RESERVED" : "AVAILABLE";
 }
@@ -51,12 +59,7 @@ export function currentReservationEnd(
 ): string | null {
   const day = todayStamp();
   const active = reservations
-    .filter((r) => {
-      if (!["PENDING", "CONFIRMED"].includes(r.status)) return false;
-      const start = dayStamp(new Date(r.startDate));
-      const end = dayStamp(new Date(r.endDate));
-      return start <= day && day <= end;
-    })
+    .filter((r) => coversToday(r, day))
     .sort(
       (a, b) => dayStamp(new Date(b.endDate)) - dayStamp(new Date(a.endDate))
     );
@@ -67,9 +70,11 @@ export function currentReservationEnd(
     .slice(0, 10);
 }
 
+/** Only current + future PENDING/CONFIRMED ranges (past bookings are hidden). */
 export function toBusyRanges(reservations: BusyReservation[]) {
+  const day = todayStamp();
   return reservations
-    .filter((r) => ["PENDING", "CONFIRMED"].includes(r.status))
+    .filter((r) => isActiveOrUpcoming(r, day))
     .map((r) => ({
       startDate: new Date(dayStamp(new Date(r.startDate)))
         .toISOString()
@@ -96,13 +101,18 @@ export function datesOverlap(
 
 const activeStatuses: ReservationStatus[] = ["PENDING", "CONFIRMED"];
 
-export const activeReservationSelect = {
-  where: {
-    status: { in: activeStatuses },
-  },
-  select: {
-    startDate: true,
-    endDate: true,
-    status: true,
-  },
-};
+/** Prisma include: skip reservations that already ended before today (Tirana). */
+export function activeReservationSelect() {
+  const today = new Date(todayStamp());
+  return {
+    where: {
+      status: { in: activeStatuses },
+      endDate: { gte: today },
+    },
+    select: {
+      startDate: true,
+      endDate: true,
+      status: true,
+    },
+  };
+}

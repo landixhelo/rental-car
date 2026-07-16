@@ -27,7 +27,7 @@ router.get("/", requireAuth, async (req, res, next) => {
         car: {
           include: {
             owner: carOwnerSelect,
-            reservations: activeReservationSelect,
+            reservations: activeReservationSelect(),
           },
         },
       },
