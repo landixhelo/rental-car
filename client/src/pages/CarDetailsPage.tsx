@@ -225,6 +225,11 @@ export default function CarDetailsPage() {
             <p className="muted">
               {car.year} · ⭐ {car.ratingAvg || "-"} ({car.ratingCount || 0})
             </p>
+            <span
+              className={`status-chip status-inline status-${(car.status || "AVAILABLE").toLowerCase()}`}
+            >
+              {statusLabel(car.status || "AVAILABLE")}
+            </span>
           </div>
           <div className="price-box">
             <button className={`fav-btn detail ${car.isFavorite ? "active" : ""}`} onClick={toggleFavorite}>
@@ -371,11 +376,6 @@ export default function CarDetailsPage() {
           <span>{t("details.color")}: {car.color || "-"}</span>
           <span>{t("details.km")}: {car.mileage || "-"}</span>
           <span>{t("details.location")}: {car.location}</span>
-          <span
-            className={`status-chip status-${(car.status || "AVAILABLE").toLowerCase()}`}
-          >
-            {statusLabel(car.status || "AVAILABLE")}
-          </span>
         </div>
         <div className="panel">
           <h3>{t("details.features")}</h3>
