@@ -76,7 +76,10 @@ app.get("/api/meta", (_req, res) => {
     locations: LOCATIONS,
     extras: EXTRAS,
     cardEnabled: stripeEnabled(),
-    whatsapp: env.WHATSAPP_PHONE.replace(/[^\d]/g, ""),
+    whatsapp: String(env.WHATSAPP_PHONE || "355690000000").replace(
+      /[^\d]/g,
+      ""
+    ),
   });
 });
 
