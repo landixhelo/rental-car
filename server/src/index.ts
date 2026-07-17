@@ -17,7 +17,9 @@ import favoriteRoutes from "./routes/favorites.js";
 import contactRoutes from "./routes/contact.js";
 import adminRoutes from "./routes/admin.js";
 import superAdminRoutes from "./routes/superAdmin.js";
+import paymentRoutes, { stripeWebhookHandler } from "./routes/payments.js";
 import { EXTRAS, LOCATIONS } from "./lib/pricing.js";
+import { stripeEnabled } from "./lib/stripePay.js";
 
 console.log("Booting AutoRent API...");
 
@@ -44,6 +46,15 @@ app.use(
     credentials: true,
   })
 );
+
+app.post(
+  "/api/payments/webhook",
+  express.raw({ type: "application/json" }),
+  (req, res) => {
+    void stripeWebhookHandler(req, res);
+  }
+);
+
 app.use(express.json({ limit: "100kb" }));
 app.use(express.urlencoded({ extended: false, limit: "100kb" }));
 app.use(cookieParser());
@@ -61,7 +72,12 @@ app.get("/api/health", (_req, res) => {
 });
 
 app.get("/api/meta", (_req, res) => {
-  res.json({ locations: LOCATIONS, extras: EXTRAS });
+  res.json({
+    locations: LOCATIONS,
+    extras: EXTRAS,
+    cardEnabled: stripeEnabled(),
+    whatsapp: env.WHATSAPP_PHONE.replace(/[^\d]/g, ""),
+  });
 });
 
 app.use(
@@ -80,6 +96,7 @@ app.use("/api/reservations", reservationRoutes);
 app.use("/api/reviews", reviewRoutes);
 app.use("/api/favorites", favoriteRoutes);
 app.use("/api/contact", contactRoutes);
+app.use("/api/payments", paymentRoutes);
 app.use("/api/admin", adminRoutes);
 app.use("/api/super-admin", superAdminRoutes);
 

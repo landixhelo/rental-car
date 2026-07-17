@@ -123,6 +123,7 @@ model Reservation {
   notes          String?
   paymentMethod  PaymentMethod
   paymentStatus  PaymentStatus     @default(PENDING)
+  stripeSessionId String?          @unique
   documentUrl    String?
   status         ReservationStatus @default(CONFIRMED)
   createdAt      DateTime          @default(now())

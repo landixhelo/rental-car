@@ -5,6 +5,10 @@ import { requireAuth, requireAdmin, requireContractorOrAdmin } from "../middlewa
 import { upload } from "../middleware/upload.js";
 import { idParamSchema, reservationSchema } from "../validators/schemas.js";
 import { EXTRAS, calcDays, getLocation } from "../lib/pricing.js";
+import { sendReservationEmails } from "../lib/mail.js";
+import { buildReservationPdf } from "../lib/pdfContract.js";
+import { createCheckoutSession, stripeEnabled } from "../lib/stripePay.js";
+import { env } from "../config/env.js";
 import { z } from "zod";
 import { validate } from "../middleware/validate.js";
 import { Router } from "express";
@@ -240,11 +244,23 @@ router.post(
       const locationFees = pickup.fee + ret.fee;
       const totalPrice = carSubtotal + extrasTotal + locationFees;
 
+      if (paymentMethod === "CARD" && !stripeEnabled()) {
+        throw new AppError(
+          "Pagesa me kartë nuk është aktive ende. Zgjidh Cash ose Bank Transfer.",
+          400
+        );
+      }
+
       let paymentStatus: PaymentStatus = PaymentStatus.PENDING;
-      if (paymentMethod === "CARD") paymentStatus = PaymentStatus.PAID;
-      else if (paymentMethod === "BANK_TRANSFER") {
+      let bookingStatus: "PENDING" | "CONFIRMED" = "CONFIRMED";
+      if (paymentMethod === "CARD") {
+        paymentStatus = PaymentStatus.PENDING;
+        bookingStatus = "PENDING";
+      } else if (paymentMethod === "BANK_TRANSFER") {
         paymentStatus = PaymentStatus.AWAITING_TRANSFER;
-      } else paymentStatus = PaymentStatus.PAY_ON_PICKUP;
+      } else {
+        paymentStatus = PaymentStatus.PAY_ON_PICKUP;
+      }
 
       const created = await prisma.reservation.create({
         data: {
@@ -264,7 +280,7 @@ router.post(
           paymentMethod,
           paymentStatus,
           documentUrl: req.file ? `/uploads/${req.file.filename}` : null,
-          status: "CONFIRMED",
+          status: bookingStatus,
         },
         include: {
           car: {
@@ -274,18 +290,38 @@ router.post(
               imageUrl: true,
               year: true,
               ownerId: true,
+              owner: { select: { email: true } },
             },
           },
           user: { select: { fullName: true, email: true, phone: true } },
         },
       });
 
-      // Notifications are best-effort (reservation already saved)
+      let checkoutUrl: string | null = null;
+      if (paymentMethod === "CARD") {
+        const session = await createCheckoutSession({
+          reservationId: created.id,
+          amountEur: Number(created.totalPrice),
+          carLabel: `${created.car.brand} ${created.car.model}`,
+          customerEmail: created.user.email,
+        });
+        checkoutUrl = session.url;
+        await prisma.reservation.update({
+          where: { id: created.id },
+          data: { stripeSessionId: session.id },
+        });
+      }
+
+      // Notifications / email are best-effort (reservation already saved)
       try {
+        const title =
+          bookingStatus === "PENDING"
+            ? "Rezervimi u krijua — prisni pagesën"
+            : "Rezervimi u konfirmua";
         await prisma.notification.create({
           data: {
             userId: req.user!.id,
-            title: "Rezervimi u konfirmua",
+            title,
             message: `Rezervimi për ${created.car.brand} ${created.car.model} (${startDate} → ${endDate}) u ruajt. Pagesa: ${paymentMethod}.`,
           },
         });
@@ -316,8 +352,22 @@ router.post(
             },
           });
         }
+
+        await sendReservationEmails({
+          customerEmail: created.user.email,
+          customerName: created.user.fullName,
+          carLabel: `${created.car.brand} ${created.car.model}`,
+          startDate,
+          endDate,
+          totalPrice: Number(created.totalPrice),
+          paymentMethod,
+          paymentStatus,
+          status: bookingStatus,
+          adminEmail: env.ADMIN_EMAIL,
+          ownerEmail: created.car.owner?.email,
+        });
       } catch (notifyErr) {
-        console.error("Notification failed after reservation:", notifyErr);
+        console.error("Notification/email failed after reservation:", notifyErr);
       }
 
       res.status(201).json({
@@ -328,6 +378,7 @@ router.post(
           locationFees: Number(created.locationFees),
           totalPrice: Number(created.totalPrice),
         },
+        checkoutUrl,
       });
     } catch (err) {
       next(err);
@@ -359,6 +410,119 @@ router.patch(
       const updated = await prisma.reservation.update({
         where: { id: reservation.id },
         data: { status: "CANCELLED" },
+      });
+      res.json({ reservation: updated });
+    } catch (err) {
+      next(err);
+    }
+  }
+);
+
+router.get(
+  "/:id/contract.pdf",
+  requireAuth,
+  validate(idParamSchema),
+  async (req, res, next) => {
+    try {
+      const reservation = await prisma.reservation.findUnique({
+        where: { id: req.params.id },
+        include: {
+          user: {
+            select: { fullName: true, email: true, phone: true, id: true },
+          },
+          car: {
+            select: { brand: true, model: true, year: true, ownerId: true },
+          },
+        },
+      });
+      if (!reservation) throw new AppError("Reservation not found", 404);
+
+      const role = req.user!.role;
+      const isOwner =
+        reservation.userId === req.user!.id ||
+        reservation.car.ownerId === req.user!.id ||
+        role === "ADMIN" ||
+        role === "SUPER_ADMIN";
+      if (!isOwner) throw new AppError("Forbidden", 403);
+
+      const extras = Array.isArray(reservation.extras)
+        ? (reservation.extras as Array<{ name?: string; price?: number }>)
+        : [];
+
+      const pdf = await buildReservationPdf({
+        id: reservation.id,
+        customerName: reservation.user.fullName,
+        customerEmail: reservation.user.email,
+        customerPhone: reservation.user.phone,
+        carLabel: `${reservation.car.brand} ${reservation.car.model} (${reservation.car.year})`,
+        startDate: reservation.startDate.toISOString().slice(0, 10),
+        endDate: reservation.endDate.toISOString().slice(0, 10),
+        totalDays: reservation.totalDays,
+        pickupLocation: reservation.pickupLocation,
+        returnLocation: reservation.returnLocation,
+        paymentMethod: reservation.paymentMethod,
+        paymentStatus: reservation.paymentStatus,
+        status: reservation.status,
+        carSubtotal: Number(reservation.carSubtotal),
+        extrasTotal: Number(reservation.extrasTotal),
+        locationFees: Number(reservation.locationFees),
+        totalPrice: Number(reservation.totalPrice),
+        extras,
+        createdAt: reservation.createdAt.toISOString().slice(0, 10),
+      });
+
+      res.setHeader("Content-Type", "application/pdf");
+      res.setHeader(
+        "Content-Disposition",
+        `attachment; filename="autorent-${reservation.id}.pdf"`
+      );
+      res.send(pdf);
+    } catch (err) {
+      next(err);
+    }
+  }
+);
+
+const paymentStatusSchema = z.object({
+  body: z.object({
+    paymentStatus: z.enum([
+      "PENDING",
+      "AWAITING_TRANSFER",
+      "PAY_ON_PICKUP",
+      "PAID",
+    ]),
+  }),
+  params: z.object({ id: z.string().cuid() }),
+});
+
+router.patch(
+  "/:id/payment",
+  requireAuth,
+  requireContractorOrAdmin,
+  validate(paymentStatusSchema),
+  async (req, res, next) => {
+    try {
+      const reservation = await prisma.reservation.findUnique({
+        where: { id: req.params.id },
+        include: { car: { select: { ownerId: true } } },
+      });
+      if (!reservation) throw new AppError("Reservation not found", 404);
+      if (
+        req.user!.role === "CONTRACTOR" &&
+        reservation.car.ownerId !== req.user!.id
+      ) {
+        throw new AppError("Forbidden", 403);
+      }
+
+      const paymentStatus = req.body.paymentStatus as PaymentStatus;
+      const updated = await prisma.reservation.update({
+        where: { id: reservation.id },
+        data: {
+          paymentStatus,
+          ...(paymentStatus === "PAID" && reservation.status === "PENDING"
+            ? { status: "CONFIRMED" }
+            : {}),
+        },
       });
       res.json({ reservation: updated });
     } catch (err) {

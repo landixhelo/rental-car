@@ -89,6 +89,9 @@ export const it: Dict = {
     ctaText: "Scegli l'auto oggi e completa la prenotazione in pochi minuti.",
     ctaCars: "Vedi la flotta",
     ctaContact: "Contattaci",
+    searchTitle: "Trova un'auto libera",
+    searchSub: "Imposta date e località — vedi solo le auto disponibili.",
+    searchBtn: "Cerca",
   },
   cars: {
     title: "La nostra flotta",
@@ -195,6 +198,10 @@ export const it: Dict = {
     total: "Totale",
     status: "Stato",
     actions: "Azioni",
+    downloadPdf: "Scarica contratto",
+    markPaid: "Segna come pagato",
+    paidOk: "Pagamento registrato",
+    payRedirect: "Apertura pagamento con carta…",
   },
   details: {
     seats: "Posti",

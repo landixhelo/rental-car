@@ -1,6 +1,6 @@
 import { type FormEvent, useEffect, useMemo, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { api, type Car, API_URL } from "../lib/api";
+import { api, type Car } from "../lib/api";
 import { useAuth } from "../context/AuthContext";
 import { useLocale, useT } from "../context/LocaleContext";
 import { useToast } from "../hooks/useToast";
@@ -20,6 +20,7 @@ export default function CarDetailsPage() {
   const [meta, setMeta] = useState<{
     locations: Array<{ id: string; name: string; fee: number }>;
     extras: Array<{ id: string; name: string; price: number }>;
+    cardEnabled?: boolean;
   } | null>(null);
 
   const [startDate, setStartDate] = useState("");
@@ -103,27 +104,23 @@ export default function CarDetailsPage() {
     }
 
     try {
-      await fetch(`${API_URL}/api/reservations`, {
-        method: "POST",
-        credentials: "include",
-        body: (() => {
-          const fd = new FormData();
-          fd.append("carId", id);
-          fd.append("startDate", startDate);
-          fd.append("endDate", endDate);
-          fd.append("pickupLocationId", pickup);
-          fd.append("returnLocationId", ret);
-          fd.append("paymentMethod", paymentMethod);
-          if (notes) fd.append("notes", notes);
-          selectedExtras.forEach((x) => fd.append("extras", x));
-          if (documentFile) fd.append("document", documentFile);
-          return fd;
-        })(),
-      }).then(async (res) => {
-        const data = await res.json();
-        if (!res.ok) throw new Error(data.message || "Reservation failed");
-        return data;
-      });
+      const fd = new FormData();
+      fd.append("carId", id);
+      fd.append("startDate", startDate);
+      fd.append("endDate", endDate);
+      fd.append("pickupLocationId", pickup);
+      fd.append("returnLocationId", ret);
+      fd.append("paymentMethod", paymentMethod);
+      if (notes) fd.append("notes", notes);
+      selectedExtras.forEach((x) => fd.append("extras", x));
+      if (documentFile) fd.append("document", documentFile);
+
+      const data = await api.createReservation(fd);
+      if (data.checkoutUrl) {
+        show(t("reservations.payRedirect"));
+        window.location.href = data.checkoutUrl;
+        return;
+      }
       show(t("details.success"));
       navigate("/reservations");
     } catch (err) {
@@ -327,7 +324,9 @@ export default function CarDetailsPage() {
             <select value={paymentMethod} onChange={(e) => setPaymentMethod(e.target.value)}>
               <option value="CASH">Cash në marrje</option>
               <option value="BANK_TRANSFER">Transfer bankar</option>
-              <option value="CARD">Kartë (simulim)</option>
+              {meta?.cardEnabled ? (
+                <option value="CARD">Kartë (Stripe)</option>
+              ) : null}
             </select>
           </label>
 

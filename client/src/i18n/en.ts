@@ -89,6 +89,9 @@ export const en: Dict = {
     ctaText: "Pick a car today and finish booking in minutes.",
     ctaCars: "Browse the fleet",
     ctaContact: "Contact us",
+    searchTitle: "Find an available car",
+    searchSub: "Set dates and location — only free cars are shown.",
+    searchBtn: "Search",
   },
   cars: {
     title: "Our Fleet",
@@ -195,6 +198,10 @@ export const en: Dict = {
     total: "Total",
     status: "Status",
     actions: "Actions",
+    downloadPdf: "Download contract",
+    markPaid: "Mark as paid",
+    paidOk: "Payment marked",
+    payRedirect: "Opening card payment…",
   },
   details: {
     seats: "Seats",

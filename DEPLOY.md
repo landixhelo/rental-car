@@ -31,7 +31,23 @@ CONTRACTOR_PASSWORD=<fjalekalim_i_forte_10+_chars>
 BCRYPT_ROUNDS=12
 JWT_EXPIRES_IN=8h
 UPLOAD_DIR=uploads
+PUBLIC_APP_URL=https://www.landixhelo.me
+WHATSAPP_PHONE=3556XXXXXXXX
+
+# Email (opsionale por e rekomanduar — Gmail App Password / Resend / etc.)
+SMTP_HOST=smtp.gmail.com
+SMTP_PORT=587
+SMTP_USER=your@email.com
+SMTP_PASS=your_app_password
+SMTP_FROM="AutoRent <your@email.com>"
+
+# Stripe (opsionale — pa këto, opsioni CARD fshihet nga UI)
+STRIPE_SECRET_KEY=sk_live_...
+STRIPE_WEBHOOK_SECRET=whsec_...
 ```
+
+Webhook Stripe: `https://YOUR-API.up.railway.app/api/payments/webhook`  
+Event: `checkout.session.completed`
 
 > Mos i vendos fjalëkalimet e vjetra të demo (`Admin@12345678`) në production.
 

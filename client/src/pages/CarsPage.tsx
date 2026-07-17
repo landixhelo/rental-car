@@ -18,6 +18,8 @@ const emptyFilters = {
   location: "all",
   minPrice: "",
   maxPrice: "",
+  startDate: "",
+  endDate: "",
 };
 
 export default function CarsPage() {
@@ -27,6 +29,8 @@ export default function CarsPage() {
     ...emptyFilters,
     type: searchParams.get("type") || "all",
     location: searchParams.get("location") || "all",
+    startDate: searchParams.get("startDate") || "",
+    endDate: searchParams.get("endDate") || "",
   }));
   const { user } = useAuth();
   const { show, Toast } = useToast();
@@ -47,6 +51,8 @@ export default function CarsPage() {
       ...emptyFilters,
       type: searchParams.get("type") || "all",
       location: searchParams.get("location") || "all",
+      startDate: searchParams.get("startDate") || "",
+      endDate: searchParams.get("endDate") || "",
     };
     setFilters(next);
     load(next).catch((e) => show(e.message));
@@ -88,6 +94,21 @@ export default function CarsPage() {
           placeholder={t("common.search")}
           value={filters.search}
           onChange={(e) => setFilters({ ...filters, search: e.target.value })}
+        />
+        <input
+          type="date"
+          value={filters.startDate}
+          onChange={(e) =>
+            setFilters({ ...filters, startDate: e.target.value })
+          }
+          aria-label={t("details.startDate")}
+        />
+        <input
+          type="date"
+          min={filters.startDate || undefined}
+          value={filters.endDate}
+          onChange={(e) => setFilters({ ...filters, endDate: e.target.value })}
+          aria-label={t("details.endDate")}
         />
         <select
           value={filters.type}

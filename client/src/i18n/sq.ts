@@ -87,6 +87,9 @@ export const sq = {
     ctaText: "Zgjidh makinën sot dhe rezervimi zgjidhet brenda minutash.",
     ctaCars: "Shiko flotën",
     ctaContact: "Na kontakto",
+    searchTitle: "Gjej makinë të lirë",
+    searchSub: "Vendos datat dhe lokacionin — shfaqen vetëm makinat e disponueshme.",
+    searchBtn: "Kërko",
   },
   cars: {
     title: "Flota Jonë",
@@ -193,6 +196,10 @@ export const sq = {
     total: "Totali",
     status: "Statusi",
     actions: "Veprime",
+    downloadPdf: "Shkarko kontratën",
+    markPaid: "Shëno si e paguar",
+    paidOk: "Pagesa u shënua",
+    payRedirect: "Po hapet pagesa me kartë…",
   },
   details: {
     seats: "Vende",

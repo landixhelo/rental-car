@@ -98,6 +98,8 @@ export const api = {
     request<{
       locations: Array<{ id: string; name: string; fee: number }>;
       extras: Array<{ id: string; name: string; price: number }>;
+      cardEnabled?: boolean;
+      whatsapp?: string;
     }>("/api/meta"),
 
   register: (body: {
@@ -169,10 +171,13 @@ export const api = {
     request<{ message: string }>(`/api/cars/${id}`, { method: "DELETE" }),
 
   createReservation: (formData: FormData) =>
-    request<{ reservation: unknown }>("/api/reservations", {
-      method: "POST",
-      body: formData,
-    }),
+    request<{ reservation: unknown; checkoutUrl?: string | null }>(
+      "/api/reservations",
+      {
+        method: "POST",
+        body: formData,
+      }
+    ),
   myReservations: () =>
     request<{ reservations: any[] }>("/api/reservations/mine"),
   fleetReservations: () =>
@@ -188,6 +193,13 @@ export const api = {
       method: "PATCH",
       body: JSON.stringify({ status }),
     }),
+  updateReservationPayment: (id: string, paymentStatus: string) =>
+    request<{ reservation: unknown }>(`/api/reservations/${id}/payment`, {
+      method: "PATCH",
+      body: JSON.stringify({ paymentStatus }),
+    }),
+  reservationContractUrl: (id: string) =>
+    `${API_URL}/api/reservations/${id}/contract.pdf`,
   deleteReservation: (id: string) =>
     request<{ message: string }>(`/api/reservations/${id}`, {
       method: "DELETE",

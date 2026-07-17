@@ -1,4 +1,4 @@
-import { type FormEvent, useState } from "react";
+import { type FormEvent, useEffect, useState } from "react";
 import { api } from "../lib/api";
 import { useLocale, useT } from "../context/LocaleContext";
 import { useToast } from "../hooks/useToast";
@@ -10,6 +10,7 @@ export default function ContactPage() {
   const { show, Toast } = useToast();
   const t = useT();
   const { locale } = useLocale();
+  const [whatsapp, setWhatsapp] = useState("355690000000");
   const [form, setForm] = useState({
     name: "",
     email: "",
@@ -17,6 +18,15 @@ export default function ContactPage() {
     subject: "Rezervim",
     message: "",
   });
+
+  useEffect(() => {
+    api
+      .meta()
+      .then((m) => {
+        if (m.whatsapp) setWhatsapp(m.whatsapp.replace(/[^\d]/g, ""));
+      })
+      .catch(() => {});
+  }, []);
 
   async function onSubmit(e: FormEvent) {
     e.preventDefault();
@@ -97,7 +107,7 @@ export default function ContactPage() {
           </button>
           <a
             className="whatsapp"
-            href="https://wa.me/355690000000"
+            href={`https://wa.me/${whatsapp}`}
             target="_blank"
             rel="noreferrer"
           >
@@ -105,10 +115,10 @@ export default function ContactPage() {
           </a>
         </form>
         <div className="panel">
-          <p>📍 Tiranë, Shqipëri</p>
-          <p>📞 +355 69 000 0000</p>
-          <p>✉️ support@autorent.al</p>
-          <p>🕒 {t("contact.hours")}</p>
+          <p>Tiranë, Shqipëri</p>
+          <p>+{whatsapp}</p>
+          <p>{SITE.email}</p>
+          <p>{t("contact.hours")}</p>
         </div>
       </div>
     </div>

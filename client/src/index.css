@@ -503,6 +503,61 @@ main { flex: 1; width: 100%; }
   color: #fff !important;
 }
 
+.home-search {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
+  align-items: end;
+  padding: 18px;
+  border-radius: 18px;
+  border: 1px solid var(--border);
+  background:
+    linear-gradient(145deg, rgba(225, 28, 73, 0.1), transparent 55%),
+    var(--bg-elevated);
+}
+.home-search label {
+  display: grid;
+  gap: 6px;
+  font-size: 0.9rem;
+  color: var(--text-muted);
+}
+.home-search input,
+.home-search select {
+  width: 100%;
+  padding: 10px 12px;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  background: var(--input-bg);
+  color: var(--text);
+}
+.home-search .btn { width: 100%; }
+
+.whatsapp-float {
+  position: fixed;
+  right: 18px;
+  bottom: 18px;
+  z-index: 50;
+  width: 54px;
+  height: 54px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  background: #25d366;
+  color: #fff !important;
+  font-weight: 700;
+  font-size: 0.95rem;
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.28);
+  transition: transform 0.2s ease;
+}
+.whatsapp-float:hover { transform: translateY(-3px); }
+
+.reservation-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 12px;
+}
+
 @keyframes home-fade-up {
   from { opacity: 0; transform: translateY(18px); }
   to { opacity: 1; transform: translateY(0); }
@@ -1234,6 +1289,7 @@ th { color: var(--text-muted); font-weight: 600; }
   .home-trust {
     grid-template-columns: 1fr 1fr;
   }
+  .home-search { grid-template-columns: 1fr 1fr; }
   .home-cta { padding: 40px 5%; margin-top: 28px; }
 }
 
@@ -1278,7 +1334,8 @@ th { color: var(--text-muted); font-weight: 600; }
   .home-steps,
   .home-categories,
   .home-cities,
-  .home-trust {
+  .home-trust,
+  .home-search {
     grid-template-columns: 1fr;
   }
   .section-head.row-between .btn {

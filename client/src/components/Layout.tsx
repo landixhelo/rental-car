@@ -14,6 +14,7 @@ export default function Layout() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [profileOpen, setProfileOpen] = useState(false);
   const [reservationBadge, setReservationBadge] = useState(0);
+  const [whatsapp, setWhatsapp] = useState("355690000000");
   const profileRef = useRef<HTMLDivElement>(null);
 
   const showReservationBadge =
@@ -35,6 +36,15 @@ export default function Layout() {
       // ignore badge errors
     }
   }
+
+  useEffect(() => {
+    api
+      .meta()
+      .then((m) => {
+        if (m.whatsapp) setWhatsapp(m.whatsapp.replace(/[^\d]/g, ""));
+      })
+      .catch(() => {});
+  }, []);
 
   useEffect(() => {
     const close = () => setMenuOpen(false);
@@ -261,9 +271,26 @@ export default function Layout() {
           <Link to="/faq">{t("nav.faq")}</Link>
           <Link to="/terms">{t("footer.terms")}</Link>
           <Link to="/cars">{t("nav.cars")}</Link>
+          <a
+            href={`https://wa.me/${whatsapp}`}
+            target="_blank"
+            rel="noreferrer"
+          >
+            WhatsApp
+          </a>
         </div>
         <p>{t("footer.rights")}</p>
       </footer>
+
+      <a
+        className="whatsapp-float"
+        href={`https://wa.me/${whatsapp}`}
+        target="_blank"
+        rel="noreferrer"
+        aria-label="WhatsApp"
+      >
+        WA
+      </a>
     </div>
   );
 }

@@ -63,6 +63,8 @@ router.get("/", optionalAuth, async (req, res, next) => {
       location,
       minPrice,
       maxPrice,
+      startDate,
+      endDate,
     } = req.query as Record<string, string | undefined>;
 
     const where: Prisma.CarWhereInput = {};
@@ -87,6 +89,23 @@ router.get("/", optionalAuth, async (req, res, next) => {
       where.pricePerDay = {};
       if (minPrice) where.pricePerDay.gte = Number(minPrice);
       if (maxPrice) where.pricePerDay.lte = Number(maxPrice);
+    }
+
+    if (startDate && endDate) {
+      const start = new Date(`${startDate}T00:00:00.000Z`);
+      const end = new Date(`${endDate}T00:00:00.000Z`);
+      if (!Number.isNaN(start.getTime()) && !Number.isNaN(end.getTime()) && end >= start) {
+        where.status = { not: "MAINTENANCE" };
+        where.NOT = {
+          reservations: {
+            some: {
+              status: { in: ["PENDING", "CONFIRMED"] },
+              startDate: { lte: end },
+              endDate: { gte: start },
+            },
+          },
+        };
+      }
     }
 
     const cars = await prisma.car.findMany({

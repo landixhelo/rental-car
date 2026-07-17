@@ -88,6 +88,20 @@ export default function ReservationsPage() {
     }
   }
 
+  async function markPaid(id: string) {
+    try {
+      await api.updateReservationPayment(id, "PAID");
+      show(t("reservations.paidOk"));
+      await load();
+    } catch (e) {
+      show(e instanceof Error ? e.message : t("common.error"));
+    }
+  }
+
+  function openContract(id: string) {
+    window.open(api.reservationContractUrl(id), "_blank", "noopener");
+  }
+
   return (
     <div className="section">
       {Toast}
@@ -155,6 +169,24 @@ export default function ReservationsPage() {
                         ))}
                       </select>
                     </label>
+                    <div className="reservation-actions">
+                      <button
+                        type="button"
+                        className="btn ghost"
+                        onClick={() => openContract(r.id)}
+                      >
+                        {t("reservations.downloadPdf")}
+                      </button>
+                      {r.paymentStatus !== "PAID" ? (
+                        <button
+                          type="button"
+                          className="btn"
+                          onClick={() => markPaid(r.id)}
+                        >
+                          {t("reservations.markPaid")}
+                        </button>
+                      ) : null}
+                    </div>
                   </div>
                 </div>
               ))}
@@ -199,16 +231,25 @@ export default function ReservationsPage() {
                     <span className={`badge status-${r.status}`}>
                       {statusText(r.status)}
                     </span>
-                    {!["CANCELLED", "COMPLETED", "REJECTED"].includes(
-                      r.status
-                    ) && (
+                    <div className="reservation-actions">
                       <button
-                        className="btn danger"
-                        onClick={() => cancel(r.id)}
+                        type="button"
+                        className="btn ghost"
+                        onClick={() => openContract(r.id)}
                       >
-                        {t("reservations.cancel")}
+                        {t("reservations.downloadPdf")}
                       </button>
-                    )}
+                      {!["CANCELLED", "COMPLETED", "REJECTED"].includes(
+                        r.status
+                      ) && (
+                        <button
+                          className="btn danger"
+                          onClick={() => cancel(r.id)}
+                        >
+                          {t("reservations.cancel")}
+                        </button>
+                      )}
+                    </div>
                   </div>
                 </div>
               ))}

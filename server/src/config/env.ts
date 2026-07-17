@@ -8,13 +8,25 @@ const envSchema = z.object({
   CLIENT_ORIGIN: z.string().url(),
   /** Comma-separated extra allowed origins, e.g. https://landixhelo.me,https://www.landixhelo.me */
   CLIENT_ORIGINS: z.string().optional().default(""),
+  /** Public web app URL for Stripe redirects (defaults to CLIENT_ORIGIN). */
+  PUBLIC_APP_URL: z.string().url().optional(),
   PORT: z.coerce.number().default(5000),
-  NODE_ENV: z.enum(["development", "production", "test"]).default("development"),
+  NODE_ENV: z
+    .enum(["development", "production", "test"])
+    .default("development"),
   BCRYPT_ROUNDS: z.coerce.number().min(10).default(12),
   ADMIN_EMAIL: z.string().email().optional(),
   ADMIN_PASSWORD: z.string().min(8).optional(),
   ADMIN_NAME: z.string().min(2).optional(),
   UPLOAD_DIR: z.string().default("uploads"),
+  SMTP_HOST: z.string().optional(),
+  SMTP_PORT: z.coerce.number().default(587),
+  SMTP_USER: z.string().optional(),
+  SMTP_PASS: z.string().optional(),
+  SMTP_FROM: z.string().optional(),
+  STRIPE_SECRET_KEY: z.string().optional(),
+  STRIPE_WEBHOOK_SECRET: z.string().optional(),
+  WHATSAPP_PHONE: z.string().optional().default("355690000000"),
 });
 
 const parsed = envSchema.safeParse(process.env);

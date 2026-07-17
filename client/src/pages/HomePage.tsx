@@ -1,5 +1,5 @@
-import { Link } from "react-router-dom";
-import { useEffect, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { useEffect, useState, type FormEvent } from "react";
 import { api, type Car } from "../lib/api";
 import { useAuth } from "../context/AuthContext";
 import { useLocale, useT } from "../context/LocaleContext";
@@ -32,11 +32,17 @@ const CITIES = [
 
 export default function HomePage() {
   const t = useT();
+  const navigate = useNavigate();
   const { locale } = useLocale();
   const { user } = useAuth();
   const { show, Toast } = useToast();
   const [cars, setCars] = useState<Car[]>([]);
   const [fleetCount, setFleetCount] = useState(0);
+  const [search, setSearch] = useState({
+    startDate: "",
+    endDate: "",
+    location: "all",
+  });
 
   async function load() {
     const res = await api.cars();
@@ -60,6 +66,17 @@ export default function HomePage() {
     } catch (e) {
       show(e instanceof Error ? e.message : t("common.error"));
     }
+  }
+
+  function onSearch(e: FormEvent) {
+    e.preventDefault();
+    const params = new URLSearchParams();
+    if (search.startDate) params.set("startDate", search.startDate);
+    if (search.endDate) params.set("endDate", search.endDate);
+    if (search.location && search.location !== "all") {
+      params.set("location", search.location);
+    }
+    navigate(`/cars?${params.toString()}`);
   }
 
   return (
@@ -98,6 +115,55 @@ export default function HomePage() {
             </Link>
           </div>
         </div>
+      </section>
+
+      <section className="section home-reveal home-search-section">
+        <div className="section-head">
+          <h2>{t("home.searchTitle")}</h2>
+          <p className="section-sub">{t("home.searchSub")}</p>
+        </div>
+        <form className="home-search" onSubmit={onSearch}>
+          <label>
+            {t("details.startDate")}
+            <input
+              type="date"
+              value={search.startDate}
+              onChange={(e) =>
+                setSearch({ ...search, startDate: e.target.value })
+              }
+              required
+            />
+          </label>
+          <label>
+            {t("details.endDate")}
+            <input
+              type="date"
+              min={search.startDate || undefined}
+              value={search.endDate}
+              onChange={(e) =>
+                setSearch({ ...search, endDate: e.target.value })
+              }
+              required
+            />
+          </label>
+          <label>
+            {t("cars.location")}
+            <select
+              value={search.location}
+              onChange={(e) =>
+                setSearch({ ...search, location: e.target.value })
+              }
+            >
+              <option value="all">{t("cars.location")}</option>
+              <option value="Tiranë">Tiranë</option>
+              <option value="Durrës">Durrës</option>
+              <option value="Vlorë">Vlorë</option>
+            </select>
+          </label>
+          <button className="btn" type="submit">
+            {t("home.searchBtn")}
+          </button>
+        </form>
       </section>
 
       <section className="section home-reveal">
