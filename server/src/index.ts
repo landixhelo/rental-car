@@ -21,6 +21,7 @@ import paymentRoutes, { stripeWebhookHandler } from "./routes/payments.js";
 import { EXTRAS, LOCATIONS } from "./lib/pricing.js";
 import { stripeEnabled } from "./lib/stripePay.js";
 import { getBusinessPublic } from "./lib/business.js";
+import { ensureSchema } from "./lib/ensureSchema.js";
 
 console.log("Booting AutoRent API...");
 
@@ -106,6 +107,14 @@ app.use("/api/super-admin", superAdminRoutes);
 app.use(notFound);
 app.use(errorHandler);
 
-app.listen(env.PORT, "0.0.0.0", () => {
-  console.log(`AutoRent API on http://0.0.0.0:${env.PORT}`);
+async function start() {
+  await ensureSchema();
+  app.listen(env.PORT, "0.0.0.0", () => {
+    console.log(`AutoRent API on http://0.0.0.0:${env.PORT}`);
+  });
+}
+
+start().catch((err) => {
+  console.error("Failed to start API:", err);
+  process.exit(1);
 });

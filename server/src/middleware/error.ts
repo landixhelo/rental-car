@@ -78,6 +78,18 @@ export function errorHandler(
   }
 
   console.error(err);
+
+  const prismaCode = (err as { code?: string })?.code;
+  if (
+    prismaCode === "P2022" ||
+    (err instanceof Error && /column .* does not exist/i.test(err.message))
+  ) {
+    return res.status(500).json({
+      message:
+        "Databaza po përditësohet. Prisni 1 minutë dhe provo përsëri rezervimin.",
+    });
+  }
+
   return res.status(500).json({
     message: isProd
       ? "Ndodhi një gabim në server. Provo përsëri."
