@@ -85,11 +85,23 @@ async function request<T>(
         "Fotot janë shumë të mëdha për upload. Provo foto më të vogla."
       );
     }
-    throw new Error(
-      data.message || `Request failed (${res.status})`
-    );
+    throw new Error(publicErrorMessage(data.message, res.status));
   }
   return data as T;
+}
+
+/** Hide secrets / opaque "AI password" strings from toasts. */
+function publicErrorMessage(raw: string | undefined, status: number): string {
+  const msg = (raw || "").trim();
+  if (!msg) return `Request failed (${status})`;
+  if (
+    /sk_live_|sk_test_|whsec_|postgres(ql)?:\/\//i.test(msg) ||
+    /Invalid API Key|API key/i.test(msg) ||
+    (/^[A-Za-z0-9#@$%!&*_.-]{10,64}$/.test(msg) && !/\s/.test(msg) && !/[àëç]/i.test(msg))
+  ) {
+    return "Ndodhi një gabim teknik. Provo Cash ose Transfer, pastaj rifresko faqen.";
+  }
+  return msg;
 }
 
 export const api = {
