@@ -301,17 +301,33 @@ router.post(
 
       let checkoutUrl: string | null = null;
       if (paymentMethod === "CARD") {
-        const session = await createCheckoutSession({
-          reservationId: created.id,
-          amountEur: Number(created.totalPrice),
-          carLabel: `${created.car.brand} ${created.car.model}`,
-          customerEmail: created.user.email,
-        });
-        checkoutUrl = session.url;
-        await prisma.reservation.update({
-          where: { id: created.id },
-          data: { stripeSessionId: session.id },
-        });
+        try {
+          const session = await createCheckoutSession({
+            reservationId: created.id,
+            amountEur: Number(created.totalPrice),
+            carLabel: `${created.car.brand} ${created.car.model}`,
+            customerEmail: created.user.email,
+          });
+          checkoutUrl = session.url;
+          await prisma.reservation.update({
+            where: { id: created.id },
+            data: { stripeSessionId: session.id },
+          });
+        } catch (stripeErr) {
+          console.error("Stripe checkout failed:", stripeErr);
+          // Reservation exists — mark clearly and ask user to pay another way / retry
+          await prisma.reservation.update({
+            where: { id: created.id },
+            data: {
+              status: "PENDING",
+              paymentStatus: PaymentStatus.PENDING,
+            },
+          });
+          throw new AppError(
+            "Pagesa me kartë dështoi. Rezervimi u ruajt si PENDING — zgjidh Cash/Transfer ose provo përsëri.",
+            502
+          );
+        }
       }
 
       // Notifications / email are best-effort (reservation already saved)

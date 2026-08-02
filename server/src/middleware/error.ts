@@ -1,5 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import { ZodError } from "zod";
+import { isProd } from "../config/env.js";
 
 export class AppError extends Error {
   statusCode: number;
@@ -25,6 +26,23 @@ function isAppError(err: unknown): err is AppError {
   );
 }
 
+/** Never echo secrets / API keys / connection strings to the client. */
+function safePublicMessage(raw: string | undefined): string {
+  if (!raw) return "Ndodhi një gabim. Provo përsëri.";
+  if (
+    /sk_live_|sk_test_|whsec_|postgres(ql)?:\/\//i.test(raw) ||
+    /Invalid API Key|API key/i.test(raw) ||
+    /password|secret|token/i.test(raw)
+  ) {
+    return "Konfigurimi i pagesës ose serverit dështoi. Provo Cash/Transfer ose kontakto support.";
+  }
+  // Looks like a raw password / opaque secret dumped as message
+  if (/^[A-Za-z0-9#@$%!&*]{10,40}$/.test(raw) && !/\s/.test(raw)) {
+    return "Ndodhi një gabim teknik. Provo përsëri ose zgjidh Cash/Transfer.";
+  }
+  return raw;
+}
+
 export function errorHandler(
   err: unknown,
   _req: Request,
@@ -40,7 +58,9 @@ export function errorHandler(
   }
 
   if (isAppError(err)) {
-    return res.status(err.statusCode).json({ message: err.message });
+    return res
+      .status(err.statusCode)
+      .json({ message: safePublicMessage(err.message) });
   }
 
   // Multer file filter / size errors
@@ -59,6 +79,8 @@ export function errorHandler(
 
   console.error(err);
   return res.status(500).json({
-    message: err instanceof Error ? err.message : "Internal server error",
+    message: isProd
+      ? "Ndodhi një gabim në server. Provo përsëri."
+      : safePublicMessage(err instanceof Error ? err.message : undefined),
   });
 }

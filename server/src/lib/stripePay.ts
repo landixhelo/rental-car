@@ -1,15 +1,21 @@
 import Stripe from "stripe";
 import { env } from "../config/env.js";
+import { AppError } from "../middleware/error.js";
 
+/** Only real Stripe secret keys — ignores passwords / placeholders. */
 export function stripeEnabled() {
-  return Boolean(env.STRIPE_SECRET_KEY);
+  const key = env.STRIPE_SECRET_KEY?.trim() || "";
+  return key.startsWith("sk_test_") || key.startsWith("sk_live_");
 }
 
 export function getStripe() {
-  if (!env.STRIPE_SECRET_KEY) {
-    throw new Error("STRIPE_SECRET_KEY missing");
+  if (!stripeEnabled()) {
+    throw new AppError(
+      "Pagesa me kartë nuk është e konfiguruar. Zgjidh Cash ose Bank Transfer.",
+      400
+    );
   }
-  return new Stripe(env.STRIPE_SECRET_KEY);
+  return new Stripe(env.STRIPE_SECRET_KEY!.trim());
 }
 
 export async function createCheckoutSession(input: {
