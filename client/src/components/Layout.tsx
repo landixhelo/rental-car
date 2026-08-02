@@ -4,6 +4,7 @@ import { api } from "../lib/api";
 import { useAuth } from "../context/AuthContext";
 import { useTheme } from "../context/ThemeContext";
 import { useLocale } from "../context/LocaleContext";
+import { applyBusinessMeta } from "../seo/site";
 import type { Locale } from "../i18n";
 
 export default function Layout() {
@@ -41,7 +42,12 @@ export default function Layout() {
     api
       .meta()
       .then((m) => {
-        if (m.whatsapp) setWhatsapp(m.whatsapp.replace(/[^\d]/g, ""));
+        applyBusinessMeta(m.business);
+        const wa = (m.business?.whatsapp || m.whatsapp || "").replace(
+          /[^\d]/g,
+          ""
+        );
+        if (wa) setWhatsapp(wa);
       })
       .catch(() => {});
   }, []);

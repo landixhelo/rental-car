@@ -1,5 +1,7 @@
 import nodemailer from "nodemailer";
 import { env } from "../config/env.js";
+import { cancellationPolicyText } from "./cancellation.js";
+import { getBusinessPublic } from "./business.js";
 
 function canSendMail() {
   return Boolean(env.SMTP_HOST && env.SMTP_USER && env.SMTP_PASS);
@@ -51,6 +53,7 @@ export async function sendReservationEmails(input: {
   adminEmail?: string | null;
   ownerEmail?: string | null;
 }) {
+  const biz = getBusinessPublic();
   const summary = [
     `Makina: ${input.carLabel}`,
     `Datat: ${input.startDate} → ${input.endDate}`,
@@ -59,10 +62,19 @@ export async function sendReservationEmails(input: {
     `Statusi: ${input.status}`,
   ].join("\n");
 
+  const policy = cancellationPolicyText();
+  const contactLine = [
+    biz.phone && `Tel: ${biz.phone}`,
+    biz.whatsapp && `WhatsApp: +${biz.whatsapp}`,
+    `Email: ${biz.email}`,
+  ]
+    .filter(Boolean)
+    .join("\n");
+
   await sendMail({
     to: input.customerEmail,
-    subject: `AutoRent — rezervimi yt (${input.carLabel})`,
-    text: `Përshëndetje ${input.customerName},\n\nRezervimi u regjistrua.\n\n${summary}\n\nFaleminderit,\nAutoRent`,
+    subject: `AutoRent — konfirmim rezervimi (${input.carLabel})`,
+    text: `Përshëndetje ${input.customerName},\n\nRezervimi u regjistrua me sukses.\n\n${summary}\n\nPolitika e anulimit:\n${policy}\n\nNa kontakto:\n${contactLine}\n\nwww.landixhelo.me\n\nFaleminderit,\nAutoRent`,
   });
 
   const staff = [input.adminEmail, input.ownerEmail].filter(

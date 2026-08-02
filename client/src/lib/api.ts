@@ -100,6 +100,19 @@ export const api = {
       extras: Array<{ id: string; name: string; price: number }>;
       cardEnabled?: boolean;
       whatsapp?: string;
+      business?: {
+        phone?: string;
+        phoneDigits?: string;
+        whatsapp?: string;
+        email?: string;
+        nipt?: string;
+        address?: string;
+        street?: string;
+        hours?: string;
+        cancelFreeHours?: number;
+        cancellationPolicy?: string;
+        mailConfigured?: boolean;
+      };
     }>("/api/meta"),
 
   register: (body: {
@@ -185,7 +198,10 @@ export const api = {
   allReservations: () =>
     request<{ reservations: any[] }>("/api/reservations"),
   cancelReservation: (id: string) =>
-    request<{ reservation: unknown }>(`/api/reservations/${id}/cancel`, {
+    request<{
+      reservation: unknown;
+      cancellation?: { freeCancel: boolean; refundNote: string };
+    }>(`/api/reservations/${id}/cancel`, {
       method: "PATCH",
     }),
   updateReservationStatus: (id: string, status: string) =>

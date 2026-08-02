@@ -20,6 +20,7 @@ import superAdminRoutes from "./routes/superAdmin.js";
 import paymentRoutes, { stripeWebhookHandler } from "./routes/payments.js";
 import { EXTRAS, LOCATIONS } from "./lib/pricing.js";
 import { stripeEnabled } from "./lib/stripePay.js";
+import { getBusinessPublic } from "./lib/business.js";
 
 console.log("Booting AutoRent API...");
 
@@ -72,14 +73,13 @@ app.get("/api/health", (_req, res) => {
 });
 
 app.get("/api/meta", (_req, res) => {
+  const business = getBusinessPublic();
   res.json({
     locations: LOCATIONS,
     extras: EXTRAS,
     cardEnabled: stripeEnabled(),
-    whatsapp: String(env.WHATSAPP_PHONE || "355690000000").replace(
-      /[^\d]/g,
-      ""
-    ),
+    whatsapp: business.whatsapp,
+    business,
   });
 });
 

@@ -90,8 +90,17 @@ export const it: Dict = {
     ctaCars: "Vedi la flotta",
     ctaContact: "Contattaci",
     searchTitle: "Trova un'auto libera",
-    searchSub: "Imposta date e località — vedi solo le auto disponibili.",
-    searchBtn: "Cerca",
+    searchSub:
+      "Imposta date e città — vedi solo le auto libere per quelle date.",
+    searchBtn: "Mostra auto disponibili",
+    searchPickup: "Data ritiro",
+    searchReturn: "Data riconsegna",
+    searchCity: "Città",
+    searchAnyCity: "Tutte le città",
+    searchHint:
+      "La ricerca apre la flotta filtrata. Puoi ancora cambiare le date nella pagina auto.",
+    searchNeedDates: "Scegli data di ritiro e riconsegna.",
+    searchInvalidDates: "La data di riconsegna deve essere dopo il ritiro.",
   },
   cars: {
     title: "La nostra flotta",
@@ -135,8 +144,11 @@ export const it: Dict = {
     subjectCars: "Auto",
     subjectOther: "Altro",
     sent: "Messaggio inviato!",
-    whatsapp: "Supporto WhatsApp",
-    hours: "08:00 – 20:00",
+    whatsapp: "Scrivici su WhatsApp",
+    hours: "Orari",
+    hoursValue: "08:00 – 20:00",
+    address: "Indirizzo",
+    nipt: "NIPT",
   },
   faq: {
     title: "FAQ",
@@ -145,22 +157,26 @@ export const it: Dict = {
     q2: "Quali documenti servono?",
     a2: "Patente e documento d'identità. Puoi caricarli durante la prenotazione.",
     q3: "Posso annullare?",
-    a3: "Sì, da Le mie prenotazioni finché lo stato lo consente.",
+    a3: "Sì. Cancellazione gratuita fino a 24 ore prima del ritiro. Sotto le 24 ore: annullamento consentito, senza rimborso automatico. Dopo l'inizio non si annulla dall'app.",
     q4: "Come pago?",
-    a4: "Contanti, bonifico o carta (simulazione sicura).",
+    a4: "Contanti al ritiro, bonifico, o carta quando Stripe è attivo.",
   },
   terms: {
     title: "Termini di noleggio",
     intro:
       "Utilizzando AutoRent, accetti i seguenti termini per il noleggio auto.",
     s1: "1. Prenotazione",
-    s1Text: "La prenotazione è valida dopo la conferma sulla piattaforma.",
+    s1Text:
+      "La prenotazione è valida una volta registrata sulla piattaforma. La disponibilità viene verificata per le date scelte.",
     s2: "2. Documenti",
-    s2Text: "Sono richiesti patente valida e documento di identità.",
+    s2Text:
+      "Al ritiro servono patente valida e documento d'identità. Puoi anche caricarli online.",
     s3: "3. Pagamento e deposito",
-    s3Text: "Contanti, bonifico o carta. Il deposito viene restituito dopo il controllo.",
-    s4: "4. Cancellazione",
-    s4Text: "Cancellazione gratuita fino a 24 ore prima, secondo policy.",
+    s3Text:
+      "Pagamento in contanti al ritiro, bonifico o carta (se attiva). L'eventuale deposito viene restituito dopo il controllo.",
+    s4: "4. Cancellazione e rimborsi",
+    s4Text:
+      "Cancellazione gratuita fino a 24 ore prima del ritiro — gli importi pagati vengono rimborsati con lo stesso metodo. Entro 24 ore: annullamento consentito senza rimborso automatico. Dopo la data di inizio il cliente non può annullare dalla piattaforma. I casi speciali sono gestiti da AutoRent.",
     s5: "5. Responsabilità",
     s5Text: "Il cliente è responsabile dei danni durante il periodo di noleggio.",
   },
@@ -189,6 +205,8 @@ export const it: Dict = {
     fleet: "Prenotazioni flotta",
     empty: "Nessuna prenotazione.",
     cancel: "Annulla",
+    cancelConfirm:
+      "Annullare la prenotazione? La cancellazione gratuita vale fino a 24 ore prima del ritiro; dopo potrebbe non esserci rimborso.",
     confirm: "Conferma",
     reject: "Rifiuta",
     complete: "Completa",

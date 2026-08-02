@@ -38,10 +38,18 @@ export default function HomePage() {
   const { show, Toast } = useToast();
   const [cars, setCars] = useState<Car[]>([]);
   const [fleetCount, setFleetCount] = useState(0);
-  const [search, setSearch] = useState({
-    startDate: "",
-    endDate: "",
-    location: "all",
+  const today = new Intl.DateTimeFormat("en-CA", {
+    timeZone: "Europe/Tirane",
+  }).format(new Date());
+
+  const [search, setSearch] = useState(() => {
+    const d = new Date(`${today}T12:00:00`);
+    d.setDate(d.getDate() + 1);
+    return {
+      startDate: today,
+      endDate: d.toISOString().slice(0, 10),
+      location: "all",
+    };
   });
 
   async function load() {
@@ -70,13 +78,33 @@ export default function HomePage() {
 
   function onSearch(e: FormEvent) {
     e.preventDefault();
+    if (!search.startDate || !search.endDate) {
+      show(t("home.searchNeedDates"));
+      return;
+    }
+    if (search.endDate <= search.startDate) {
+      show(t("home.searchInvalidDates"));
+      return;
+    }
     const params = new URLSearchParams();
-    if (search.startDate) params.set("startDate", search.startDate);
-    if (search.endDate) params.set("endDate", search.endDate);
+    params.set("startDate", search.startDate);
+    params.set("endDate", search.endDate);
     if (search.location && search.location !== "all") {
       params.set("location", search.location);
     }
     navigate(`/cars?${params.toString()}`);
+  }
+
+  function onStartChange(value: string) {
+    setSearch((prev) => {
+      const next = { ...prev, startDate: value };
+      if (!prev.endDate || prev.endDate <= value) {
+        const d = new Date(`${value}T12:00:00`);
+        d.setDate(d.getDate() + 1);
+        next.endDate = d.toISOString().slice(0, 10);
+      }
+      return next;
+    });
   }
 
   return (
@@ -124,21 +152,20 @@ export default function HomePage() {
         </div>
         <form className="home-search" onSubmit={onSearch}>
           <label>
-            {t("details.startDate")}
+            {t("home.searchPickup")}
             <input
               type="date"
+              min={today}
               value={search.startDate}
-              onChange={(e) =>
-                setSearch({ ...search, startDate: e.target.value })
-              }
+              onChange={(e) => onStartChange(e.target.value)}
               required
             />
           </label>
           <label>
-            {t("details.endDate")}
+            {t("home.searchReturn")}
             <input
               type="date"
-              min={search.startDate || undefined}
+              min={search.startDate || today}
               value={search.endDate}
               onChange={(e) =>
                 setSearch({ ...search, endDate: e.target.value })
@@ -147,14 +174,14 @@ export default function HomePage() {
             />
           </label>
           <label>
-            {t("cars.location")}
+            {t("home.searchCity")}
             <select
               value={search.location}
               onChange={(e) =>
                 setSearch({ ...search, location: e.target.value })
               }
             >
-              <option value="all">{t("cars.location")}</option>
+              <option value="all">{t("home.searchAnyCity")}</option>
               <option value="Tiranë">Tiranë</option>
               <option value="Durrës">Durrës</option>
               <option value="Vlorë">Vlorë</option>
@@ -164,6 +191,7 @@ export default function HomePage() {
             {t("home.searchBtn")}
           </button>
         </form>
+        <p className="home-search-hint muted">{t("home.searchHint")}</p>
       </section>
 
       <section className="section home-reveal">

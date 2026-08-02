@@ -36,6 +36,16 @@ const envSchema = z.object({
     emptyToUndef,
     z.string().optional().default("355690000000")
   ),
+  BUSINESS_PHONE: z.preprocess(emptyToUndef, z.string().optional()),
+  BUSINESS_EMAIL: z.preprocess(emptyToUndef, z.string().email().optional()),
+  BUSINESS_NIPT: z.preprocess(emptyToUndef, z.string().optional()),
+  BUSINESS_ADDRESS: z.preprocess(
+    emptyToUndef,
+    z.string().optional().default("Tiranë, Shqipëri")
+  ),
+  BUSINESS_STREET: z.preprocess(emptyToUndef, z.string().optional()),
+  /** Free cancellation window before pickup (hours). */
+  CANCEL_FREE_HOURS: z.coerce.number().min(1).default(24),
 });
 
 const parsed = envSchema.safeParse(process.env);

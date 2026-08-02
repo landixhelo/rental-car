@@ -33,6 +33,12 @@ JWT_EXPIRES_IN=8h
 UPLOAD_DIR=uploads
 PUBLIC_APP_URL=https://www.landixhelo.me
 WHATSAPP_PHONE=3556XXXXXXXX
+BUSINESS_PHONE=+3556XXXXXXXX
+BUSINESS_EMAIL=your@email.com
+BUSINESS_NIPT=K12345678A
+BUSINESS_ADDRESS=Tiranë, Shqipëri
+BUSINESS_STREET=Rruga e Durrësit
+CANCEL_FREE_HOURS=24
 
 # Email (opsionale por e rekomanduar — Gmail App Password / Resend / etc.)
 SMTP_HOST=smtp.gmail.com

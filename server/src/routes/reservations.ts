@@ -5,9 +5,11 @@ import { requireAuth, requireAdmin, requireContractorOrAdmin } from "../middlewa
 import { upload } from "../middleware/upload.js";
 import { idParamSchema, reservationSchema } from "../validators/schemas.js";
 import { EXTRAS, calcDays, getLocation } from "../lib/pricing.js";
-import { sendReservationEmails } from "../lib/mail.js";
+import { sendMail, sendReservationEmails } from "../lib/mail.js";
 import { buildReservationPdf } from "../lib/pdfContract.js";
 import { createCheckoutSession, stripeEnabled } from "../lib/stripePay.js";
+import { assertCustomerCanCancel } from "../lib/cancellation.js";
+import { cancellationPolicyText } from "../lib/cancellation.js";
 import { env } from "../config/env.js";
 import { z } from "zod";
 import { validate } from "../middleware/validate.js";
@@ -394,6 +396,10 @@ router.patch(
     try {
       const reservation = await prisma.reservation.findUnique({
         where: { id: req.params.id },
+        include: {
+          user: { select: { email: true, fullName: true } },
+          car: { select: { brand: true, model: true } },
+        },
       });
       if (!reservation) throw new AppError("Reservation not found", 404);
       if (
@@ -407,11 +413,40 @@ router.patch(
         throw new AppError("Reservation cannot be cancelled");
       }
 
+      const decision = assertCustomerCanCancel(
+        reservation.startDate,
+        req.user!.role
+      );
+
       const updated = await prisma.reservation.update({
         where: { id: reservation.id },
         data: { status: "CANCELLED" },
       });
-      res.json({ reservation: updated });
+
+      try {
+        await sendMail({
+          to: reservation.user.email,
+          subject: "AutoRent — rezervimi u anulua",
+          text: `Përshëndetje ${reservation.user.fullName},\n\nRezervimi për ${reservation.car.brand} ${reservation.car.model} u anulua.\n\n${decision.refundNote}\n\nPolitika: ${cancellationPolicyText()}\n\nAutoRent`,
+        });
+        if (env.ADMIN_EMAIL) {
+          await sendMail({
+            to: env.ADMIN_EMAIL,
+            subject: `Anulim rezervimi — ${reservation.car.brand} ${reservation.car.model}`,
+            text: `${reservation.user.fullName} anuloi rezervimin ${reservation.id}.\n${decision.refundNote}\nFree cancel: ${decision.freeCancel}`,
+          });
+        }
+      } catch (mailErr) {
+        console.error("Cancel email failed:", mailErr);
+      }
+
+      res.json({
+        reservation: updated,
+        cancellation: {
+          freeCancel: decision.freeCancel,
+          refundNote: decision.refundNote,
+        },
+      });
     } catch (err) {
       next(err);
     }

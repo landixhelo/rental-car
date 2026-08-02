@@ -3,14 +3,14 @@ import { api } from "../lib/api";
 import { useLocale, useT } from "../context/LocaleContext";
 import { useToast } from "../hooks/useToast";
 import Seo from "../seo/Seo";
-import { SITE } from "../seo/site";
+import { SITE, applyBusinessMeta, businessRuntime } from "../seo/site";
 import { breadcrumbJsonLd } from "../seo/jsonLd";
 
 export default function ContactPage() {
   const { show, Toast } = useToast();
   const t = useT();
   const { locale } = useLocale();
-  const [whatsapp, setWhatsapp] = useState("355690000000");
+  const [biz, setBiz] = useState({ ...businessRuntime });
   const [form, setForm] = useState({
     name: "",
     email: "",
@@ -23,7 +23,8 @@ export default function ContactPage() {
     api
       .meta()
       .then((m) => {
-        if (m.whatsapp) setWhatsapp(m.whatsapp.replace(/[^\d]/g, ""));
+        applyBusinessMeta(m.business);
+        setBiz({ ...businessRuntime });
       })
       .catch(() => {});
   }, []);
@@ -44,6 +45,8 @@ export default function ContactPage() {
       show(err instanceof Error ? err.message : t("common.error"));
     }
   }
+
+  const wa = (biz.whatsapp || biz.phoneDigits || "").replace(/[^\d]/g, "");
 
   return (
     <div className="section">
@@ -105,20 +108,55 @@ export default function ContactPage() {
           <button className="btn" type="submit">
             {t("common.send")}
           </button>
-          <a
-            className="whatsapp"
-            href={`https://wa.me/${whatsapp}`}
-            target="_blank"
-            rel="noreferrer"
-          >
-            {t("contact.whatsapp")}
-          </a>
+          {wa ? (
+            <a
+              className="whatsapp"
+              href={`https://wa.me/${wa}`}
+              target="_blank"
+              rel="noreferrer"
+            >
+              {t("contact.whatsapp")}
+            </a>
+          ) : null}
         </form>
-        <div className="panel">
-          <p>Tiranë, Shqipëri</p>
-          <p>+{whatsapp}</p>
-          <p>{SITE.email}</p>
-          <p>{t("contact.hours")}</p>
+        <div className="panel contact-details">
+          <p>
+            <strong>{t("contact.address")}</strong>
+            <br />
+            {biz.street ? `${biz.street}, ` : ""}
+            {biz.address || SITE.address.full}
+          </p>
+          {biz.phone ? (
+            <p>
+              <strong>{t("auth.phone")}</strong>
+              <br />
+              <a href={`tel:${biz.phoneDigits || wa}`}>{biz.phone}</a>
+            </p>
+          ) : null}
+          <p>
+            <strong>Email</strong>
+            <br />
+            <a href={`mailto:${biz.email || SITE.email}`}>
+              {biz.email || SITE.email}
+            </a>
+          </p>
+          {biz.nipt ? (
+            <p>
+              <strong>{t("contact.nipt")}</strong>
+              <br />
+              {biz.nipt}
+            </p>
+          ) : null}
+          <p>
+            <strong>{t("contact.hours")}</strong>
+            <br />
+            {biz.hours || t("contact.hoursValue")}
+          </p>
+          {biz.cancellationPolicy ? (
+            <p className="muted" style={{ marginTop: 12, fontSize: "0.9rem" }}>
+              {biz.cancellationPolicy}
+            </p>
+          ) : null}
         </div>
       </div>
     </div>

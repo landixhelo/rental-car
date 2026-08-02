@@ -55,10 +55,10 @@ export default function ReservationsPage() {
   }, [user?.id, user?.role]);
 
   async function cancel(id: string) {
-    if (!confirm(t("reservations.cancel") + "?")) return;
+    if (!confirm(t("reservations.cancelConfirm"))) return;
     try {
-      await api.cancelReservation(id);
-      show(t("status.CANCELLED"));
+      const res = await api.cancelReservation(id);
+      show(res.cancellation?.refundNote || t("status.CANCELLED"));
       await load();
     } catch (e) {
       show(e instanceof Error ? e.message : t("common.error"));

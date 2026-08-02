@@ -1,8 +1,10 @@
-import { SITE, absoluteUrl } from "./site";
+import { SITE, absoluteUrl, businessRuntime } from "./site";
 import type { Car } from "../lib/api";
 import { mediaUrl } from "../lib/mediaUrl";
 
 export function organizationJsonLd() {
+  const phone = businessRuntime.phone || SITE.phone;
+  const email = businessRuntime.email || SITE.email;
   return {
     "@context": "https://schema.org",
     "@type": ["Organization", "AutoRental", "LocalBusiness"],
@@ -12,10 +14,14 @@ export function organizationJsonLd() {
     url: SITE.url,
     logo: absoluteUrl("/favicon.svg"),
     image: SITE.ogImage,
-    email: SITE.email,
-    telephone: SITE.phone,
+    email,
+    telephone: phone,
+    ...(businessRuntime.nipt
+      ? { taxID: businessRuntime.nipt, vatID: businessRuntime.nipt }
+      : {}),
     address: {
       "@type": "PostalAddress",
+      streetAddress: businessRuntime.street || SITE.address.street || undefined,
       addressLocality: SITE.address.locality,
       addressRegion: SITE.address.region,
       addressCountry: SITE.address.country,
