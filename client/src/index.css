@@ -98,10 +98,13 @@ main { flex: 1; width: 100%; }
 .nav-actions { display: flex; align-items: center; gap: 8px; }
 
 .lang-switch {
+  --nav-chip-h: 30px;
   display: inline-flex;
   align-items: center;
   gap: 2px;
-  padding: 3px;
+  height: var(--nav-chip-h);
+  padding: 2px;
+  box-sizing: border-box;
   border-radius: 999px;
   border: 1px solid var(--border);
   background: var(--bg-nav);
@@ -110,8 +113,9 @@ main { flex: 1; width: 100%; }
   appearance: none;
   border: 0;
   margin: 0;
-  min-width: 2.35rem;
-  padding: 5px 10px;
+  min-width: 2.1rem;
+  height: 100%;
+  padding: 0 9px;
   border-radius: 999px;
   background: transparent;
   color: var(--text-muted);
@@ -119,7 +123,7 @@ main { flex: 1; width: 100%; }
   font-size: 0.72rem;
   font-weight: 700;
   letter-spacing: 0.04em;
-  line-height: 1.2;
+  line-height: 1;
   cursor: pointer;
   transition: background 0.18s ease, color 0.18s ease;
 }
@@ -282,12 +286,15 @@ main { flex: 1; width: 100%; }
 }
 
 .theme-toggle {
-  width: 30px;
-  height: 30px;
+  --nav-chip-h: 30px;
+  width: var(--nav-chip-h);
+  height: var(--nav-chip-h);
+  box-sizing: border-box;
   border-radius: 999px;
   background: var(--bg-nav);
-  font-size: 0.85rem;
+  font-size: 0.78rem;
   line-height: 1;
+  padding: 0;
 }
 
 .menu-toggle { display: none; }
