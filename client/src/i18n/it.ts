@@ -233,7 +233,7 @@ export const it: Dict = {
     total: "Totale",
     status: "Stato",
     actions: "Azioni",
-    downloadPdf: "Scarica contratto",
+    downloadPdf: "Scarica fattura",
     markPaid: "Segna come pagato",
     paidOk: "Pagamento registrato",
     payRedirect: "Apertura pagamento con carta…",

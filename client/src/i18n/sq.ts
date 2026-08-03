@@ -230,7 +230,7 @@ export const sq = {
     total: "Totali",
     status: "Statusi",
     actions: "Veprime",
-    downloadPdf: "Shkarko kontratën",
+    downloadPdf: "Shkarko faturën",
     markPaid: "Shëno si e paguar",
     paidOk: "Pagesa u shënua",
     payRedirect: "Po hapet pagesa me kartë…",

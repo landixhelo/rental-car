@@ -232,7 +232,7 @@ export const en: Dict = {
     total: "Total",
     status: "Status",
     actions: "Actions",
-    downloadPdf: "Download contract",
+    downloadPdf: "Download invoice",
     markPaid: "Mark as paid",
     paidOk: "Payment marked",
     payRedirect: "Opening card payment…",

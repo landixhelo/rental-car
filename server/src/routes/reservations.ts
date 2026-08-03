@@ -529,6 +529,8 @@ router.get(
         extrasTotal: Number(reservation.extrasTotal),
         locationFees: Number(reservation.locationFees),
         totalPrice: Number(reservation.totalPrice),
+        depositAmount: Number(reservation.depositAmount || 0),
+        depositStatus: reservation.depositStatus,
         extras,
         createdAt: reservation.createdAt.toISOString().slice(0, 10),
       });
@@ -536,7 +538,7 @@ router.get(
       res.setHeader("Content-Type", "application/pdf");
       res.setHeader(
         "Content-Disposition",
-        `attachment; filename="autorent-${reservation.id}.pdf"`
+        `attachment; filename="autorent-fature-${reservation.id.slice(0, 8)}.pdf"`
       );
       res.send(pdf);
     } catch (err) {
