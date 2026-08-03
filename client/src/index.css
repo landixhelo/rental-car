@@ -1387,8 +1387,8 @@ th { color: var(--text-muted); font-weight: 600; }
 
 @media (max-width: 560px) {
   .lang-switch button {
-    min-width: 2.1rem;
-    padding: 5px 8px;
+    min-width: 1.9rem;
+    padding: 0 7px;
     font-size: 0.68rem;
   }
 
