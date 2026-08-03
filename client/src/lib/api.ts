@@ -143,7 +143,7 @@ export const api = {
       body: JSON.stringify(body),
     }),
   forgotPassword: (email: string) =>
-    request<{ message: string }>("/api/auth/forgot-password", {
+    request<{ message: string; resetUrl?: string }>("/api/auth/forgot-password", {
       method: "POST",
       body: JSON.stringify({ email }),
     }),

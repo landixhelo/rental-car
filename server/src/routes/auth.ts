@@ -5,7 +5,7 @@ import rateLimit from "express-rate-limit";
 import { prisma } from "../lib/prisma.js";
 import { env, isProd } from "../config/env.js";
 import { AppError } from "../middleware/error.js";
-import { sendMail } from "../lib/mail.js";
+import { isMailConfigured, sendMail } from "../lib/mail.js";
 import {
   clearAuthCookie,
   requireAuth,
@@ -152,11 +152,21 @@ router.post(
       const appUrl = env.PUBLIC_APP_URL || env.CLIENT_ORIGIN;
       const resetUrl = `${appUrl}/reset-password?token=${rawToken}`;
 
-      await sendMail({
+      const mailed = await sendMail({
         to: user.email,
         subject: "AutoRent — rivendos fjalëkalimin",
         text: `Përshëndetje ${user.fullName},\n\nKliko për të rivendosur fjalëkalimin (vlen 1 orë):\n${resetUrl}\n\nNëse nuk e kërkove ti, injoro këtë email.\n\nAutoRent`,
       });
+
+      // Without SMTP, return the link once so reset still works until email is set up.
+      if (!mailed.sent && !isMailConfigured()) {
+        res.json({
+          message:
+            "Email nuk është konfiguruar ende. Përdor linkun më poshtë (vlen 1 orë).",
+          resetUrl,
+        });
+        return;
+      }
 
       res.json(okMessage);
     } catch (err) {

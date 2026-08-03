@@ -3,7 +3,7 @@ import { env } from "../config/env.js";
 import { cancellationPolicyText } from "./cancellation.js";
 import { getBusinessPublic } from "./business.js";
 
-function canSendMail() {
+export function isMailConfigured() {
   return Boolean(env.SMTP_HOST && env.SMTP_USER && env.SMTP_PASS);
 }
 
@@ -25,7 +25,7 @@ export async function sendMail(options: {
   text: string;
   html?: string;
 }) {
-  if (!canSendMail()) {
+  if (!isMailConfigured()) {
     console.warn("[mail] SMTP not configured — skipped:", options.subject);
     return { sent: false as const };
   }

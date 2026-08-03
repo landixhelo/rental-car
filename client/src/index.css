@@ -1162,6 +1162,15 @@ textarea { min-height: 90px; resize: vertical; }
 .price-box { text-align: right; }
 .price-box h2 { color: var(--accent); margin: 0; }
 
+.reset-link-box {
+  display: grid;
+  gap: 0.65rem;
+  margin-top: 0.75rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid color-mix(in srgb, var(--border, #ccc) 80%, transparent);
+  word-break: break-all;
+}
+
 .auth-page {
   min-height: 70vh;
   display: grid;
