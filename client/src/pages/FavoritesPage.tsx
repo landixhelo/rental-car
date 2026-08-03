@@ -39,7 +39,7 @@ export default function FavoritesPage() {
       <div className="cars-grid">
         {cars.map((car) => (
           <div key={car.id} className="car-card-wrap">
-            <Link to={`/cars/${car.slug || car.id}`} className="car-card">
+            <Link to={`/cars/${(car.slug || "").trim() || car.id}`} className="car-card">
               <img src={mediaUrl(car.imageUrl)} alt="" />
               <div className="car-card-body">
                 <h3>

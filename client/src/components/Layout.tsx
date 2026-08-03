@@ -10,7 +10,7 @@ import type { Locale } from "../i18n";
 export default function Layout() {
   const { user, logout } = useAuth();
   const { theme, toggleTheme } = useTheme();
-  const { t, locale, setLocale, locales, labels } = useLocale();
+  const { t, locale, setLocale, labels } = useLocale();
   const location = useLocation();
   const [menuOpen, setMenuOpen] = useState(false);
   const [profileOpen, setProfileOpen] = useState(false);
@@ -114,20 +114,26 @@ export default function Layout() {
           </Link>
 
           <div className="nav-actions">
-            <label className="lang-switch" title={t("nav.language")}>
-              <span className="sr-only">{t("nav.language")}</span>
-              <select
-                value={locale}
-                onChange={(e) => setLocale(e.target.value as Locale)}
-                aria-label={t("nav.language")}
-              >
-                {locales.map((code) => (
-                  <option key={code} value={code}>
-                    {labels[code]}
-                  </option>
-                ))}
-              </select>
-            </label>
+            <div
+              className="lang-switch"
+              role="group"
+              aria-label={t("nav.language")}
+              title={t("nav.language")}
+            >
+              {(["en", "sq", "it"] as Locale[]).map((code) => (
+                <button
+                  key={code}
+                  type="button"
+                  className={locale === code ? "active" : undefined}
+                  onClick={() => setLocale(code)}
+                  aria-pressed={locale === code}
+                  aria-label={labels[code]}
+                  title={labels[code]}
+                >
+                  {code.toUpperCase()}
+                </button>
+              ))}
+            </div>
 
             <button
               type="button"

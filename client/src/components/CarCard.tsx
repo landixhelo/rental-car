@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import type { Car } from "../lib/api";
 import { mediaUrl } from "../lib/mediaUrl";
+import { carPath } from "../lib/carPath";
 import { useT } from "../context/LocaleContext";
 
 type Props = {
@@ -23,7 +24,7 @@ export default function CarCard({ car, onToggleFavorite }: Props) {
 
   return (
     <div className="car-card-wrap">
-      <Link to={`/cars/${car.slug || car.id}`} className="car-card">
+      <Link to={carPath(car)} className="car-card">
         <img
           src={mediaUrl(car.imageUrl)}
           alt={`${car.brand} ${car.model}`}
