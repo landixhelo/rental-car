@@ -104,7 +104,7 @@ main { flex: 1; width: 100%; }
   padding: 3px;
   border-radius: 999px;
   border: 1px solid var(--border);
-  background: color-mix(in srgb, var(--bg-soft) 88%, #000 12%);
+  background: var(--bg-nav);
 }
 .lang-switch button {
   appearance: none;
