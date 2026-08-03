@@ -137,7 +137,7 @@ export default function Layout() {
 
             <button
               type="button"
-              className="icon-btn"
+              className="icon-btn theme-toggle"
               onClick={toggleTheme}
               aria-label={
                 theme === "dark" ? t("nav.switchLight") : t("nav.switchDark")
