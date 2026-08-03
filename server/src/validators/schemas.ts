@@ -26,6 +26,19 @@ export const loginSchema = z.object({
   }),
 });
 
+export const forgotPasswordSchema = z.object({
+  body: z.object({
+    email: z.string().trim().email(),
+  }),
+});
+
+export const resetPasswordSchema = z.object({
+  body: z.object({
+    token: z.string().trim().min(20).max(200),
+    password: strongPassword,
+  }),
+});
+
 export const updateProfileSchema = z.object({
   body: z.object({
     fullName: z.string().trim().min(2).max(100),

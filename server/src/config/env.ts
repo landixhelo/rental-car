@@ -46,6 +46,8 @@ const envSchema = z.object({
   BUSINESS_STREET: z.preprocess(emptyToUndef, z.string().optional()),
   /** Free cancellation window before pickup (hours). */
   CANCEL_FREE_HOURS: z.coerce.number().min(1).default(24),
+  /** Default deposit in EUR when not overridden (0 = use 1 day rate). */
+  DEFAULT_DEPOSIT_EUR: z.coerce.number().min(0).default(0),
 });
 
 const parsed = envSchema.safeParse(process.env);

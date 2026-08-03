@@ -4,6 +4,7 @@ import { api, type Car } from "../lib/api";
 import { buildCarJsonPayload, uploadCarImageFiles } from "../lib/carMedia";
 import { mediaUrl } from "../lib/mediaUrl";
 import FeatureCheckboxes from "../components/FeatureCheckboxes";
+import FleetCalendar from "../components/FleetCalendar";
 import { useAuth } from "../context/AuthContext";
 import { useToast } from "../hooks/useToast";
 
@@ -135,7 +136,9 @@ export default function ContractorPage() {
         </Link>
       </p>
 
-      <form className="panel" onSubmit={saveCar}>
+      <FleetCalendar reservations={reservations} />
+
+      <form className="panel" onSubmit={saveCar} style={{ marginTop: 24 }}>
         <h2>{editId ? "Edito makinën" : "Shto makinë të re"}</h2>
         <div className="filters">
           <input

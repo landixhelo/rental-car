@@ -142,6 +142,16 @@ export const api = {
       method: "POST",
       body: JSON.stringify(body),
     }),
+  forgotPassword: (email: string) =>
+    request<{ message: string }>("/api/auth/forgot-password", {
+      method: "POST",
+      body: JSON.stringify({ email }),
+    }),
+  resetPassword: (token: string, password: string) =>
+    request<{ message: string }>("/api/auth/reset-password", {
+      method: "POST",
+      body: JSON.stringify({ token, password }),
+    }),
   logout: () =>
     request<{ message: string }>("/api/auth/logout", { method: "POST" }),
   me: () => request<{ user: User }>("/api/auth/me"),
@@ -225,6 +235,22 @@ export const api = {
     request<{ reservation: unknown }>(`/api/reservations/${id}/payment`, {
       method: "PATCH",
       body: JSON.stringify({ paymentStatus }),
+    }),
+  updateReservationDocument: (
+    id: string,
+    body: { documentStatus: string; documentNote?: string }
+  ) =>
+    request<{ reservation: unknown }>(`/api/reservations/${id}/document`, {
+      method: "PATCH",
+      body: JSON.stringify(body),
+    }),
+  updateReservationDeposit: (
+    id: string,
+    body: { depositStatus: string; depositAmount?: number }
+  ) =>
+    request<{ reservation: unknown }>(`/api/reservations/${id}/deposit`, {
+      method: "PATCH",
+      body: JSON.stringify(body),
     }),
   reservationContractUrl: (id: string) =>
     `${API_URL}/api/reservations/${id}/contract.pdf`,

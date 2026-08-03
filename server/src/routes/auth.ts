@@ -1,9 +1,11 @@
 import { Router } from "express";
 import bcrypt from "bcryptjs";
+import crypto from "crypto";
 import rateLimit from "express-rate-limit";
 import { prisma } from "../lib/prisma.js";
 import { env, isProd } from "../config/env.js";
 import { AppError } from "../middleware/error.js";
+import { sendMail } from "../lib/mail.js";
 import {
   clearAuthCookie,
   requireAuth,
@@ -12,8 +14,10 @@ import {
 } from "../middleware/auth.js";
 import { validate } from "../middleware/validate.js";
 import {
+  forgotPasswordSchema,
   loginSchema,
   registerSchema,
+  resetPasswordSchema,
   updateProfileSchema,
 } from "../validators/schemas.js";
 
@@ -109,6 +113,96 @@ router.post("/logout", (_req, res) => {
   clearAuthCookie(res);
   res.json({ message: "Logged out" });
 });
+
+router.post(
+  "/forgot-password",
+  authAttemptLimiter,
+  validate(forgotPasswordSchema),
+  async (req, res, next) => {
+    try {
+      const email = String(req.body.email).trim().toLowerCase();
+      const user = await prisma.user.findUnique({ where: { email } });
+
+      // Always same response (no email enumeration)
+      const okMessage = {
+        message:
+          "Nëse email-i ekziston, dërguam një link për rivendosjen e fjalëkalimit.",
+      };
+
+      if (!user || !user.isActive) {
+        res.json(okMessage);
+        return;
+      }
+
+      const rawToken = crypto.randomBytes(32).toString("hex");
+      const tokenHash = crypto
+        .createHash("sha256")
+        .update(rawToken)
+        .digest("hex");
+      const expires = new Date(Date.now() + 60 * 60 * 1000); // 1h
+
+      await prisma.user.update({
+        where: { id: user.id },
+        data: {
+          passwordResetToken: tokenHash,
+          passwordResetExpires: expires,
+        },
+      });
+
+      const appUrl = env.PUBLIC_APP_URL || env.CLIENT_ORIGIN;
+      const resetUrl = `${appUrl}/reset-password?token=${rawToken}`;
+
+      await sendMail({
+        to: user.email,
+        subject: "AutoRent — rivendos fjalëkalimin",
+        text: `Përshëndetje ${user.fullName},\n\nKliko për të rivendosur fjalëkalimin (vlen 1 orë):\n${resetUrl}\n\nNëse nuk e kërkove ti, injoro këtë email.\n\nAutoRent`,
+      });
+
+      res.json(okMessage);
+    } catch (err) {
+      next(err);
+    }
+  }
+);
+
+router.post(
+  "/reset-password",
+  authAttemptLimiter,
+  validate(resetPasswordSchema),
+  async (req, res, next) => {
+    try {
+      const { token, password } = req.body as {
+        token: string;
+        password: string;
+      };
+      const tokenHash = crypto.createHash("sha256").update(token).digest("hex");
+
+      const user = await prisma.user.findFirst({
+        where: {
+          passwordResetToken: tokenHash,
+          passwordResetExpires: { gt: new Date() },
+        },
+      });
+      if (!user) {
+        throw new AppError("Linku është i pavlefshëm ose ka skaduar", 400);
+      }
+
+      const passwordHash = await bcrypt.hash(password, env.BCRYPT_ROUNDS);
+      await prisma.user.update({
+        where: { id: user.id },
+        data: {
+          passwordHash,
+          passwordResetToken: null,
+          passwordResetExpires: null,
+        },
+      });
+
+      res.json({ message: "Fjalëkalimi u ndryshua. Mund të hysh tani." });
+    } catch (err) {
+      next(err);
+    }
+  }
+);
 
 router.get("/me", requireAuth, async (req, res, next) => {
   try {

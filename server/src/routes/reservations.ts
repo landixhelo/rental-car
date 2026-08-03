@@ -60,6 +60,7 @@ router.get("/mine", requireAuth, async (req, res, next) => {
         extrasTotal: Number(r.extrasTotal),
         locationFees: Number(r.locationFees),
         totalPrice: Number(r.totalPrice),
+        depositAmount: Number(r.depositAmount),
         car: {
           ...r.car,
           companyName:
@@ -117,6 +118,7 @@ router.get("/fleet", requireAuth, requireContractorOrAdmin, async (req, res, nex
         extrasTotal: Number(r.extrasTotal),
         locationFees: Number(r.locationFees),
         totalPrice: Number(r.totalPrice),
+        depositAmount: Number(r.depositAmount),
       })),
     });
   } catch (err) {
@@ -264,6 +266,12 @@ router.post(
         paymentStatus = PaymentStatus.PAY_ON_PICKUP;
       }
 
+      const hasDocument = Boolean(req.file);
+      const depositAmount =
+        env.DEFAULT_DEPOSIT_EUR > 0
+          ? env.DEFAULT_DEPOSIT_EUR
+          : Number(car.pricePerDay);
+
       const created = await prisma.reservation.create({
         data: {
           userId: req.user!.id,
@@ -281,7 +289,10 @@ router.post(
           notes,
           paymentMethod,
           paymentStatus,
-          documentUrl: req.file ? `/uploads/${req.file.filename}` : null,
+          documentUrl: hasDocument ? `/uploads/${req.file!.filename}` : null,
+          documentStatus: hasDocument ? "PENDING" : "NONE",
+          depositAmount,
+          depositStatus: depositAmount > 0 ? "HELD" : "NONE",
           status: bookingStatus,
         },
         include: {
@@ -546,6 +557,22 @@ const paymentStatusSchema = z.object({
   params: z.object({ id: z.string().cuid() }),
 });
 
+const documentStatusSchema = z.object({
+  body: z.object({
+    documentStatus: z.enum(["PENDING", "APPROVED", "REJECTED"]),
+    documentNote: z.string().trim().max(500).optional(),
+  }),
+  params: z.object({ id: z.string().cuid() }),
+});
+
+const depositStatusSchema = z.object({
+  body: z.object({
+    depositStatus: z.enum(["HELD", "RETURNED", "FORFEITED"]),
+    depositAmount: z.coerce.number().min(0).max(10000).optional(),
+  }),
+  params: z.object({ id: z.string().cuid() }),
+});
+
 router.patch(
   "/:id/payment",
   requireAuth,
@@ -607,6 +634,101 @@ router.patch(
         data: { status: req.body.status },
       });
       res.json({ reservation: updated });
+    } catch (err) {
+      next(err);
+    }
+  }
+);
+
+async function assertFleetAccess(
+  reservationId: string,
+  user: { id: string; role: string } | undefined
+) {
+  const reservation = await prisma.reservation.findUnique({
+    where: { id: reservationId },
+    include: {
+      car: { select: { ownerId: true } },
+      user: { select: { email: true, fullName: true } },
+    },
+  });
+  if (!reservation) throw new AppError("Reservation not found", 404);
+  if (!user) throw new AppError("Forbidden", 403);
+  if (
+    user.role === "CONTRACTOR" &&
+    reservation.car.ownerId !== user.id
+  ) {
+    throw new AppError("Forbidden", 403);
+  }
+  if (
+    user.role !== "CONTRACTOR" &&
+    user.role !== "ADMIN" &&
+    user.role !== "SUPER_ADMIN"
+  ) {
+    throw new AppError("Forbidden", 403);
+  }
+  return reservation;
+}
+
+router.patch(
+  "/:id/document",
+  requireAuth,
+  requireContractorOrAdmin,
+  validate(documentStatusSchema),
+  async (req, res, next) => {
+    try {
+      const reservation = await assertFleetAccess(req.params.id, req.user);
+      if (!reservation.documentUrl && req.body.documentStatus !== "PENDING") {
+        throw new AppError("Nuk ka dokument të ngarkuar për këtë rezervim", 400);
+      }
+
+      const updated = await prisma.reservation.update({
+        where: { id: reservation.id },
+        data: {
+          documentStatus: req.body.documentStatus,
+          documentNote: req.body.documentNote || null,
+        },
+      });
+
+      try {
+        await sendMail({
+          to: reservation.user.email,
+          subject: `AutoRent — dokumenti: ${req.body.documentStatus}`,
+          text: `Përshëndetje ${reservation.user.fullName},\n\nStatusi i dokumentit të rezervimit: ${req.body.documentStatus}.\n${req.body.documentNote ? `Shënim: ${req.body.documentNote}\n` : ""}\nAutoRent`,
+        });
+      } catch (e) {
+        console.error("Document status email failed:", e);
+      }
+
+      res.json({ reservation: updated });
+    } catch (err) {
+      next(err);
+    }
+  }
+);
+
+router.patch(
+  "/:id/deposit",
+  requireAuth,
+  requireContractorOrAdmin,
+  validate(depositStatusSchema),
+  async (req, res, next) => {
+    try {
+      await assertFleetAccess(req.params.id, req.user);
+      const updated = await prisma.reservation.update({
+        where: { id: req.params.id },
+        data: {
+          depositStatus: req.body.depositStatus,
+          ...(req.body.depositAmount != null
+            ? { depositAmount: req.body.depositAmount }
+            : {}),
+        },
+      });
+      res.json({
+        reservation: {
+          ...updated,
+          depositAmount: Number(updated.depositAmount),
+        },
+      });
     } catch (err) {
       next(err);
     }

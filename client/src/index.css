@@ -564,6 +564,51 @@ main { flex: 1; width: 100%; }
   margin-top: 12px;
 }
 
+.fleet-calendar { margin: 8px 0 28px; }
+.calendar-nav {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.calendar-nav .btn {
+  width: auto;
+  min-width: 40px;
+  padding: 6px 10px;
+}
+.calendar-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 6px;
+}
+.calendar-head {
+  margin-bottom: 6px;
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  text-align: center;
+}
+.calendar-cell {
+  min-height: 52px;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  padding: 6px;
+  background: var(--bg-soft);
+  position: relative;
+}
+.calendar-cell.empty { border: none; background: transparent; }
+.calendar-cell.busy {
+  border-color: rgba(225, 28, 73, 0.35);
+  background: rgba(225, 28, 73, 0.1);
+}
+.calendar-day { font-size: 0.85rem; font-weight: 600; }
+.calendar-badge {
+  position: absolute;
+  right: 6px;
+  bottom: 6px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--accent);
+}
+
 @keyframes home-fade-up {
   from { opacity: 0; transform: translateY(18px); }
   to { opacity: 1; transform: translateY(0); }

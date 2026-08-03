@@ -102,6 +102,44 @@ export default function ReservationsPage() {
     window.open(api.reservationContractUrl(id), "_blank", "noopener");
   }
 
+  async function setDocument(id: string, documentStatus: string) {
+    try {
+      await api.updateReservationDocument(id, { documentStatus });
+      show(
+        documentStatus === "APPROVED"
+          ? t("reservations.docApproved")
+          : t("reservations.docRejected")
+      );
+      await load();
+    } catch (e) {
+      show(e instanceof Error ? e.message : t("common.error"));
+    }
+  }
+
+  async function setDeposit(id: string, depositStatus: string) {
+    try {
+      await api.updateReservationDeposit(id, { depositStatus });
+      show(t("reservations.depositUpdated"));
+      await load();
+    } catch (e) {
+      show(e instanceof Error ? e.message : t("common.error"));
+    }
+  }
+
+  function docLabel(status?: string) {
+    if (status === "PENDING") return t("reservations.DOC_PENDING");
+    if (status === "APPROVED") return t("reservations.DOC_APPROVED");
+    if (status === "REJECTED") return t("reservations.DOC_REJECTED");
+    return t("reservations.DOC_NONE");
+  }
+
+  function depLabel(status?: string) {
+    if (status === "HELD") return t("reservations.DEP_HELD");
+    if (status === "RETURNED") return t("reservations.DEP_RETURNED");
+    if (status === "FORFEITED") return t("reservations.DEP_FORFEITED");
+    return t("reservations.DEP_NONE");
+  }
+
   return (
     <div className="section">
       {Toast}
@@ -156,6 +194,27 @@ export default function ReservationsPage() {
                       {r.pickupLocation} → {r.returnLocation}
                     </p>
                     <p className="total">€{r.totalPrice}</p>
+                    <p>
+                      {t("reservations.deposit")}: €{Number(r.depositAmount || 0)} ·{" "}
+                      {depLabel(r.depositStatus)}
+                    </p>
+                    <p>
+                      {t("reservations.document")}: {docLabel(r.documentStatus)}
+                      {r.documentUrl ? (
+                        <>
+                          {" · "}
+                          <a
+                            href={mediaUrl(r.documentUrl)}
+                            target="_blank"
+                            rel="noreferrer"
+                          >
+                            {t("reservations.viewDocument")}
+                          </a>
+                        </>
+                      ) : (
+                        <> · {t("reservations.noDocument")}</>
+                      )}
+                    </p>
                     <label className="fleet-status-label">
                       {t("reservations.status")}
                       <select
@@ -167,6 +226,30 @@ export default function ReservationsPage() {
                             {t(`status.${s}`)}
                           </option>
                         ))}
+                      </select>
+                    </label>
+                    {r.documentUrl ? (
+                      <label className="fleet-status-label">
+                        {t("reservations.docStatus")}
+                        <select
+                          value={r.documentStatus || "PENDING"}
+                          onChange={(e) => setDocument(r.id, e.target.value)}
+                        >
+                          <option value="PENDING">{t("reservations.DOC_PENDING")}</option>
+                          <option value="APPROVED">{t("reservations.DOC_APPROVED")}</option>
+                          <option value="REJECTED">{t("reservations.DOC_REJECTED")}</option>
+                        </select>
+                      </label>
+                    ) : null}
+                    <label className="fleet-status-label">
+                      {t("reservations.depositStatus")}
+                      <select
+                        value={r.depositStatus || "NONE"}
+                        onChange={(e) => setDeposit(r.id, e.target.value)}
+                      >
+                        <option value="HELD">{t("reservations.DEP_HELD")}</option>
+                        <option value="RETURNED">{t("reservations.DEP_RETURNED")}</option>
+                        <option value="FORFEITED">{t("reservations.DEP_FORFEITED")}</option>
                       </select>
                     </label>
                     <div className="reservation-actions">
@@ -226,6 +309,25 @@ export default function ReservationsPage() {
                     </p>
                     <p>
                       {r.paymentMethod} · {r.paymentStatus}
+                    </p>
+                    <p>
+                      {t("reservations.deposit")}: €{Number(r.depositAmount || 0)} ·{" "}
+                      {depLabel(r.depositStatus)}
+                    </p>
+                    <p>
+                      {t("reservations.document")}: {docLabel(r.documentStatus)}
+                      {r.documentUrl ? (
+                        <>
+                          {" · "}
+                          <a
+                            href={mediaUrl(r.documentUrl)}
+                            target="_blank"
+                            rel="noreferrer"
+                          >
+                            {t("reservations.viewDocument")}
+                          </a>
+                        </>
+                      ) : null}
                     </p>
                     <p className="total">€{r.totalPrice}</p>
                     <span className={`badge status-${r.status}`}>

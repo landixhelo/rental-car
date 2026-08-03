@@ -39,6 +39,7 @@ BUSINESS_NIPT=K12345678A
 BUSINESS_ADDRESS=Tiranë, Shqipëri
 BUSINESS_STREET=Rruga e Durrësit
 CANCEL_FREE_HOURS=24
+DEFAULT_DEPOSIT_EUR=0
 
 # Email (opsionale por e rekomanduar — Gmail App Password / Resend / etc.)
 SMTP_HOST=smtp.gmail.com
@@ -50,6 +51,12 @@ SMTP_FROM="AutoRent <your@email.com>"
 # Stripe (opsionale — pa këto, opsioni CARD fshihet nga UI)
 STRIPE_SECRET_KEY=sk_live_...
 STRIPE_WEBHOOK_SECRET=whsec_...
+```
+
+### Frontend (Vercel) — analytics opsionale
+```env
+VITE_GA_MEASUREMENT_ID=G-XXXXXXXX
+VITE_META_PIXEL_ID=1234567890
 ```
 
 Webhook Stripe: `https://YOUR-API.up.railway.app/api/payments/webhook`  
