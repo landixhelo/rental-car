@@ -232,11 +232,20 @@ async function main() {
       where: { email: "contractor@autorent.al" },
     });
     await prisma.car.createMany({
-      data: cars.map((car) => ({
-        ...car,
-        images: [car.imageUrl],
-        ownerId: contractor?.id,
-      })),
+      data: cars.map((car) => {
+        const slug = `${car.brand} ${car.model} ${car.year}`
+          .toLowerCase()
+          .replace(/[ë]/g, "e")
+          .replace(/[ç]/g, "c")
+          .replace(/[^a-z0-9]+/g, "-")
+          .replace(/^-+|-+$/g, "");
+        return {
+          ...car,
+          slug,
+          images: [car.imageUrl],
+          ownerId: contractor?.id,
+        };
+      }),
     });
   }
 

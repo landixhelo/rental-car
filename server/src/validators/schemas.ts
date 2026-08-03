@@ -126,3 +126,14 @@ export const idParamSchema = z.object({
     id: z.string().cuid(),
   }),
 });
+
+/** Public car URL: cuid (legacy) or slug like bmw-x5-2023 */
+export const carPublicParamSchema = z.object({
+  params: z.object({
+    id: z
+      .string()
+      .min(2)
+      .max(120)
+      .regex(/^[a-zA-Z0-9][a-zA-Z0-9_-]*$/),
+  }),
+});

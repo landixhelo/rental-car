@@ -23,7 +23,7 @@ export default function CarCard({ car, onToggleFavorite }: Props) {
 
   return (
     <div className="car-card-wrap">
-      <Link to={`/cars/${car.id}`} className="car-card">
+      <Link to={`/cars/${car.slug || car.id}`} className="car-card">
         <img
           src={mediaUrl(car.imageUrl)}
           alt={`${car.brand} ${car.model}`}

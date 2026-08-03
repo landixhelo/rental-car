@@ -83,6 +83,7 @@ model User {
 
 model Car {
   id           String         @id @default(cuid())
+  slug         String?        @unique
   brand        String
   model        String
   year         Int

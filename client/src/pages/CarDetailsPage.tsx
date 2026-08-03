@@ -8,6 +8,7 @@ import ImageCarousel from "../components/ImageCarousel";
 import Seo from "../seo/Seo";
 import { breadcrumbJsonLd, carProductJsonLd } from "../seo/jsonLd";
 import { mediaUrl } from "../lib/mediaUrl";
+import { carPath } from "../lib/carPath";
 
 export default function CarDetailsPage() {
   const { id } = useParams();
@@ -40,6 +41,10 @@ export default function CarDetailsPage() {
       .then(([carRes, metaRes]) => {
         setCar(carRes.car);
         setMeta(metaRes);
+        const pretty = carRes.car.slug;
+        if (pretty && id !== pretty) {
+          navigate(carPath(carRes.car), { replace: true });
+        }
       })
       .catch((e) => show(e.message));
   }, [id]);
@@ -97,7 +102,7 @@ export default function CarDetailsPage() {
       navigate("/login");
       return;
     }
-    if (!id) return;
+    if (!car) return;
     if (dateConflict) {
       show(dateConflict);
       return;
@@ -105,7 +110,7 @@ export default function CarDetailsPage() {
 
     try {
       const fd = new FormData();
-      fd.append("carId", id);
+      fd.append("carId", car.id);
       fd.append("startDate", startDate);
       fd.append("endDate", endDate);
       fd.append("pickupLocationId", pickup);
@@ -130,10 +135,10 @@ export default function CarDetailsPage() {
 
   async function onReview(e: FormEvent) {
     e.preventDefault();
-    if (!id) return;
+    if (!car) return;
     try {
       await api.addReview({
-        carId: id,
+        carId: car.id,
         rating: Number(rating),
         comment,
       });
@@ -178,7 +183,7 @@ export default function CarDetailsPage() {
       <Seo
         title={`${car.brand} ${car.model} — €${car.pricePerDay}${t("common.perDay")}`}
         description={car.description}
-        path={`/cars/${car.id}`}
+        path={carPath(car)}
         locale={locale}
         type="product"
         image={mediaUrl(car.imageUrl) || undefined}
@@ -188,7 +193,7 @@ export default function CarDetailsPage() {
             { name: t("nav.cars"), path: "/cars" },
             {
               name: `${car.brand} ${car.model}`,
-              path: `/cars/${car.id}`,
+              path: carPath(car),
             },
           ]),
           carProductJsonLd(car),

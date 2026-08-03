@@ -1,6 +1,7 @@
 import { SITE, absoluteUrl, businessRuntime } from "./site";
 import type { Car } from "../lib/api";
 import { mediaUrl } from "../lib/mediaUrl";
+import { carPath } from "../lib/carPath";
 
 export function organizationJsonLd() {
   const phone = businessRuntime.phone || SITE.phone;
@@ -96,17 +97,18 @@ export function carProductJsonLd(car: Car) {
     })
     .filter(Boolean);
 
+  const path = carPath(car);
   return {
     "@context": "https://schema.org",
     "@type": "Car",
-    "@id": absoluteUrl(`/cars/${car.id}`),
+    "@id": absoluteUrl(path),
     name: `${car.brand} ${car.model}`,
     brand: { "@type": "Brand", name: car.brand },
     model: car.model,
     vehicleModelDate: String(car.year),
     description: car.description,
     image: images,
-    url: absoluteUrl(`/cars/${car.id}`),
+    url: absoluteUrl(path),
     color: car.color || undefined,
     vehicleTransmission: car.transmission,
     fuelType: car.fuel,
@@ -117,7 +119,7 @@ export function carProductJsonLd(car: Car) {
       : undefined,
     offers: {
       "@type": "Offer",
-      url: absoluteUrl(`/cars/${car.id}`),
+      url: absoluteUrl(path),
       priceCurrency: "EUR",
       price: car.pricePerDay,
       availability:
@@ -160,7 +162,13 @@ export function faqJsonLd(
 }
 
 export function itemListCarsJsonLd(
-  cars: Array<{ id: string; brand: string; model: string; imageUrl: string }>
+  cars: Array<{
+    id: string;
+    slug?: string | null;
+    brand: string;
+    model: string;
+    imageUrl: string;
+  }>
 ) {
   return {
     "@context": "https://schema.org",
@@ -168,7 +176,7 @@ export function itemListCarsJsonLd(
     itemListElement: cars.slice(0, 20).map((car, index) => ({
       "@type": "ListItem",
       position: index + 1,
-      url: absoluteUrl(`/cars/${car.id}`),
+      url: absoluteUrl(carPath(car)),
       name: `${car.brand} ${car.model}`,
     })),
   };

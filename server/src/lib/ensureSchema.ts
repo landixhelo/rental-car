@@ -1,4 +1,5 @@
 import { prisma } from "./prisma.js";
+import { uniqueCarSlug } from "./slug.js";
 
 /**
  * Ensure critical columns/enums exist even if `prisma db push` was skipped at boot.
@@ -62,6 +63,35 @@ export async function ensureSchema() {
         END IF;
       END $$;
     `);
+
+    await prisma.$executeRawUnsafe(`
+      ALTER TABLE "Car"
+      ADD COLUMN IF NOT EXISTS "slug" TEXT
+    `);
+    await prisma.$executeRawUnsafe(`
+      DO $$
+      BEGIN
+        IF NOT EXISTS (
+          SELECT 1 FROM pg_constraint WHERE conname = 'Car_slug_key'
+        ) AND NOT EXISTS (
+          SELECT 1 FROM pg_indexes WHERE indexname = 'Car_slug_key'
+        ) THEN
+          ALTER TABLE "Car" ADD CONSTRAINT "Car_slug_key" UNIQUE ("slug");
+        END IF;
+      END $$;
+    `);
+
+    const missing = await prisma.car.findMany({
+      where: { OR: [{ slug: null }, { slug: "" }] },
+      select: { id: true, brand: true, model: true, year: true },
+    });
+    for (const row of missing) {
+      const slug = await uniqueCarSlug(row.brand, row.model, row.year, row.id);
+      await prisma.car.update({
+        where: { id: row.id },
+        data: { slug },
+      });
+    }
 
     console.log("[schema] ensureSchema OK");
   } catch (err) {

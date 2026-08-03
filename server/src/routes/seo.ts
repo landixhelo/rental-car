@@ -15,7 +15,7 @@ const STATIC_PATHS: Array<{ path: string; changefreq: string; priority: string }
 router.get("/sitemap.xml", async (_req, res, next) => {
   try {
     const cars = await prisma.car.findMany({
-      select: { id: true, updatedAt: true },
+      select: { id: true, slug: true, updatedAt: true },
       orderBy: { updatedAt: "desc" },
     });
 
@@ -29,8 +29,9 @@ router.get("/sitemap.xml", async (_req, res, next) => {
       ),
       ...cars.map((car) => {
         const lastmod = car.updatedAt.toISOString().slice(0, 10);
+        const key = car.slug || car.id;
         return `  <url>
-    <loc>${SITE}/cars/${car.id}</loc>
+    <loc>${SITE}/cars/${key}</loc>
     <lastmod>${lastmod}</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>

@@ -1,6 +1,12 @@
 import { optionalAuth, requireAuth, requireContractorOrAdmin } from "../middleware/auth.js";
 import { validate } from "../middleware/validate.js";
-import { carBodyObject, carSchema, idParamSchema } from "../validators/schemas.js";
+import {
+  carBodyObject,
+  carPublicParamSchema,
+  carSchema,
+  idParamSchema,
+} from "../validators/schemas.js";
+import { uniqueCarSlug } from "../lib/slug.js";
 import { AppError } from "../middleware/error.js";
 import { prisma } from "../lib/prisma.js";
 import { carOwnerSelect, companyNameFromOwner } from "../lib/carOwner.js";
@@ -232,10 +238,13 @@ router.post(
   }
 );
 
-router.get("/:id", optionalAuth, validate(idParamSchema), async (req, res, next) => {
+router.get("/:id", optionalAuth, validate(carPublicParamSchema), async (req, res, next) => {
   try {
-    const car = await prisma.car.findUnique({
-      where: { id: req.params.id },
+    const key = req.params.id;
+    const car = await prisma.car.findFirst({
+      where: {
+        OR: [{ id: key }, { slug: key }],
+      },
       include: {
         owner: carOwnerSelect,
         reservations: activeReservationSelect(),
@@ -327,9 +336,15 @@ router.post(
         req.user!.role === "CONTRACTOR" ? req.user!.id : raw.ownerId || null;
 
       const { images: _bodyImages, imageUrl: _bodyUrl, ...carFields } = body;
+      const slug = await uniqueCarSlug(
+        carFields.brand,
+        carFields.model,
+        carFields.year
+      );
       const car = await prisma.car.create({
         data: {
           ...carFields,
+          slug,
           imageUrl: media.imageUrl,
           images: media.images,
           ownerId,
@@ -399,10 +414,23 @@ router.patch(
       const nextCover = nextImages[0] || existing.imageUrl;
 
       const { images: _ignoredImages, imageUrl: _ignoredUrl, ...rest } = parsed;
+      const nextBrand = rest.brand ?? existing.brand;
+      const nextModel = rest.model ?? existing.model;
+      const nextYear = rest.year ?? existing.year;
+      const brandModelYearChanged =
+        nextBrand !== existing.brand ||
+        nextModel !== existing.model ||
+        nextYear !== existing.year;
+      const slug =
+        !existing.slug || brandModelYearChanged
+          ? await uniqueCarSlug(nextBrand, nextModel, nextYear, existing.id)
+          : existing.slug;
+
       const car = await prisma.car.update({
         where: { id: req.params.id },
         data: {
           ...rest,
+          slug,
           imageUrl: nextCover,
           images: nextImages,
         },

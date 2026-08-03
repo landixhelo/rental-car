@@ -24,6 +24,7 @@ export type Account = User & {
 
 export type Car = {
   id: string;
+  slug?: string | null;
   brand: string;
   model: string;
   year: number;
