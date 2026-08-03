@@ -142,7 +142,7 @@ export default function CarDetailsPage() {
         rating: Number(rating),
         comment,
       });
-      const refreshed = await api.car(id);
+      const refreshed = await api.car(car.id);
       setCar(refreshed.car);
       setComment("");
       show(t("details.submitReview"));
