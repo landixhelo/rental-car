@@ -19,11 +19,18 @@ function transporter() {
   });
 }
 
+export type MailAttachment = {
+  filename: string;
+  content: Buffer;
+  contentType?: string;
+};
+
 export async function sendMail(options: {
   to: string;
   subject: string;
   text: string;
   html?: string;
+  attachments?: MailAttachment[];
 }) {
   if (!isMailConfigured()) {
     console.warn("[mail] SMTP not configured — skipped:", options.subject);
@@ -36,6 +43,11 @@ export async function sendMail(options: {
     subject: options.subject,
     text: options.text,
     html: options.html || options.text.replace(/\n/g, "<br/>"),
+    attachments: options.attachments?.map((a) => ({
+      filename: a.filename,
+      content: a.content,
+      contentType: a.contentType || "application/pdf",
+    })),
   });
   return { sent: true as const };
 }
@@ -52,6 +64,8 @@ export async function sendReservationEmails(input: {
   status: string;
   adminEmail?: string | null;
   ownerEmail?: string | null;
+  invoicePdf?: Buffer | null;
+  invoiceFilename?: string;
 }) {
   const biz = getBusinessPublic();
   const summary = [
@@ -71,10 +85,27 @@ export async function sendReservationEmails(input: {
     .filter(Boolean)
     .join("\n");
 
+  const invoiceNote = input.invoicePdf
+    ? "\nFatura e rezervimit është bashkangjitur si PDF.\n"
+    : "";
+
+  const customerAttachments: MailAttachment[] | undefined = input.invoicePdf
+    ? [
+        {
+          filename:
+            input.invoiceFilename ||
+            `autorent-fature-${input.startDate}.pdf`,
+          content: input.invoicePdf,
+          contentType: "application/pdf",
+        },
+      ]
+    : undefined;
+
   await sendMail({
     to: input.customerEmail,
     subject: `AutoRent — konfirmim rezervimi (${input.carLabel})`,
-    text: `Përshëndetje ${input.customerName},\n\nRezervimi u regjistrua me sukses.\n\n${summary}\n\nPolitika e anulimit:\n${policy}\n\nNa kontakto:\n${contactLine}\n\nwww.landixhelo.me\n\nFaleminderit,\nAutoRent`,
+    text: `Përshëndetje ${input.customerName},\n\nRezervimi u regjistrua me sukses.\n${invoiceNote}\n${summary}\n\nPolitika e anulimit:\n${policy}\n\nNa kontakto:\n${contactLine}\n\nwww.landixhelo.me\n\nFaleminderit,\nAutoRent`,
+    attachments: customerAttachments,
   });
 
   const staff = [input.adminEmail, input.ownerEmail].filter(
@@ -86,6 +117,7 @@ export async function sendReservationEmails(input: {
       to,
       subject: `Rezervim i ri — ${input.carLabel}`,
       text: `Rezervim i ri nga ${input.customerName} (${input.customerEmail}).\n\n${summary}`,
+      attachments: customerAttachments,
     });
   }
 }
