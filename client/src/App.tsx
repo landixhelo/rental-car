@@ -20,6 +20,7 @@ import TermsPage from "./pages/TermsPage";
 import AdminPage from "./pages/AdminPage";
 import SuperAdminPage from "./pages/SuperAdminPage";
 import ContractorPage from "./pages/ContractorPage";
+import DashboardPage from "./pages/DashboardPage";
 import Analytics from "./components/Analytics";
 
 export default function App() {
@@ -62,6 +63,14 @@ export default function App() {
                   element={
                     <Protected>
                       <ProfilePage />
+                    </Protected>
+                  }
+                />
+                <Route
+                  path="dashboard"
+                  element={
+                    <Protected contractor>
+                      <DashboardPage />
                     </Protected>
                   }
                 />

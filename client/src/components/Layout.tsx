@@ -105,6 +105,7 @@ export default function Layout() {
     "/reservations",
     "/favorites",
     "/contractor",
+    "/dashboard",
   ].some((p) => location.pathname.startsWith(p));
 
   return (
@@ -168,6 +169,11 @@ export default function Layout() {
 
           {user ? (
             <>
+              {canManageFleet ? (
+                <NavLink to="/dashboard" onClick={closeMenus}>
+                  {t("nav.dashboard")}
+                </NavLink>
+              ) : null}
               {user.role === "ADMIN" || user.role === "SUPER_ADMIN" ? (
                 <NavLink to="/admin" onClick={closeMenus}>
                   {t("nav.admin")}
@@ -232,13 +238,22 @@ export default function Layout() {
                     ) : null}
                   </NavLink>
                   {canManageFleet ? (
-                    <NavLink
-                      to="/contractor"
-                      role="menuitem"
-                      onClick={closeMenus}
-                    >
-                      {t("nav.fleet")}
-                    </NavLink>
+                    <>
+                      <NavLink
+                        to="/dashboard"
+                        role="menuitem"
+                        onClick={closeMenus}
+                      >
+                        {t("nav.dashboard")}
+                      </NavLink>
+                      <NavLink
+                        to="/contractor"
+                        role="menuitem"
+                        onClick={closeMenus}
+                      >
+                        {t("nav.fleet")}
+                      </NavLink>
+                    </>
                   ) : null}
                   <NavLink
                     to="/favorites"

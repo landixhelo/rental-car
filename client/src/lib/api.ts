@@ -186,6 +186,42 @@ export const api = {
     const q = new URLSearchParams(params || {}).toString();
     return request<{ cars: Car[] }>(`/api/cars${q ? `?${q}` : ""}`);
   },
+  dashboard: () =>
+    request<{
+      scope: "fleet" | "platform";
+      fleet: {
+        total: number;
+        available: number;
+        reserved: number;
+        maintenance: number;
+        availabilityPct: number;
+      };
+      reservations: {
+        total: number;
+        byStatus: Record<string, number>;
+        active: number;
+      };
+      revenue: {
+        total: number;
+        monthly: Array<{ month: string; total: number }>;
+      };
+      ops: {
+        pendingDocuments: number;
+        heldDeposits: number;
+      };
+      recent: Array<{
+        id: string;
+        status: string;
+        totalPrice: number;
+        startDate: string;
+        endDate: string;
+        carLabel: string;
+        customerName: string;
+        customerEmail: string;
+        createdAt: string;
+      }>;
+      topCars: Array<{ carId: string; label: string; count: number }>;
+    }>("/api/dashboard"),
   myCars: () => request<{ cars: Car[] }>("/api/cars/mine"),
   car: (id: string) => request<{ car: Car }>(`/api/cars/${id}`),
   uploadCarImage: (body: FormData) =>

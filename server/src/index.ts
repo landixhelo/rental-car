@@ -18,6 +18,7 @@ import contactRoutes from "./routes/contact.js";
 import adminRoutes from "./routes/admin.js";
 import superAdminRoutes from "./routes/superAdmin.js";
 import paymentRoutes, { stripeWebhookHandler } from "./routes/payments.js";
+import dashboardRoutes from "./routes/dashboard.js";
 import { EXTRAS, LOCATIONS } from "./lib/pricing.js";
 import { stripeEnabled } from "./lib/stripePay.js";
 import { getBusinessPublic } from "./lib/business.js";
@@ -103,6 +104,7 @@ app.use("/api/contact", contactRoutes);
 app.use("/api/payments", paymentRoutes);
 app.use("/api/admin", adminRoutes);
 app.use("/api/super-admin", superAdminRoutes);
+app.use("/api/dashboard", dashboardRoutes);
 
 app.use(notFound);
 app.use(errorHandler);
