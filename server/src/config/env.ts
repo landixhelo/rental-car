@@ -34,10 +34,16 @@ const envSchema = z.object({
   STRIPE_WEBHOOK_SECRET: z.preprocess(emptyToUndef, z.string().optional()),
   WHATSAPP_PHONE: z.preprocess(
     emptyToUndef,
-    z.string().optional().default("355690000000")
+    z.string().optional().default("355689001257")
   ),
-  BUSINESS_PHONE: z.preprocess(emptyToUndef, z.string().optional()),
-  BUSINESS_EMAIL: z.preprocess(emptyToUndef, z.string().email().optional()),
+  BUSINESS_PHONE: z.preprocess(
+    emptyToUndef,
+    z.string().optional().default("+355689001257")
+  ),
+  BUSINESS_EMAIL: z.preprocess(
+    emptyToUndef,
+    z.string().email().optional().default("devbyland@gmail.com")
+  ),
   BUSINESS_NIPT: z.preprocess(emptyToUndef, z.string().optional()),
   BUSINESS_ADDRESS: z.preprocess(
     emptyToUndef,

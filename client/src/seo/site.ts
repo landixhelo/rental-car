@@ -19,8 +19,8 @@ export const SITE = {
     it: "noleggio auto albania, noleggio tirana, affitto auto albania, SUV noleggio, AutoRent",
   },
   /** Overridden at runtime from /api/meta when available. */
-  phone: "+355690000000",
-  email: "support@landixhelo.me",
+  phone: "+355689001257",
+  email: "devbyland@gmail.com",
   nipt: "",
   address: {
     street: "",

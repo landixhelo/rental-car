@@ -15,7 +15,7 @@ export default function Layout() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [profileOpen, setProfileOpen] = useState(false);
   const [reservationBadge, setReservationBadge] = useState(0);
-  const [whatsapp, setWhatsapp] = useState("355690000000");
+  const [whatsapp, setWhatsapp] = useState("355689001257");
   const profileRef = useRef<HTMLDivElement>(null);
 
   const showReservationBadge =

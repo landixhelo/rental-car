@@ -19,7 +19,7 @@ export function getBusinessPublic() {
     phone: phoneDisplay,
     phoneDigits: digits(phoneRaw),
     whatsapp,
-    email: env.BUSINESS_EMAIL || env.ADMIN_EMAIL || "support@landixhelo.me",
+    email: env.BUSINESS_EMAIL || env.ADMIN_EMAIL || "devbyland@gmail.com",
     nipt: env.BUSINESS_NIPT || "",
     address: env.BUSINESS_ADDRESS || "Tiranë, Shqipëri",
     street: env.BUSINESS_STREET || "",

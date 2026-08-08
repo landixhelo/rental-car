@@ -32,21 +32,21 @@ BCRYPT_ROUNDS=12
 JWT_EXPIRES_IN=8h
 UPLOAD_DIR=uploads
 PUBLIC_APP_URL=https://www.landixhelo.me
-WHATSAPP_PHONE=3556XXXXXXXX
-BUSINESS_PHONE=+3556XXXXXXXX
-BUSINESS_EMAIL=your@email.com
-BUSINESS_NIPT=K12345678A
+WHATSAPP_PHONE=355689001257
+BUSINESS_PHONE=+355689001257
+BUSINESS_EMAIL=devbyland@gmail.com
+BUSINESS_NIPT=
 BUSINESS_ADDRESS=Tiranë, Shqipëri
-BUSINESS_STREET=Rruga e Durrësit
+BUSINESS_STREET=
 CANCEL_FREE_HOURS=24
 DEFAULT_DEPOSIT_EUR=0
 
-# Email (opsionale por e rekomanduar — Gmail App Password / Resend / etc.)
+# Email (opsionale por e rekomanduar — Gmail App Password)
 SMTP_HOST=smtp.gmail.com
 SMTP_PORT=587
-SMTP_USER=your@email.com
-SMTP_PASS=your_app_password
-SMTP_FROM="AutoRent <your@email.com>"
+SMTP_USER=devbyland@gmail.com
+SMTP_PASS=<gmail_app_password>
+SMTP_FROM="AutoRent <devbyland@gmail.com>"
 
 # Stripe (opsionale — pa këto, opsioni CARD fshihet nga UI)
 STRIPE_SECRET_KEY=sk_live_...
