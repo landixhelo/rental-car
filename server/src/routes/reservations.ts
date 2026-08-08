@@ -217,12 +217,13 @@ router.post(
         throw new AppError("Makina është në mirëmbajtje");
       }
 
+      // Half-open [start, end): return day can be the next customer's pickup day.
       const overlap = await prisma.reservation.findFirst({
         where: {
           carId,
           status: { in: ["PENDING", "CONFIRMED"] },
-          startDate: { lte: end },
-          endDate: { gte: start },
+          startDate: { lt: end },
+          endDate: { gt: start },
         },
       });
       if (overlap) {

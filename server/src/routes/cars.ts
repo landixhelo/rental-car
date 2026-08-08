@@ -106,8 +106,8 @@ router.get("/", optionalAuth, async (req, res, next) => {
           reservations: {
             some: {
               status: { in: ["PENDING", "CONFIRMED"] },
-              startDate: { lte: end },
-              endDate: { gte: start },
+              startDate: { lt: end },
+              endDate: { gt: start },
             },
           },
         };

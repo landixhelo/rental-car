@@ -1,5 +1,6 @@
 import { prisma } from "./prisma.js";
 import { uniqueCarSlug } from "./slug.js";
+import { healPastReservations } from "./carAvailability.js";
 
 /**
  * Ensure critical columns/enums exist even if `prisma db push` was skipped at boot.
@@ -91,6 +92,11 @@ export async function ensureSchema() {
         where: { id: row.id },
         data: { slug },
       });
+    }
+
+    const closed = await healPastReservations(prisma);
+    if (closed > 0) {
+      console.log(`[schema] closed ${closed} past reservation(s)`);
     }
 
     console.log("[schema] ensureSchema OK");

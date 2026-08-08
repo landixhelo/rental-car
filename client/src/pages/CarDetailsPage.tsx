@@ -84,8 +84,9 @@ export default function CarDetailsPage() {
     if (car.status === "MAINTENANCE") {
       return t("status.MAINTENANCE");
     }
+    // Half-open [start, end): pickup on a return day is allowed.
     const hit = (car.busyRanges || []).find((range) => {
-      return startDate <= range.endDate && endDate >= range.startDate;
+      return startDate < range.endDate && endDate > range.startDate;
     });
     if (hit) {
       return `${t("details.conflict")} (${hit.startDate} – ${hit.endDate})`;
