@@ -13,6 +13,7 @@ export const sq = {
     requiredLogin: "Duhet të identifikoheni",
   },
   nav: {
+    home: "Kryefaqja",
     cars: "Makinat",
     contact: "Kontakt",
     faq: "FAQ",

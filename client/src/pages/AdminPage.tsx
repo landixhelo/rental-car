@@ -2,7 +2,9 @@ import { type FormEvent, useEffect, useState } from "react";
 import { api, type Car } from "../lib/api";
 import { buildCarJsonPayload, uploadCarImageFiles } from "../lib/carMedia";
 import { mediaUrl } from "../lib/mediaUrl";
+import Breadcrumbs from "../components/Breadcrumbs";
 import FeatureCheckboxes from "../components/FeatureCheckboxes";
+import { useT } from "../context/LocaleContext";
 import { useToast } from "../hooks/useToast";
 
 const emptyCar = {
@@ -27,6 +29,7 @@ const emptyCar = {
 };
 
 export default function AdminPage() {
+  const t = useT();
   const { show, Toast } = useToast();
   const [stats, setStats] = useState<any>(null);
   const [cars, setCars] = useState<Car[]>([]);
@@ -91,6 +94,7 @@ export default function AdminPage() {
   return (
     <div className="section">
       {Toast}
+      <Breadcrumbs items={[{ label: t("nav.admin") }]} />
       <h1>Admin Dashboard</h1>
 
       {stats && (

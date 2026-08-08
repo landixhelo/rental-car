@@ -1,5 +1,7 @@
 import { type FormEvent, useEffect, useState } from "react";
 import { api, type Account } from "../lib/api";
+import Breadcrumbs from "../components/Breadcrumbs";
+import { useT } from "../context/LocaleContext";
 import { useToast } from "../hooks/useToast";
 
 type Filter = "all" | "clients" | "contractors" | "admins";
@@ -15,6 +17,7 @@ const emptyForm = {
 };
 
 export default function SuperAdminPage() {
+  const t = useT();
   const { show, Toast } = useToast();
   const [overview, setOverview] = useState<Record<string, number> | null>(null);
   const [filter, setFilter] = useState<Filter>("all");
@@ -88,6 +91,7 @@ export default function SuperAdminPage() {
   return (
     <div className="section">
       {Toast}
+      <Breadcrumbs items={[{ label: t("nav.superAdmin") }]} />
       <h1>Super Admin Panel</h1>
       <p className="muted">
         Kontroll i plotë mbi klientët, kontraktorët dhe adminët e platformës.

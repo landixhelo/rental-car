@@ -3,9 +3,11 @@ import { Link } from "react-router-dom";
 import { api, type Car } from "../lib/api";
 import { buildCarJsonPayload, uploadCarImageFiles } from "../lib/carMedia";
 import { mediaUrl } from "../lib/mediaUrl";
+import Breadcrumbs from "../components/Breadcrumbs";
 import FeatureCheckboxes from "../components/FeatureCheckboxes";
 import FleetCalendar from "../components/FleetCalendar";
 import { useAuth } from "../context/AuthContext";
+import { useT } from "../context/LocaleContext";
 import { useToast } from "../hooks/useToast";
 
 const emptyCar = {
@@ -31,6 +33,7 @@ const emptyCar = {
 
 export default function ContractorPage() {
   const { user } = useAuth();
+  const t = useT();
   const { show, Toast } = useToast();
   const [cars, setCars] = useState<Car[]>([]);
   const [reservations, setReservations] = useState<any[]>([]);
@@ -101,6 +104,7 @@ export default function ContractorPage() {
   return (
     <div className="section">
       {Toast}
+      <Breadcrumbs items={[{ label: t("nav.fleet") }]} />
       <h1>Paneli i Kontraktorit</h1>
       <p className="muted">
         Menaxho flotën tënde — {user?.companyName || user?.fullName}.

@@ -15,6 +15,7 @@ export const en: Dict = {
     requiredLogin: "Please sign in",
   },
   nav: {
+    home: "Home",
     cars: "Cars",
     contact: "Contact",
     faq: "FAQ",

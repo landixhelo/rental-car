@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { api } from "../lib/api";
+import Breadcrumbs from "../components/Breadcrumbs";
 import { useAuth } from "../context/AuthContext";
 import { useT } from "../context/LocaleContext";
 import { useToast } from "../hooks/useToast";
@@ -196,6 +197,7 @@ export default function DashboardPage() {
     return (
       <div className="section">
         {Toast}
+        <Breadcrumbs items={[{ label: t("nav.dashboard") }]} />
         <p className="muted">{t("common.loading")}</p>
       </div>
     );
@@ -205,6 +207,7 @@ export default function DashboardPage() {
     return (
       <div className="section">
         {Toast}
+        <Breadcrumbs items={[{ label: t("nav.dashboard") }]} />
         <p className="muted">{t("common.error")}</p>
       </div>
     );
@@ -213,6 +216,7 @@ export default function DashboardPage() {
   return (
     <div className="section dashboard">
       {Toast}
+      <Breadcrumbs items={[{ label: t("nav.dashboard") }]} />
       <div className="row-between" style={{ alignItems: "flex-end", gap: 12 }}>
         <div>
           <h1 style={{ marginBottom: 6 }}>{t("dashboard.title")}</h1>
