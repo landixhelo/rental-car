@@ -1,6 +1,7 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Link, NavLink, Outlet, useLocation } from "react-router-dom";
 import { api } from "../lib/api";
+import Breadcrumbs from "./Breadcrumbs";
 import { useAuth } from "../context/AuthContext";
 import { useTheme } from "../context/ThemeContext";
 import { useLocale } from "../context/LocaleContext";
@@ -107,6 +108,23 @@ export default function Layout() {
     "/contractor",
     "/dashboard",
   ].some((p) => location.pathname.startsWith(p));
+
+  const staffCrumb = useMemo(() => {
+    const path = location.pathname;
+    if (path === "/admin" || path.startsWith("/admin/")) {
+      return { label: t("nav.admin") };
+    }
+    if (path === "/super-admin" || path.startsWith("/super-admin/")) {
+      return { label: t("nav.superAdmin") };
+    }
+    if (path === "/dashboard" || path.startsWith("/dashboard/")) {
+      return { label: t("nav.dashboard") };
+    }
+    if (path === "/contractor" || path.startsWith("/contractor/")) {
+      return { label: t("nav.fleet") };
+    }
+    return null;
+  }, [location.pathname, t]);
 
   return (
     <div className="app-shell">
@@ -288,6 +306,12 @@ export default function Layout() {
           )}
         </div>
       </nav>
+
+      {staffCrumb ? (
+        <div className="breadcrumbs-bar">
+          <Breadcrumbs items={[staffCrumb]} />
+        </div>
+      ) : null}
 
       <main>
         <Outlet />
