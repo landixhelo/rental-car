@@ -19,7 +19,9 @@ export default function Layout() {
   const profileRef = useRef<HTMLDivElement>(null);
 
   const showReservationBadge =
-    user?.role === "CONTRACTOR" || user?.role === "SUPER_ADMIN";
+    user?.role === "CONTRACTOR" ||
+    user?.role === "ADMIN" ||
+    user?.role === "SUPER_ADMIN";
   const canManageFleet =
     user?.role === "CONTRACTOR" ||
     user?.role === "ADMIN" ||

@@ -13,5 +13,6 @@ export const carOwnerSelect = {
 export function companyNameFromOwner(owner: OwnerInfo): string {
   if (!owner) return "AutoRent";
   const company = owner.companyName?.trim();
-  return company || owner.fullName;
+  // Prefer company brand; do not fall back to a person's name (looks like wrong booker).
+  return company || "AutoRent";
 }

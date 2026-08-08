@@ -63,10 +63,7 @@ router.get("/mine", requireAuth, async (req, res, next) => {
         depositAmount: Number(r.depositAmount),
         car: {
           ...r.car,
-          companyName:
-            r.car.owner?.companyName?.trim() ||
-            r.car.owner?.fullName ||
-            "AutoRent",
+          companyName: r.car.owner?.companyName?.trim() || "AutoRent",
           owner: undefined,
         },
       })),
