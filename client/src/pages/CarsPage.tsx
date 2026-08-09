@@ -8,6 +8,7 @@ import CarCard from "../components/CarCard";
 import Seo from "../seo/Seo";
 import { SITE } from "../seo/site";
 import { breadcrumbJsonLd, itemListCarsJsonLd } from "../seo/jsonLd";
+import { addDays, clampDate, tiraneToday } from "../lib/dates";
 
 const emptyFilters = {
   search: "",
@@ -36,6 +37,7 @@ export default function CarsPage() {
   const { show, Toast } = useToast();
   const t = useT();
   const { locale } = useLocale();
+  const today = tiraneToday();
 
   async function load(next = filters) {
     const params: Record<string, string> = {};
@@ -97,17 +99,37 @@ export default function CarsPage() {
         />
         <input
           type="date"
+          min={today}
           value={filters.startDate}
-          onChange={(e) =>
-            setFilters({ ...filters, startDate: e.target.value })
-          }
+          onChange={(e) => {
+            const start = clampDate(e.target.value, today);
+            const end =
+              filters.endDate && filters.endDate > start
+                ? filters.endDate
+                : start
+                  ? addDays(start, 1)
+                  : "";
+            setFilters({ ...filters, startDate: start, endDate: end });
+          }}
           aria-label={t("details.startDate")}
         />
         <input
           type="date"
-          min={filters.startDate || undefined}
+          min={
+            filters.startDate
+              ? addDays(filters.startDate, 1)
+              : addDays(today, 1)
+          }
           value={filters.endDate}
-          onChange={(e) => setFilters({ ...filters, endDate: e.target.value })}
+          onChange={(e) => {
+            const minEnd = filters.startDate
+              ? addDays(filters.startDate, 1)
+              : addDays(today, 1);
+            setFilters({
+              ...filters,
+              endDate: clampDate(e.target.value, minEnd),
+            });
+          }}
           aria-label={t("details.endDate")}
         />
         <select

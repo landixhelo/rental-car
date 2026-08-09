@@ -12,6 +12,7 @@ import {
   websiteJsonLd,
   itemListCarsJsonLd,
 } from "../seo/jsonLd";
+import { addDays, clampDate, tiraneToday } from "../lib/dates";
 
 const CATEGORIES = [
   { type: "SUV", titleKey: "home.catSuv", textKey: "home.catSuvText" },
@@ -38,19 +39,13 @@ export default function HomePage() {
   const { show, Toast } = useToast();
   const [cars, setCars] = useState<Car[]>([]);
   const [fleetCount, setFleetCount] = useState(0);
-  const today = new Intl.DateTimeFormat("en-CA", {
-    timeZone: "Europe/Tirane",
-  }).format(new Date());
+  const today = tiraneToday();
 
-  const [search, setSearch] = useState(() => {
-    const d = new Date(`${today}T12:00:00`);
-    d.setDate(d.getDate() + 1);
-    return {
-      startDate: today,
-      endDate: d.toISOString().slice(0, 10),
-      location: "all",
-    };
-  });
+  const [search, setSearch] = useState(() => ({
+    startDate: today,
+    endDate: addDays(today, 1),
+    location: "all",
+  }));
 
   async function load() {
     const res = await api.cars();
@@ -96,15 +91,24 @@ export default function HomePage() {
   }
 
   function onStartChange(value: string) {
+    const start = clampDate(value, today);
     setSearch((prev) => {
-      const next = { ...prev, startDate: value };
-      if (!prev.endDate || prev.endDate <= value) {
-        const d = new Date(`${value}T12:00:00`);
-        d.setDate(d.getDate() + 1);
-        next.endDate = d.toISOString().slice(0, 10);
+      const next = { ...prev, startDate: start };
+      if (!prev.endDate || prev.endDate <= start) {
+        next.endDate = addDays(start, 1);
       }
       return next;
     });
+  }
+
+  function onEndChange(value: string) {
+    const minEnd = search.startDate
+      ? addDays(search.startDate, 1)
+      : addDays(today, 1);
+    setSearch((prev) => ({
+      ...prev,
+      endDate: clampDate(value, minEnd),
+    }));
   }
 
   return (
@@ -165,11 +169,13 @@ export default function HomePage() {
             {t("home.searchReturn")}
             <input
               type="date"
-              min={search.startDate || today}
-              value={search.endDate}
-              onChange={(e) =>
-                setSearch({ ...search, endDate: e.target.value })
+              min={
+                search.startDate
+                  ? addDays(search.startDate, 1)
+                  : addDays(today, 1)
               }
+              value={search.endDate}
+              onChange={(e) => onEndChange(e.target.value)}
               required
             />
           </label>

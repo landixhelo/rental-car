@@ -1,5 +1,6 @@
 import { useMemo, useState } from "react";
 import { useT } from "../context/LocaleContext";
+import { formatDay, monthMatrix, tiraneToday } from "../lib/dates";
 
 type ResItem = {
   id: string;
@@ -10,31 +11,12 @@ type ResItem = {
   user?: { fullName?: string };
 };
 
-function monthMatrix(year: number, month: number) {
-  const first = new Date(year, month, 1);
-  const startPad = (first.getDay() + 6) % 7; // Monday-first
-  const daysInMonth = new Date(year, month + 1, 0).getDate();
-  const cells: Array<{ date: Date | null }> = [];
-  for (let i = 0; i < startPad; i++) cells.push({ date: null });
-  for (let d = 1; d <= daysInMonth; d++) {
-    cells.push({ date: new Date(year, month, d) });
-  }
-  while (cells.length % 7 !== 0) cells.push({ date: null });
-  return cells;
-}
-
-function dayKey(d: Date) {
-  const y = d.getFullYear();
-  const m = String(d.getMonth() + 1).padStart(2, "0");
-  const day = String(d.getDate()).padStart(2, "0");
-  return `${y}-${m}-${day}`;
-}
-
+/** Half-open [start, end). */
 function overlaps(day: string, start: string, end: string) {
   const d = day.slice(0, 10);
   const s = String(start).slice(0, 10);
   const e = String(end).slice(0, 10);
-  return d >= s && d <= e;
+  return d >= s && d < e;
 }
 
 export default function FleetCalendar({
@@ -43,7 +25,8 @@ export default function FleetCalendar({
   reservations: ResItem[];
 }) {
   const t = useT();
-  const now = new Date();
+  const today = tiraneToday();
+  const now = new Date(`${today}T12:00:00`);
   const [cursor, setCursor] = useState({
     y: now.getFullYear(),
     m: now.getMonth(),
@@ -102,19 +85,26 @@ export default function FleetCalendar({
       </div>
       <div className="calendar-grid">
         {cells.map((cell, i) => {
-          if (!cell.date) return <div key={`e-${i}`} className="calendar-cell empty" />;
-          const key = dayKey(cell.date);
+          if (!cell.date) {
+            return <div key={`e-${i}`} className="calendar-cell empty" />;
+          }
+          const key = formatDay(cell.date);
+          const past = key < today;
           const hits = active.filter((r) =>
             overlaps(key, r.startDate, r.endDate)
           );
           return (
             <div
               key={key}
-              className={`calendar-cell${hits.length ? " busy" : ""}`}
+              className={`calendar-cell${hits.length ? " busy" : ""}${
+                past ? " is-past" : ""
+              }`}
               title={hits
                 .map(
                   (r) =>
-                    `${r.car?.brand || ""} ${r.car?.model || ""} — ${r.user?.fullName || ""}`
+                    `${r.car?.brand || ""} ${r.car?.model || ""} — ${
+                      r.user?.fullName || ""
+                    }`
                 )
                 .join("\n")}
             >

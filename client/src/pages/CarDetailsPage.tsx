@@ -7,9 +7,11 @@ import { useToast } from "../hooks/useToast";
 import ImageCarousel from "../components/ImageCarousel";
 import Seo from "../seo/Seo";
 import { breadcrumbJsonLd, carProductJsonLd } from "../seo/jsonLd";
+import BookingCalendar from "../components/BookingCalendar";
 import { mediaUrl } from "../lib/mediaUrl";
 import { carPath } from "../lib/carPath";
 import { setFlash } from "../lib/flash";
+import { rangeOverlapsBusy, tiraneToday } from "../lib/dates";
 
 export default function CarDetailsPage() {
   const { id } = useParams();
@@ -105,6 +107,15 @@ export default function CarDetailsPage() {
       return;
     }
     if (!car) return;
+    const today = tiraneToday();
+    if (!startDate || !endDate || startDate < today || endDate <= startDate) {
+      show(t("details.pickStart"));
+      return;
+    }
+    if (rangeOverlapsBusy(startDate, endDate, car.busyRanges || [])) {
+      show(t("details.conflict"));
+      return;
+    }
     if (dateConflict) {
       show(dateConflict);
       return;
@@ -181,8 +192,6 @@ export default function CarDetailsPage() {
   }
 
   if (!car || !meta) return <div className="section">{t("common.loading")}</div>;
-
-  const today = new Date().toISOString().slice(0, 10);
 
   return (
     <div className="section details-grid">
@@ -263,19 +272,22 @@ export default function CarDetailsPage() {
               </ul>
             </div>
           ) : null}
-          <div className="two-col">
-            <label>
-              {t("details.startDate")}
-              <input type="date" min={today} value={startDate} onChange={(e) => setStartDate(e.target.value)} required />
-            </label>
-            <label>
-              {t("details.endDate")}
-              <input type="date" min={startDate || today} value={endDate} onChange={(e) => setEndDate(e.target.value)} required />
-            </label>
-          </div>
+          <BookingCalendar
+            startDate={startDate}
+            endDate={endDate}
+            busyRanges={car.busyRanges || []}
+            onChange={(start, end) => {
+              setStartDate(start);
+              setEndDate(end);
+            }}
+          />
+          {/* Keep values for form validity / screen readers */}
+          <input type="hidden" name="startDate" value={startDate} required />
+          <input type="hidden" name="endDate" value={endDate} required />
           {dateConflict ? (
             <p className="booking-conflict">{dateConflict}</p>
-          ) : null}          <div className="two-col">
+          ) : null}
+          <div className="two-col">
             <label>
               {t("details.pickup")}
               <select value={pickup} onChange={(e) => setPickup(e.target.value)}>
