@@ -1,6 +1,9 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { api } from "../lib/api";
+import CancelReservationModal, {
+  type CancelReservationTarget,
+} from "../components/CancelReservationModal";
 import { consumeFlash } from "../lib/flash";
 import { mediaUrl } from "../lib/mediaUrl";
 import { useAuth } from "../context/AuthContext";
@@ -27,6 +30,9 @@ export default function ReservationsPage() {
     title: string;
     message: string;
   } | null>(null);
+  const [cancelTarget, setCancelTarget] =
+    useState<CancelReservationTarget | null>(null);
+  const [cancelling, setCancelling] = useState(false);
   const { show, Toast } = useToast();
 
   const isFleetManager =
@@ -71,14 +77,38 @@ export default function ReservationsPage() {
     show(payload.message, 7000);
   }, [show]);
 
-  async function cancel(id: string) {
-    if (!confirm(t("reservations.cancelConfirm"))) return;
+  function openCancel(r: any) {
+    setCancelTarget({
+      id: r.id,
+      startDate: String(r.startDate).slice(0, 10),
+      endDate: String(r.endDate).slice(0, 10),
+      pickupLocation: r.pickupLocation,
+      returnLocation: r.returnLocation,
+      totalPrice: Number(r.totalPrice),
+      paymentMethod: r.paymentMethod,
+      paymentStatus: r.paymentStatus,
+      car: {
+        brand: r.car.brand,
+        model: r.car.model,
+        year: r.car.year,
+        imageUrl: r.car.imageUrl,
+        companyName: r.car.companyName,
+      },
+    });
+  }
+
+  async function confirmCancel(reason: string) {
+    if (!cancelTarget) return;
+    setCancelling(true);
     try {
-      const res = await api.cancelReservation(id);
-      show(res.cancellation?.refundNote || t("status.CANCELLED"));
+      const res = await api.cancelReservation(cancelTarget.id, reason);
+      setCancelTarget(null);
+      show(res.cancellation?.refundNote || t("status.CANCELLED"), 6000);
       await load();
     } catch (e) {
       show(e instanceof Error ? e.message : t("common.error"));
+    } finally {
+      setCancelling(false);
     }
   }
 
@@ -162,6 +192,14 @@ export default function ReservationsPage() {
   return (
     <div className="section">
       {Toast}
+      <CancelReservationModal
+        reservation={cancelTarget}
+        submitting={cancelling}
+        onClose={() => {
+          if (!cancelling) setCancelTarget(null);
+        }}
+        onConfirm={confirmCancel}
+      />
       {flash ? (
         <div className="flash-success" role="status">
           <strong>{flash.title}</strong>
@@ -426,12 +464,18 @@ export default function ReservationsPage() {
                     <button
                       type="button"
                       className="btn danger"
-                      onClick={() => cancel(r.id)}
+                      onClick={() => openCancel(r)}
                     >
                       {t("reservations.cancel")}
                     </button>
                   )}
                 </div>
+                {r.status === "CANCELLED" && r.cancelReason ? (
+                  <p className="cancel-reason-note">
+                    <strong>{t("reservations.cancelReason")}:</strong>{" "}
+                    {r.cancelReason}
+                  </p>
+                ) : null}
               </div>
             </article>
           ))}

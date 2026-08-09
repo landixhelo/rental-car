@@ -3,7 +3,11 @@ import { prisma } from "../lib/prisma.js";
 import { AppError } from "../middleware/error.js";
 import { requireAuth, requireAdmin, requireContractorOrAdmin } from "../middleware/auth.js";
 import { upload } from "../middleware/upload.js";
-import { idParamSchema, reservationSchema } from "../validators/schemas.js";
+import {
+  cancelReservationSchema,
+  idParamSchema,
+  reservationSchema,
+} from "../validators/schemas.js";
 import { EXTRAS, calcDays, getLocation } from "../lib/pricing.js";
 import { sendMail, sendReservationEmails } from "../lib/mail.js";
 import { buildReservationPdf } from "../lib/pdfContract.js";
@@ -462,9 +466,10 @@ router.post(
 router.patch(
   "/:id/cancel",
   requireAuth,
-  validate(idParamSchema),
+  validate(cancelReservationSchema),
   async (req, res, next) => {
     try {
+      const reason = String(req.body.reason || "").trim();
       const reservation = await prisma.reservation.findUnique({
         where: { id: req.params.id },
         include: {
@@ -491,20 +496,20 @@ router.patch(
 
       const updated = await prisma.reservation.update({
         where: { id: reservation.id },
-        data: { status: "CANCELLED" },
+        data: { status: "CANCELLED", cancelReason: reason },
       });
 
       try {
         await sendMail({
           to: reservation.user.email,
           subject: "AutoRent — rezervimi u anulua",
-          text: `Përshëndetje ${reservation.user.fullName},\n\nRezervimi për ${reservation.car.brand} ${reservation.car.model} u anulua.\n\n${decision.refundNote}\n\nPolitika: ${cancellationPolicyText()}\n\nAutoRent`,
+          text: `Përshëndetje ${reservation.user.fullName},\n\nRezervimi për ${reservation.car.brand} ${reservation.car.model} u anulua.\n\nArsyeja: ${reason}\n\n${decision.refundNote}\n\nPolitika: ${cancellationPolicyText()}\n\nAutoRent`,
         });
-        if (env.ADMIN_EMAIL) {
+        if (env.ADMIN_EMAIL || env.BUSINESS_EMAIL) {
           await sendMail({
-            to: env.ADMIN_EMAIL,
+            to: env.ADMIN_EMAIL || env.BUSINESS_EMAIL!,
             subject: `Anulim rezervimi — ${reservation.car.brand} ${reservation.car.model}`,
-            text: `${reservation.user.fullName} anuloi rezervimin ${reservation.id}.\n${decision.refundNote}\nFree cancel: ${decision.freeCancel}`,
+            text: `${reservation.user.fullName} anuloi rezervimin ${reservation.id}.\nArsyeja: ${reason}\n${decision.refundNote}\nFree cancel: ${decision.freeCancel}`,
           });
         }
       } catch (mailErr) {
@@ -516,6 +521,7 @@ router.patch(
         cancellation: {
           freeCancel: decision.freeCancel,
           refundNote: decision.refundNote,
+          reason,
         },
       });
     } catch (err) {

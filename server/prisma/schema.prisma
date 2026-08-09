@@ -148,6 +148,7 @@ model Reservation {
   depositAmount  Decimal           @db.Decimal(10, 2) @default(0)
   depositStatus  DepositStatus     @default(NONE)
   status         ReservationStatus @default(CONFIRMED)
+  cancelReason   String?
   createdAt      DateTime          @default(now())
   updatedAt      DateTime          @updatedAt
   user           User              @relation(fields: [userId], references: [id], onDelete: Cascade)

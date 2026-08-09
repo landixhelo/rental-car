@@ -259,12 +259,17 @@ export const api = {
     request<{ reservations: any[] }>("/api/reservations/fleet"),
   allReservations: () =>
     request<{ reservations: any[] }>("/api/reservations"),
-  cancelReservation: (id: string) =>
+  cancelReservation: (id: string, reason: string) =>
     request<{
       reservation: unknown;
-      cancellation?: { freeCancel: boolean; refundNote: string };
+      cancellation?: {
+        freeCancel: boolean;
+        refundNote: string;
+        reason?: string;
+      };
     }>(`/api/reservations/${id}/cancel`, {
       method: "PATCH",
+      body: JSON.stringify({ reason }),
     }),
   updateReservationStatus: (id: string, status: string) =>
     request<{ reservation: unknown }>(`/api/reservations/${id}/status`, {

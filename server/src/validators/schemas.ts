@@ -127,6 +127,15 @@ export const idParamSchema = z.object({
   }),
 });
 
+export const cancelReservationSchema = z.object({
+  params: z.object({
+    id: z.string().cuid(),
+  }),
+  body: z.object({
+    reason: z.string().trim().min(5).max(500),
+  }),
+});
+
 /** Public car URL: cuid (legacy) or slug like bmw-x5-2023 */
 export const carPublicParamSchema = z.object({
   params: z.object({
