@@ -42,6 +42,13 @@ export const it: Dict = {
     terms: "Termini",
     rights: "© 2026 AutoRent. Tutti i diritti riservati.",
   },
+  cookies: {
+    title: "Cookie",
+    body: "Usiamo cookie necessari per l'accesso e, con il tuo consenso, cookie analitici per migliorare il sito.",
+    learnMore: "Scopri di più",
+    necessary: "Solo necessari",
+    accept: "Accetta tutti",
+  },
   home: {
     eyebrow: "NOLEGGIO AUTO PREMIUM",
     titleBefore: "L'esperienza di guida",

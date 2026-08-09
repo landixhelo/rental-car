@@ -40,6 +40,13 @@ export const sq = {
     terms: "Kushtet",
     rights: "© 2026 AutoRent. Të gjitha të drejtat e rezervuara.",
   },
+  cookies: {
+    title: "Cookies",
+    body: "Përdorim cookies të nevojshme për hyrjen në llogari dhe, me lejen tënde, cookies analitike për të përmirësuar faqen.",
+    learnMore: "Mëso më shumë",
+    necessary: "Vetëm të nevojshme",
+    accept: "Prano të gjitha",
+  },
   home: {
     eyebrow: "QIRA MAKINASH PREMIUM",
     titleBefore: "Përvoja e Drejtimit",

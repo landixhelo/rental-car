@@ -23,6 +23,7 @@ import SuperAdminPage from "./pages/SuperAdminPage";
 import ContractorPage from "./pages/ContractorPage";
 import DashboardPage from "./pages/DashboardPage";
 import Analytics from "./components/Analytics";
+import CookieConsent from "./components/CookieConsent";
 
 export default function App() {
   return (
@@ -32,6 +33,7 @@ export default function App() {
           <BrowserRouter>
             <ToastProvider>
             <Analytics />
+            <CookieConsent />
             <Routes>
               <Route element={<Layout />}>
                 <Route index element={<HomePage />} />

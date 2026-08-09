@@ -42,6 +42,13 @@ export const en: Dict = {
     terms: "Terms",
     rights: "© 2026 AutoRent. All rights reserved.",
   },
+  cookies: {
+    title: "Cookies",
+    body: "We use necessary cookies for login and, with your permission, analytics cookies to improve the site.",
+    learnMore: "Learn more",
+    necessary: "Necessary only",
+    accept: "Accept all",
+  },
   home: {
     eyebrow: "PREMIUM CAR RENTAL",
     titleBefore: "The Driving Experience",
