@@ -2,6 +2,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { Link, NavLink, Outlet, useLocation } from "react-router-dom";
 import { api } from "../lib/api";
 import Breadcrumbs from "./Breadcrumbs";
+import ChatWidget from "./ChatWidget";
 import { useAuth } from "../context/AuthContext";
 import { useTheme } from "../context/ThemeContext";
 import { useLocale } from "../context/LocaleContext";
@@ -335,15 +336,7 @@ export default function Layout() {
         <p>{t("footer.rights")}</p>
       </footer>
 
-      <a
-        className="whatsapp-float"
-        href={`https://wa.me/${whatsapp}`}
-        target="_blank"
-        rel="noreferrer"
-        aria-label="WhatsApp"
-      >
-        WA
-      </a>
+      <ChatWidget />
     </div>
   );
 }

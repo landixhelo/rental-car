@@ -182,6 +182,20 @@ export const sq = {
     address: "Adresa",
     nipt: "NIPT",
   },
+  chat: {
+    fab: "Chat",
+    open: "Hap chat",
+    title: "AutoRent Chat",
+    subtitle: "Përgjigjemi sa më shpejt — ose shkruaj në WhatsApp.",
+    greeting:
+      "Përshëndetje! Si mund të ndihmojmë me rezervimin ose flotën?",
+    messagePlaceholder: "Shkruaj mesazhin tënd…",
+    send: "Dërgo mesazhin",
+    sent: "Faleminderit! Mesazhi u dërgua. Do t’ju përgjigjemi së shpejti.",
+    whatsapp: "Vazhdo në WhatsApp",
+    subject: "Chat nga faqja",
+    waPrefill: "Përshëndetje AutoRent, kam një pyetje për qiranë e makinës.",
+  },
   faq: {
     title: "FAQ",
     q1: "Si funksionon rezervimi?",
