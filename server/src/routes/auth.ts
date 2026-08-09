@@ -88,7 +88,11 @@ router.post(
   validate(loginSchema),
   async (req, res, next) => {
   try {
-    const { email, password } = req.body;
+    const { email, password, rememberMe } = req.body as {
+      email: string;
+      password: string;
+      rememberMe?: boolean;
+    };
     const user = await prisma.user.findUnique({ where: { email } });
     if (!user) throw new AppError("Invalid email or password", 401);
 
@@ -96,13 +100,17 @@ router.post(
     if (!ok) throw new AppError("Invalid email or password", 401);
     if (!user.isActive) throw new AppError("Account is deactivated", 403);
 
-    const token = signToken({
-      id: user.id,
-      email: user.email,
-      role: user.role,
-      fullName: user.fullName,
-    });
-    setAuthCookie(res, token);
+    const keepSignedIn = Boolean(rememberMe);
+    const token = signToken(
+      {
+        id: user.id,
+        email: user.email,
+        role: user.role,
+        fullName: user.fullName,
+      },
+      keepSignedIn
+    );
+    setAuthCookie(res, token, keepSignedIn);
     res.json({ user: publicUser(user) });
   } catch (err) {
     next(err);

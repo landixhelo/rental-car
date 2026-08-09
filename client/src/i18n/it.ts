@@ -132,6 +132,7 @@ export const it: Dict = {
     fullName: "Nome completo",
     phone: "Telefono",
     loginBtn: "Accedi",
+    rememberMe: "Ricordami",
     registerBtn: "Crea account",
     noAccount: "Non hai un account?",
     hasAccount: "Hai già un account?",

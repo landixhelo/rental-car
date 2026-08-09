@@ -13,11 +13,12 @@ export default function LoginPage() {
   const { locale } = useLocale();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [rememberMe, setRememberMe] = useState(true);
 
   async function onSubmit(e: FormEvent) {
     e.preventDefault();
     try {
-      await login(email, password);
+      await login(email, password, rememberMe);
       show(t("auth.welcome"));
       navigate("/");
     } catch (err) {
@@ -37,6 +38,7 @@ export default function LoginPage() {
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           required
+          autoComplete="email"
         />
         <input
           type="password"
@@ -44,7 +46,16 @@ export default function LoginPage() {
           value={password}
           onChange={(e) => setPassword(e.target.value)}
           required
+          autoComplete="current-password"
         />
+        <label className="remember-me">
+          <input
+            type="checkbox"
+            checked={rememberMe}
+            onChange={(e) => setRememberMe(e.target.checked)}
+          />
+          <span>{t("auth.rememberMe")}</span>
+        </label>
         <button className="btn" type="submit">
           {t("auth.loginBtn")}
         </button>

@@ -131,6 +131,7 @@ export const en: Dict = {
     fullName: "Full name",
     phone: "Phone",
     loginBtn: "Log in",
+    rememberMe: "Remember me",
     registerBtn: "Create Account",
     noAccount: "Don't have an account?",
     hasAccount: "Already have an account?",

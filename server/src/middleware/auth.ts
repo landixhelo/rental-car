@@ -26,21 +26,30 @@ type JwtPayload = {
   role: Role;
 };
 
-export function signToken(user: AuthUser) {
+const SESSION_MS = 8 * 60 * 60 * 1000;
+const REMEMBER_MS = 30 * 24 * 60 * 60 * 1000;
+
+export function signToken(user: AuthUser, rememberMe = false) {
   return jwt.sign(
     { sub: user.id, email: user.email, role: user.role },
     env.JWT_SECRET,
-    { expiresIn: env.JWT_EXPIRES_IN } as SignOptions
+    {
+      expiresIn: rememberMe ? "30d" : env.JWT_EXPIRES_IN,
+    } as SignOptions
   );
 }
 
-export function setAuthCookie(res: Response, token: string) {
+export function setAuthCookie(
+  res: Response,
+  token: string,
+  rememberMe = false
+) {
   res.cookie("token", token, {
     httpOnly: true,
     secure: isProd,
     // Same-site via Vercel /api proxy (works on mobile Safari)
     sameSite: "lax",
-    maxAge: 8 * 60 * 60 * 1000,
+    maxAge: rememberMe ? REMEMBER_MS : SESSION_MS,
     path: "/",
   });
 }

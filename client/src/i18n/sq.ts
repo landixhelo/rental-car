@@ -129,6 +129,7 @@ export const sq = {
     fullName: "Emri i plotë",
     phone: "Telefon",
     loginBtn: "Hyr",
+    rememberMe: "Më mbaj mend",
     registerBtn: "Krijo Llogari",
     noAccount: "Nuk ke llogari?",
     hasAccount: "Ke llogari?",

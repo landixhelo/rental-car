@@ -1737,6 +1737,24 @@ textarea { min-height: 90px; resize: vertical; }
   padding: 30px 16px;
 }
 .auth-page .panel { width: min(420px, 100%); }
+.remember-me {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 4px 0 12px;
+  font-size: 0.92rem;
+  font-weight: 500;
+  color: var(--text);
+  cursor: pointer;
+  user-select: none;
+}
+.remember-me input {
+  width: 18px;
+  height: 18px;
+  margin: 0;
+  accent-color: var(--accent);
+  cursor: pointer;
+}
 
 .reservation-list {
   display: grid;
