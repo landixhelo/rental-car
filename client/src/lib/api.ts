@@ -88,6 +88,15 @@ async function request<T>(
         "Fotot janë shumë të mëdha për upload. Provo foto më të vogla."
       );
     }
+    if (
+      res.status === 404 &&
+      /passkeys/i.test(path) &&
+      /route not found/i.test(String(data?.message || ""))
+    ) {
+      throw new Error(
+        "Serveri po përditësohet. Rifresko faqen pas 1 minute dhe provo përsëri."
+      );
+    }
     const fieldMsg =
       data?.errors?.fieldErrors?.reason?.[0] ||
       data?.errors?.fieldErrors?.["body.reason"]?.[0] ||
@@ -182,6 +191,7 @@ export const api = {
   passkeyRegisterOptions: () =>
     request<Record<string, unknown>>("/api/auth/passkeys/register/options", {
       method: "POST",
+      body: "{}",
     }),
   passkeyRegisterVerify: (body: unknown) =>
     request<{
