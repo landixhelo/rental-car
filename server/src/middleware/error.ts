@@ -51,8 +51,15 @@ export function errorHandler(
 ) {
   if (err instanceof ZodError || (err as { name?: string })?.name === "ZodError") {
     const zodErr = err as ZodError;
+    const first = zodErr.issues?.[0];
+    const message =
+      (first?.message && first.message !== "Required"
+        ? first.message
+        : first?.path?.length
+          ? `${first.path.join(".")}: e detyrueshme`
+          : null) || "Validimi dështoi. Kontrollo fushat.";
     return res.status(400).json({
-      message: "Validation failed",
+      message,
       errors: typeof zodErr.flatten === "function" ? zodErr.flatten() : undefined,
     });
   }

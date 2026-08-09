@@ -79,14 +79,20 @@ async function request<T>(
     throw new Error("Nuk u lidh me serverin. Kontrollo internetin.");
   }
 
-  const data = await res.json().catch(() => ({} as { message?: string }));
+  const data = await res.json().catch(
+    () => ({} as { message?: string; errors?: any })
+  );
   if (!res.ok) {
     if (res.status === 413) {
       throw new Error(
         "Fotot janë shumë të mëdha për upload. Provo foto më të vogla."
       );
     }
-    throw new Error(publicErrorMessage(data.message, res.status));
+    const fieldMsg =
+      data?.errors?.fieldErrors?.reason?.[0] ||
+      data?.errors?.fieldErrors?.["body.reason"]?.[0] ||
+      data?.errors?.formErrors?.[0];
+    throw new Error(publicErrorMessage(fieldMsg || data.message, res.status));
   }
   return data as T;
 }
@@ -268,7 +274,7 @@ export const api = {
         reason?: string;
       };
     }>(`/api/reservations/${id}/cancel`, {
-      method: "PATCH",
+      method: "POST",
       body: JSON.stringify({ reason }),
     }),
   updateReservationStatus: (id: string, status: string) =>

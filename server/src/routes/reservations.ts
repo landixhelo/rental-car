@@ -17,7 +17,7 @@ import { cancellationPolicyText } from "../lib/cancellation.js";
 import { env } from "../config/env.js";
 import { z } from "zod";
 import { validate } from "../middleware/validate.js";
-import { Router } from "express";
+import { Router, type NextFunction, type Request, type Response } from "express";
 
 const router = Router();
 
@@ -463,71 +463,88 @@ router.post(
   }
 );
 
+async function cancelReservationHandler(
+  req: Request,
+  res: Response,
+  next: NextFunction
+) {
+  try {
+    const reason = String(req.body?.reason || "").trim();
+    if (reason.length < 5) {
+      throw new AppError("Arsyeja duhet të ketë të paktën 5 karaktere", 400);
+    }
+
+    const reservation = await prisma.reservation.findUnique({
+      where: { id: req.params.id },
+      include: {
+        user: { select: { email: true, fullName: true } },
+        car: { select: { brand: true, model: true } },
+      },
+    });
+    if (!reservation) throw new AppError("Reservation not found", 404);
+    if (
+      reservation.userId !== req.user!.id &&
+      req.user!.role !== "ADMIN" &&
+      req.user!.role !== "SUPER_ADMIN"
+    ) {
+      throw new AppError("Forbidden", 403);
+    }
+    if (["CANCELLED", "COMPLETED", "REJECTED"].includes(reservation.status)) {
+      throw new AppError("Reservation cannot be cancelled");
+    }
+
+    const decision = assertCustomerCanCancel(
+      reservation.startDate,
+      req.user!.role
+    );
+
+    const updated = await prisma.reservation.update({
+      where: { id: reservation.id },
+      data: { status: "CANCELLED", cancelReason: reason },
+    });
+
+    try {
+      await sendMail({
+        to: reservation.user.email,
+        subject: "AutoRent — rezervimi u anulua",
+        text: `Përshëndetje ${reservation.user.fullName},\n\nRezervimi për ${reservation.car.brand} ${reservation.car.model} u anulua.\n\nArsyeja: ${reason}\n\n${decision.refundNote}\n\nPolitika: ${cancellationPolicyText()}\n\nAutoRent`,
+      });
+      if (env.ADMIN_EMAIL || env.BUSINESS_EMAIL) {
+        await sendMail({
+          to: env.ADMIN_EMAIL || env.BUSINESS_EMAIL!,
+          subject: `Anulim rezervimi — ${reservation.car.brand} ${reservation.car.model}`,
+          text: `${reservation.user.fullName} anuloi rezervimin ${reservation.id}.\nArsyeja: ${reason}\n${decision.refundNote}\nFree cancel: ${decision.freeCancel}`,
+        });
+      }
+    } catch (mailErr) {
+      console.error("Cancel email failed:", mailErr);
+    }
+
+    res.json({
+      reservation: updated,
+      cancellation: {
+        freeCancel: decision.freeCancel,
+        refundNote: decision.refundNote,
+        reason,
+      },
+    });
+  } catch (err) {
+    next(err);
+  }
+}
+
+// POST is preferred (body reliably forwarded via Vercel rewrite); PATCH kept for compatibility.
+router.post(
+  "/:id/cancel",
+  requireAuth,
+  validate(cancelReservationSchema),
+  cancelReservationHandler
+);
 router.patch(
   "/:id/cancel",
   requireAuth,
   validate(cancelReservationSchema),
-  async (req, res, next) => {
-    try {
-      const reason = String(req.body.reason || "").trim();
-      const reservation = await prisma.reservation.findUnique({
-        where: { id: req.params.id },
-        include: {
-          user: { select: { email: true, fullName: true } },
-          car: { select: { brand: true, model: true } },
-        },
-      });
-      if (!reservation) throw new AppError("Reservation not found", 404);
-      if (
-        reservation.userId !== req.user!.id &&
-        req.user!.role !== "ADMIN" &&
-        req.user!.role !== "SUPER_ADMIN"
-      ) {
-        throw new AppError("Forbidden", 403);
-      }
-      if (["CANCELLED", "COMPLETED", "REJECTED"].includes(reservation.status)) {
-        throw new AppError("Reservation cannot be cancelled");
-      }
-
-      const decision = assertCustomerCanCancel(
-        reservation.startDate,
-        req.user!.role
-      );
-
-      const updated = await prisma.reservation.update({
-        where: { id: reservation.id },
-        data: { status: "CANCELLED", cancelReason: reason },
-      });
-
-      try {
-        await sendMail({
-          to: reservation.user.email,
-          subject: "AutoRent — rezervimi u anulua",
-          text: `Përshëndetje ${reservation.user.fullName},\n\nRezervimi për ${reservation.car.brand} ${reservation.car.model} u anulua.\n\nArsyeja: ${reason}\n\n${decision.refundNote}\n\nPolitika: ${cancellationPolicyText()}\n\nAutoRent`,
-        });
-        if (env.ADMIN_EMAIL || env.BUSINESS_EMAIL) {
-          await sendMail({
-            to: env.ADMIN_EMAIL || env.BUSINESS_EMAIL!,
-            subject: `Anulim rezervimi — ${reservation.car.brand} ${reservation.car.model}`,
-            text: `${reservation.user.fullName} anuloi rezervimin ${reservation.id}.\nArsyeja: ${reason}\n${decision.refundNote}\nFree cancel: ${decision.freeCancel}`,
-          });
-        }
-      } catch (mailErr) {
-        console.error("Cancel email failed:", mailErr);
-      }
-
-      res.json({
-        reservation: updated,
-        cancellation: {
-          freeCancel: decision.freeCancel,
-          refundNote: decision.refundNote,
-          reason,
-        },
-      });
-    } catch (err) {
-      next(err);
-    }
-  }
+  cancelReservationHandler
 );
 
 router.get(

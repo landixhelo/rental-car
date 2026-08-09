@@ -129,10 +129,18 @@ export const idParamSchema = z.object({
 
 export const cancelReservationSchema = z.object({
   params: z.object({
-    id: z.string().cuid(),
+    // Accept legacy cuid and any stable reservation id string.
+    id: z.string().min(1).max(64),
   }),
   body: z.object({
-    reason: z.string().trim().min(5).max(500),
+    reason: z
+      .string({
+        required_error: "Arsyeja e anulimit është e detyrueshme",
+        invalid_type_error: "Arsyeja e anulimit është e detyrueshme",
+      })
+      .trim()
+      .min(5, "Arsyeja duhet të ketë të paktën 5 karaktere")
+      .max(500, "Arsyeja është shumë e gjatë"),
   }),
 });
 
