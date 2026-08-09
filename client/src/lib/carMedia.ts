@@ -49,14 +49,20 @@ export function compressImage(
 }
 
 /** Upload one image at a time (avoids large multipart through Vercel). */
-export async function uploadCarImageFiles(files: File[]): Promise<string[]> {
+export async function uploadCarImageFiles(
+  files: File[],
+  onProgress?: (done: number, total: number) => void
+): Promise<string[]> {
+  const batch = files.slice(0, 8);
   const urls: string[] = [];
-  for (const file of files.slice(0, 8)) {
-    const compressed = await compressImage(file);
+  for (let i = 0; i < batch.length; i++) {
+    onProgress?.(i, batch.length);
+    const compressed = await compressImage(batch[i]);
     const fd = new FormData();
     fd.append("image", compressed);
     const { url } = await api.uploadCarImage(fd);
     urls.push(url);
+    onProgress?.(i + 1, batch.length);
   }
   return urls;
 }

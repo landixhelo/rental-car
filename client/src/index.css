@@ -1328,6 +1328,21 @@ main { flex: 1; width: 100%; }
   font-weight: 600;
   font-size: 0.92rem;
 }
+.car-image-picker-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+}
+.car-image-picker-hint {
+  margin: 0;
+  font-size: 0.88rem;
+}
+.car-image-picker-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
 .image-thumbs {
   display: flex;
   flex-wrap: wrap;
@@ -1344,6 +1359,7 @@ main { flex: 1; width: 100%; }
   border-radius: 10px;
   border: 1px solid var(--border);
   display: block;
+  background: var(--input-bg);
 }
 .image-thumb .btn {
   position: absolute;

@@ -2,8 +2,8 @@ import { type FormEvent, useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { api, type Car } from "../lib/api";
 import { buildCarJsonPayload, uploadCarImageFiles } from "../lib/carMedia";
-import { mediaUrl } from "../lib/mediaUrl";
 import FeatureCheckboxes from "../components/FeatureCheckboxes";
+import CarImagePicker from "../components/CarImagePicker";
 import FleetCalendar from "../components/FleetCalendar";
 import { useAuth } from "../context/AuthContext";
 import { useT } from "../context/LocaleContext";
@@ -42,6 +42,7 @@ export default function ContractorPage() {
   const [existingImages, setExistingImages] = useState<string[]>([]);
   const [imageFiles, setImageFiles] = useState<File[]>([]);
   const [saving, setSaving] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState("");
 
   async function load() {
     const carsRes = await api.myCars().catch((e) => {
@@ -82,8 +83,13 @@ export default function ContractorPage() {
       return;
     }
     setSaving(true);
+    setUploadProgress("");
     try {
-      const uploaded = await uploadCarImageFiles(imageFiles);
+      const uploaded = await uploadCarImageFiles(imageFiles, (done, total) => {
+        if (total > 0) {
+          setUploadProgress(t("carForm.uploadingCount", { done, total }));
+        }
+      });
       const images = [...existingImages, ...uploaded].slice(0, 8);
       const payload = buildCarJsonPayload(form, images);
       if (editId) await api.updateCar(editId, payload);
@@ -98,6 +104,7 @@ export default function ContractorPage() {
       show(err instanceof Error ? err.message : t("common.error"));
     } finally {
       setSaving(false);
+      setUploadProgress("");
     }
   }
 
@@ -312,50 +319,14 @@ export default function ContractorPage() {
           onChange={(features) => setForm({ ...form, features })}
         />
 
-        <div className="image-picker">
-          <label className="image-picker-label">
-            {t("carForm.photos")}
-            <input
-              type="file"
-              accept="image/jpeg,image/png,image/webp"
-              multiple
-              onChange={(e) =>
-                setImageFiles(Array.from(e.target.files || []).slice(0, 8))
-              }
-            />
-          </label>
-          <label className="field" style={{ display: "block", marginTop: 10 }}>
-            <span style={{ fontSize: "0.82rem", fontWeight: 600, color: "var(--muted)" }}>
-              {t("carForm.imageUrl")}
-            </span>
-            <input
-              placeholder="https://..."
-              value={form.imageUrl}
-              onChange={(e) => setForm({ ...form, imageUrl: e.target.value })}
-            />
-          </label>
-          <div className="image-thumbs">
-            {existingImages.map((src) => (
-              <div key={src} className="image-thumb">
-                <img src={mediaUrl(src)} alt="" />
-                <button
-                  type="button"
-                  className="btn danger"
-                  onClick={() =>
-                    setExistingImages((prev) => prev.filter((x) => x !== src))
-                  }
-                >
-                  ×
-                </button>
-              </div>
-            ))}
-            {imageFiles.map((file) => (
-              <div key={file.name + file.size} className="image-thumb">
-                <img src={URL.createObjectURL(file)} alt="" />
-              </div>
-            ))}
-          </div>
-        </div>
+        <CarImagePicker
+          existingImages={existingImages}
+          onExistingChange={setExistingImages}
+          files={imageFiles}
+          onFilesChange={setImageFiles}
+          imageUrl={form.imageUrl}
+          onImageUrlChange={(url) => setForm({ ...form, imageUrl: url })}
+        />
 
         <label className="field field-wide" style={{ display: "block" }}>
           <span style={{ fontSize: "0.82rem", fontWeight: 600, color: "var(--muted)" }}>
@@ -371,7 +342,7 @@ export default function ContractorPage() {
         <div style={{ display: "flex", gap: 10, flexWrap: "wrap" }}>
           <button className="btn" type="submit" disabled={saving}>
             {saving
-              ? t("carForm.uploading")
+              ? uploadProgress || t("carForm.uploading")
               : editId
                 ? t("carForm.update")
                 : t("carForm.add")}

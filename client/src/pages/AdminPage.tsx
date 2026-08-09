@@ -1,8 +1,8 @@
 import { type FormEvent, useEffect, useState } from "react";
 import { api, type Car } from "../lib/api";
 import { buildCarJsonPayload, uploadCarImageFiles } from "../lib/carMedia";
-import { mediaUrl } from "../lib/mediaUrl";
 import FeatureCheckboxes from "../components/FeatureCheckboxes";
+import CarImagePicker from "../components/CarImagePicker";
 import { useToast } from "../hooks/useToast";
 import { useT } from "../context/LocaleContext";
 import { roleLabel, statusLabel } from "../lib/labels";
@@ -41,6 +41,7 @@ export default function AdminPage() {
   const [existingImages, setExistingImages] = useState<string[]>([]);
   const [imageFiles, setImageFiles] = useState<File[]>([]);
   const [saving, setSaving] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState("");
 
   async function load() {
     const [s, c, r, u, m] = await Promise.all([
@@ -75,8 +76,15 @@ export default function AdminPage() {
       return;
     }
     setSaving(true);
+    setUploadProgress("");
     try {
-      const uploaded = await uploadCarImageFiles(imageFiles);
+      const uploaded = await uploadCarImageFiles(imageFiles, (done, total) => {
+        if (total > 0) {
+          setUploadProgress(
+            t("carForm.uploadingCount", { done, total })
+          );
+        }
+      });
       const images = [...existingImages, ...uploaded].slice(0, 8);
       const payload = buildCarJsonPayload(form, images);
       if (editId) await api.updateCar(editId, payload);
@@ -88,6 +96,7 @@ export default function AdminPage() {
       show(err instanceof Error ? err.message : t("common.error"));
     } finally {
       setSaving(false);
+      setUploadProgress("");
     }
   }
 
@@ -185,6 +194,62 @@ export default function AdminPage() {
             />
           </label>
           <label className="field">
+            <span>{t("carForm.doors")}</span>
+            <input
+              type="number"
+              placeholder="4"
+              min={2}
+              max={6}
+              value={form.doors}
+              onChange={(e) => setForm({ ...form, doors: Number(e.target.value) })}
+            />
+          </label>
+          <label className="field">
+            <span>{t("carForm.luggage")}</span>
+            <input
+              type="number"
+              placeholder="2"
+              min={0}
+              max={10}
+              value={form.luggage}
+              onChange={(e) =>
+                setForm({ ...form, luggage: Number(e.target.value) })
+              }
+            />
+          </label>
+          <label className="field">
+            <span>{t("carForm.hp")}</span>
+            <input
+              placeholder={t("carForm.hpPh")}
+              value={form.horsepower}
+              onChange={(e) => setForm({ ...form, horsepower: e.target.value })}
+            />
+          </label>
+          <label className="field">
+            <span>{t("carForm.color")}</span>
+            <input
+              placeholder={t("carForm.colorPh")}
+              value={form.color}
+              onChange={(e) => setForm({ ...form, color: e.target.value })}
+            />
+          </label>
+          <label className="field">
+            <span>{t("carForm.mileage")}</span>
+            <input
+              placeholder={t("carForm.mileagePh")}
+              value={form.mileage}
+              onChange={(e) => setForm({ ...form, mileage: e.target.value })}
+            />
+          </label>
+          <label className="field">
+            <span>{t("carForm.location")}</span>
+            <input
+              placeholder={t("carForm.locationPh")}
+              value={form.location}
+              onChange={(e) => setForm({ ...form, location: e.target.value })}
+            />
+          </label>
+          <label className="field">
             <span>{t("carForm.fuel")}</span>
             <select
               value={form.fuel}
@@ -240,57 +305,14 @@ export default function AdminPage() {
           onChange={(features) => setForm({ ...form, features })}
         />
 
-        <div className="image-picker">
-          <label className="image-picker-label">
-            {t("carForm.photos")}
-            <input
-              type="file"
-              accept="image/jpeg,image/png,image/webp"
-              multiple
-              onChange={(e) =>
-                setImageFiles(Array.from(e.target.files || []).slice(0, 8))
-              }
-            />
-          </label>
-          <label className="field" style={{ display: "block", marginTop: 10 }}>
-            <span
-              style={{
-                fontSize: "0.82rem",
-                fontWeight: 600,
-                color: "var(--muted)",
-              }}
-            >
-              {t("carForm.imageUrl")}
-            </span>
-            <input
-              placeholder="https://..."
-              value={form.imageUrl}
-              onChange={(e) => setForm({ ...form, imageUrl: e.target.value })}
-            />
-          </label>
-          <div className="image-thumbs">
-            {existingImages.map((src) => (
-              <div key={src} className="image-thumb">
-                <img src={mediaUrl(src)} alt="" />
-                <button
-                  type="button"
-                  className="btn danger"
-                  onClick={() =>
-                    setExistingImages((prev) => prev.filter((x) => x !== src))
-                  }
-                >
-                  ×
-                </button>
-              </div>
-            ))}
-            {imageFiles.map((file) => (
-              <div key={file.name + file.size} className="image-thumb">
-                <img src={URL.createObjectURL(file)} alt="" />
-                <span className="muted">{file.name}</span>
-              </div>
-            ))}
-          </div>
-        </div>
+        <CarImagePicker
+          existingImages={existingImages}
+          onExistingChange={setExistingImages}
+          files={imageFiles}
+          onFilesChange={setImageFiles}
+          imageUrl={form.imageUrl}
+          onImageUrlChange={(url) => setForm({ ...form, imageUrl: url })}
+        />
 
         <label className="field field-wide" style={{ display: "block" }}>
           <span
@@ -311,7 +333,9 @@ export default function AdminPage() {
         </label>
         <div style={{ display: "flex", gap: 10, flexWrap: "wrap" }}>
           <button className="btn" type="submit" disabled={saving}>
-            {saving ? t("carForm.uploading") : t("common.save")}
+            {saving
+              ? uploadProgress || t("carForm.uploading")
+              : t("common.save")}
           </button>
           {editId ? (
             <button type="button" className="btn ghost" onClick={resetForm}>

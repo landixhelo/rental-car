@@ -45,8 +45,11 @@ export default function CarCard({ car, onToggleFavorite }: Props) {
             {statusLabel()}
           </span>
           <p className="muted car-meta">
-            {car.year} · {car.location} · ⭐ {car.ratingAvg || "-"} (
-            {car.ratingCount || 0})
+            {car.year}
+            {car.color ? ` · ${car.color}` : ""}
+            {car.mileage ? ` · ${car.mileage}` : ""}
+            {" · "}
+            {car.location} · ⭐ {car.ratingAvg || "-"} ({car.ratingCount || 0})
           </p>
           <p className="clamp">{car.description}</p>
         </div>
