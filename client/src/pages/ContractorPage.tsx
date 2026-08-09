@@ -140,86 +140,166 @@ export default function ContractorPage() {
 
       <form className="panel" onSubmit={saveCar} style={{ marginTop: 24 }}>
         <h2>{editId ? "Edito makinën" : "Shto makinë të re"}</h2>
-        <div className="filters">
-          <input
-            placeholder="Brand"
-            value={form.brand}
-            onChange={(e) => setForm({ ...form, brand: e.target.value })}
-            required
-          />
-          <input
-            placeholder="Model"
-            value={form.model}
-            onChange={(e) => setForm({ ...form, model: e.target.value })}
-            required
-          />
-          <input
-            type="number"
-            placeholder="Viti"
-            value={form.year}
-            onChange={(e) => setForm({ ...form, year: Number(e.target.value) })}
-            required
-          />
-          <input
-            type="number"
-            placeholder="Çmimi / ditë"
-            value={form.pricePerDay}
-            onChange={(e) =>
-              setForm({ ...form, pricePerDay: Number(e.target.value) })
-            }
-            required
-          />
-          <input
-            type="number"
-            placeholder="Ndenjëse"
-            value={form.seats}
-            onChange={(e) => setForm({ ...form, seats: Number(e.target.value) })}
-          />
-          <input
-            placeholder="Ngjyra"
-            value={form.color}
-            onChange={(e) => setForm({ ...form, color: e.target.value })}
-          />
-          <input
-            placeholder="Lokacioni"
-            value={form.location}
-            onChange={(e) => setForm({ ...form, location: e.target.value })}
-          />
-          <select
-            value={form.fuel}
-            onChange={(e) => setForm({ ...form, fuel: e.target.value })}
-          >
-            <option>Petrol</option>
-            <option>Diesel</option>
-            <option>Hybrid</option>
-            <option>Electric</option>
-          </select>
-          <select
-            value={form.transmission}
-            onChange={(e) => setForm({ ...form, transmission: e.target.value })}
-          >
-            <option>Automatic</option>
-            <option>Manual</option>
-          </select>
-          <select
-            value={form.type}
-            onChange={(e) => setForm({ ...form, type: e.target.value })}
-          >
-            <option>Sedan</option>
-            <option>SUV</option>
-            <option>Sports</option>
-            <option>Luxury</option>
-          </select>
-          <select
-            value={form.status}
-            onChange={(e) =>
-              setForm({ ...form, status: e.target.value as Car["status"] })
-            }
-          >
-            <option value="AVAILABLE">AVAILABLE</option>
-            <option value="RESERVED">RESERVED</option>
-            <option value="MAINTENANCE">MAINTENANCE</option>
-          </select>
+        <div className="form-fields">
+          <label className="field">
+            <span>Marka</span>
+            <input
+              placeholder="p.sh. BMW, Mercedes"
+              value={form.brand}
+              onChange={(e) => setForm({ ...form, brand: e.target.value })}
+              required
+              autoComplete="off"
+            />
+          </label>
+          <label className="field">
+            <span>Modeli</span>
+            <input
+              placeholder="p.sh. X5, C-Class"
+              value={form.model}
+              onChange={(e) => setForm({ ...form, model: e.target.value })}
+              required
+              autoComplete="off"
+            />
+          </label>
+          <label className="field">
+            <span>Viti</span>
+            <input
+              type="number"
+              placeholder="2024"
+              min={1990}
+              max={2100}
+              value={form.year}
+              onChange={(e) => setForm({ ...form, year: Number(e.target.value) })}
+              required
+            />
+          </label>
+          <label className="field">
+            <span>Çmimi / ditë (€)</span>
+            <input
+              type="number"
+              placeholder="50"
+              min={1}
+              value={form.pricePerDay}
+              onChange={(e) =>
+                setForm({ ...form, pricePerDay: Number(e.target.value) })
+              }
+              required
+            />
+          </label>
+          <label className="field">
+            <span>Ndenjëse</span>
+            <input
+              type="number"
+              placeholder="5"
+              min={1}
+              max={20}
+              value={form.seats}
+              onChange={(e) => setForm({ ...form, seats: Number(e.target.value) })}
+            />
+          </label>
+          <label className="field">
+            <span>Dyer</span>
+            <input
+              type="number"
+              placeholder="4"
+              min={2}
+              max={6}
+              value={form.doors}
+              onChange={(e) => setForm({ ...form, doors: Number(e.target.value) })}
+            />
+          </label>
+          <label className="field">
+            <span>Bagazh</span>
+            <input
+              type="number"
+              placeholder="2"
+              min={0}
+              max={10}
+              value={form.luggage}
+              onChange={(e) =>
+                setForm({ ...form, luggage: Number(e.target.value) })
+              }
+            />
+          </label>
+          <label className="field">
+            <span>Kuaj fuqi (HP)</span>
+            <input
+              placeholder="p.sh. 190"
+              value={form.horsepower}
+              onChange={(e) => setForm({ ...form, horsepower: e.target.value })}
+            />
+          </label>
+          <label className="field">
+            <span>Ngjyra</span>
+            <input
+              placeholder="p.sh. e zezë, e bardhë"
+              value={form.color}
+              onChange={(e) => setForm({ ...form, color: e.target.value })}
+            />
+          </label>
+          <label className="field">
+            <span>Kilometrazhi</span>
+            <input
+              placeholder="p.sh. 45.000 km"
+              value={form.mileage}
+              onChange={(e) => setForm({ ...form, mileage: e.target.value })}
+            />
+          </label>
+          <label className="field">
+            <span>Lokacioni</span>
+            <input
+              placeholder="p.sh. Tiranë"
+              value={form.location}
+              onChange={(e) => setForm({ ...form, location: e.target.value })}
+            />
+          </label>
+          <label className="field">
+            <span>Karburanti</span>
+            <select
+              value={form.fuel}
+              onChange={(e) => setForm({ ...form, fuel: e.target.value })}
+            >
+              <option value="Petrol">Benzinë</option>
+              <option value="Diesel">Naftë</option>
+              <option value="Hybrid">Hibrid</option>
+              <option value="Electric">Elektrike</option>
+            </select>
+          </label>
+          <label className="field">
+            <span>Transmisioni</span>
+            <select
+              value={form.transmission}
+              onChange={(e) => setForm({ ...form, transmission: e.target.value })}
+            >
+              <option value="Automatic">Automatik</option>
+              <option value="Manual">Manual</option>
+            </select>
+          </label>
+          <label className="field">
+            <span>Tipi i makinës</span>
+            <select
+              value={form.type}
+              onChange={(e) => setForm({ ...form, type: e.target.value })}
+            >
+              <option value="Sedan">Sedan</option>
+              <option value="SUV">SUV</option>
+              <option value="Sports">Sportive</option>
+              <option value="Luxury">Luksoze</option>
+            </select>
+          </label>
+          <label className="field">
+            <span>Statusi</span>
+            <select
+              value={form.status}
+              onChange={(e) =>
+                setForm({ ...form, status: e.target.value as Car["status"] })
+              }
+            >
+              <option value="AVAILABLE">E lirë</option>
+              <option value="RESERVED">E rezervuar</option>
+              <option value="MAINTENANCE">Në mirëmbajtje</option>
+            </select>
+          </label>
         </div>
 
         <FeatureCheckboxes
@@ -239,11 +319,16 @@ export default function ContractorPage() {
               }
             />
           </label>
-          <input
-            placeholder="ose Image URL (opsionale)"
-            value={form.imageUrl}
-            onChange={(e) => setForm({ ...form, imageUrl: e.target.value })}
-          />
+          <label className="field" style={{ display: "block", marginTop: 10 }}>
+            <span style={{ fontSize: "0.82rem", fontWeight: 600, color: "var(--muted)" }}>
+              ose URL e fotos (opsionale)
+            </span>
+            <input
+              placeholder="https://..."
+              value={form.imageUrl}
+              onChange={(e) => setForm({ ...form, imageUrl: e.target.value })}
+            />
+          </label>
           <div className="image-thumbs">
             {existingImages.map((src) => (
               <div key={src} className="image-thumb">
@@ -267,12 +352,17 @@ export default function ContractorPage() {
           </div>
         </div>
 
-        <textarea
-          placeholder="Përshkrimi"
-          value={form.description}
-          onChange={(e) => setForm({ ...form, description: e.target.value })}
-          required
-        />
+        <label className="field field-wide" style={{ display: "block" }}>
+          <span style={{ fontSize: "0.82rem", fontWeight: 600, color: "var(--muted)" }}>
+            Përshkrimi
+          </span>
+          <textarea
+            placeholder="Shkruaj një përshkrim të shkurtër për makinën"
+            value={form.description}
+            onChange={(e) => setForm({ ...form, description: e.target.value })}
+            required
+          />
+        </label>
         <div style={{ display: "flex", gap: 10, flexWrap: "wrap" }}>
           <button className="btn" type="submit" disabled={saving}>
             {saving
