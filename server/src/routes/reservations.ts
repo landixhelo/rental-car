@@ -498,28 +498,26 @@ async function cancelReservationHandler(
       req.user!.role
     );
 
-    const updated = await prisma.reservation.update({
-      where: { id: reservation.id },
-      data: { status: "CANCELLED", cancelReason: reason },
-    });
-
+    let updated;
     try {
-      await sendMail({
-        to: reservation.user.email,
-        subject: "AutoRent — rezervimi u anulua",
-        text: `Përshëndetje ${reservation.user.fullName},\n\nRezervimi për ${reservation.car.brand} ${reservation.car.model} u anulua.\n\nArsyeja: ${reason}\n\n${decision.refundNote}\n\nPolitika: ${cancellationPolicyText()}\n\nAutoRent`,
+      updated = await prisma.reservation.update({
+        where: { id: reservation.id },
+        data: { status: "CANCELLED", cancelReason: reason },
       });
-      if (env.ADMIN_EMAIL || env.BUSINESS_EMAIL) {
-        await sendMail({
-          to: env.ADMIN_EMAIL || env.BUSINESS_EMAIL!,
-          subject: `Anulim rezervimi — ${reservation.car.brand} ${reservation.car.model}`,
-          text: `${reservation.user.fullName} anuloi rezervimin ${reservation.id}.\nArsyeja: ${reason}\n${decision.refundNote}\nFree cancel: ${decision.freeCancel}`,
+    } catch (dbErr) {
+      // If DB column is not migrated yet, still cancel the booking.
+      const code = (dbErr as { code?: string })?.code;
+      if (code === "P2022" || (dbErr instanceof Error && /cancelReason/i.test(dbErr.message))) {
+        updated = await prisma.reservation.update({
+          where: { id: reservation.id },
+          data: { status: "CANCELLED" },
         });
+      } else {
+        throw dbErr;
       }
-    } catch (mailErr) {
-      console.error("Cancel email failed:", mailErr);
     }
 
+    // Respond immediately — SMTP must not block the cancel UI.
     res.json({
       reservation: updated,
       cancellation: {
@@ -528,6 +526,25 @@ async function cancelReservationHandler(
         reason,
       },
     });
+
+    void (async () => {
+      try {
+        await sendMail({
+          to: reservation.user.email,
+          subject: "AutoRent — rezervimi u anulua",
+          text: `Përshëndetje ${reservation.user.fullName},\n\nRezervimi për ${reservation.car.brand} ${reservation.car.model} u anulua.\n\nArsyeja: ${reason}\n\n${decision.refundNote}\n\nPolitika: ${cancellationPolicyText()}\n\nAutoRent`,
+        });
+        if (env.ADMIN_EMAIL || env.BUSINESS_EMAIL) {
+          await sendMail({
+            to: env.ADMIN_EMAIL || env.BUSINESS_EMAIL!,
+            subject: `Anulim rezervimi — ${reservation.car.brand} ${reservation.car.model}`,
+            text: `${reservation.user.fullName} anuloi rezervimin ${reservation.id}.\nArsyeja: ${reason}\n${decision.refundNote}\nFree cancel: ${decision.freeCancel}`,
+          });
+        }
+      } catch (mailErr) {
+        console.error("Cancel email failed:", mailErr);
+      }
+    })();
   } catch (err) {
     next(err);
   }

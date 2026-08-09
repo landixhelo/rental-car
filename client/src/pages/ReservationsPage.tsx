@@ -103,12 +103,12 @@ export default function ReservationsPage() {
     try {
       const res = await api.cancelReservation(cancelTarget.id, reason);
       setCancelTarget(null);
-      show(res.cancellation?.refundNote || t("status.CANCELLED"), 6000);
-      await load();
-    } catch (e) {
-      show(e instanceof Error ? e.message : t("common.error"));
-    } finally {
       setCancelling(false);
+      show(res.cancellation?.refundNote || t("status.CANCELLED"), 6000);
+      await load().catch(() => {});
+    } catch (e) {
+      setCancelling(false);
+      show(e instanceof Error ? e.message : t("common.error"));
     }
   }
 
