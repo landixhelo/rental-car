@@ -22,6 +22,7 @@ import AdminPage from "./pages/AdminPage";
 import SuperAdminPage from "./pages/SuperAdminPage";
 import ContractorPage from "./pages/ContractorPage";
 import DashboardPage from "./pages/DashboardPage";
+import ChatsPage from "./pages/ChatsPage";
 import Analytics from "./components/Analytics";
 import CookieConsent from "./components/CookieConsent";
 
@@ -75,6 +76,14 @@ export default function App() {
                   element={
                     <Protected contractor>
                       <DashboardPage />
+                    </Protected>
+                  }
+                />
+                <Route
+                  path="chats"
+                  element={
+                    <Protected contractor>
+                      <ChatsPage />
                     </Protected>
                   }
                 />

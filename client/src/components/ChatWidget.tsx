@@ -10,6 +10,7 @@ const HIDDEN_PREFIXES = [
   "/super-admin",
   "/contractor",
   "/dashboard",
+  "/chats",
 ];
 
 export default function ChatWidget() {

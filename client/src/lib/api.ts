@@ -379,6 +379,14 @@ export const api = {
       body: JSON.stringify(body),
     }),
 
+  chats: () =>
+    request<{ messages: any[]; unread: number }>("/api/chats"),
+  updateChatStatus: (id: string, status: "New" | "Read" | "Done") =>
+    request<{ message: any }>(`/api/chats/${id}`, {
+      method: "PATCH",
+      body: JSON.stringify({ status }),
+    }),
+
   adminStats: () => request<{ stats: any }>("/api/admin/stats"),
   adminMessages: () => request<{ messages: any[] }>("/api/admin/messages"),
   adminUsers: () => request<{ users: User[] }>("/api/admin/users"),

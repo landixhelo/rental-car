@@ -108,6 +108,7 @@ export default function Layout() {
     "/favorites",
     "/contractor",
     "/dashboard",
+    "/chats",
   ].some((p) => location.pathname.startsWith(p));
 
   const staffCrumb = useMemo(() => {
@@ -120,6 +121,9 @@ export default function Layout() {
     }
     if (path === "/dashboard" || path.startsWith("/dashboard/")) {
       return { label: t("nav.dashboard") };
+    }
+    if (path === "/chats" || path.startsWith("/chats/")) {
+      return { label: t("nav.chats") };
     }
     if (path === "/contractor" || path.startsWith("/contractor/")) {
       return { label: t("nav.fleet") };
@@ -193,6 +197,11 @@ export default function Layout() {
                   {t("nav.dashboard")}
                 </NavLink>
               ) : null}
+              {canManageFleet ? (
+                <NavLink to="/chats" onClick={closeMenus}>
+                  {t("nav.chats")}
+                </NavLink>
+              ) : null}
               {user.role === "ADMIN" || user.role === "SUPER_ADMIN" ? (
                 <NavLink to="/admin" onClick={closeMenus}>
                   {t("nav.admin")}
@@ -264,6 +273,13 @@ export default function Layout() {
                         onClick={closeMenus}
                       >
                         {t("nav.dashboard")}
+                      </NavLink>
+                      <NavLink
+                        to="/chats"
+                        role="menuitem"
+                        onClick={closeMenus}
+                      >
+                        {t("nav.chats")}
                       </NavLink>
                       <NavLink
                         to="/contractor"
