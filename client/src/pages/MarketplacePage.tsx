@@ -51,8 +51,13 @@ export default function MarketplacePage() {
       />
       {Toast}
       <header className="marketplace-hero">
+        <p className="product-eyebrow">{t("marketplace.eyebrow")}</p>
         <h1>{t("marketplace.title")}</h1>
         <p>{t("marketplace.subtitle")}</p>
+        <p className="marketplace-split-note muted">
+          {t("marketplace.splitNote")}{" "}
+          <Link to="/cars">{t("marketplace.splitLink")}</Link>
+        </p>
         <div className="marketplace-tabs" role="tablist">
           <button
             type="button"

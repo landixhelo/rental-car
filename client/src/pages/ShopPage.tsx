@@ -55,6 +55,7 @@ export default function ShopPage() {
         locale={locale}
       />
       {Toast}
+      <p className="product-eyebrow">{t("marketplace.eyebrow")}</p>
       <Link to="/marketplace" className="muted">
         ← {t("marketplace.back")}
       </Link>

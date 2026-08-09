@@ -112,6 +112,11 @@ export default function Layout() {
     "/seller",
   ].some((p) => location.pathname.startsWith(p));
 
+  const inMarket =
+    location.pathname.startsWith("/marketplace") ||
+    location.pathname.startsWith("/shops") ||
+    location.pathname.startsWith("/seller");
+
   const staffCrumb = useMemo(() => {
     const path = location.pathname;
     if (path === "/admin" || path.startsWith("/admin/")) {
@@ -136,12 +141,34 @@ export default function Layout() {
   }, [location.pathname, t]);
 
   return (
-    <div className="app-shell">
+    <div className={`app-shell${inMarket ? " product-market" : " product-rent"}`}>
       <nav className="navbar">
         <div className="nav-top">
-          <Link to="/" className="brand" onClick={closeMenus}>
-            AutoRent
-          </Link>
+          <div className="nav-brand-row">
+            <Link to="/" className="brand" onClick={closeMenus}>
+              AutoRent
+            </Link>
+            <div
+              className="product-switch"
+              role="group"
+              aria-label={t("nav.products")}
+            >
+              <Link
+                to="/cars"
+                className={`product-switch-item${!inMarket ? " active" : ""}`}
+                onClick={closeMenus}
+              >
+                {t("nav.productRent")}
+              </Link>
+              <Link
+                to="/marketplace"
+                className={`product-switch-item${inMarket ? " active" : ""}`}
+                onClick={closeMenus}
+              >
+                {t("nav.productMarket")}
+              </Link>
+            </div>
+          </div>
 
           <div className="nav-actions">
             <div
@@ -190,12 +217,43 @@ export default function Layout() {
         </div>
 
         <div className={`nav-links ${menuOpen ? "open" : ""}`}>
-          <NavLink to="/cars" onClick={closeMenus}>
-            {t("nav.cars")}
-          </NavLink>
-          <NavLink to="/marketplace" onClick={closeMenus}>
-            {t("nav.marketplace")}
-          </NavLink>
+          {!inMarket ? (
+            <NavLink to="/cars" onClick={closeMenus}>
+              {t("nav.cars")}
+            </NavLink>
+          ) : (
+            <>
+              <NavLink
+                to="/marketplace"
+                end
+                onClick={closeMenus}
+                className={({ isActive }) =>
+                  isActive && !location.search.includes("tab=buy")
+                    ? "active"
+                    : undefined
+                }
+              >
+                {t("nav.marketHome")}
+              </NavLink>
+              <NavLink
+                to="/marketplace?tab=buy"
+                onClick={closeMenus}
+                className={() =>
+                  location.pathname === "/marketplace" &&
+                  location.search.includes("tab=buy")
+                    ? "active"
+                    : undefined
+                }
+              >
+                {t("nav.marketBuy")}
+              </NavLink>
+              {user ? (
+                <NavLink to="/seller" onClick={closeMenus}>
+                  {t("nav.sell")}
+                </NavLink>
+              ) : null}
+            </>
+          )}
 
           {user ? (
             <>
@@ -209,9 +267,6 @@ export default function Layout() {
                   {t("nav.chats")}
                 </NavLink>
               ) : null}
-              <NavLink to="/seller" onClick={closeMenus}>
-                {t("nav.sell")}
-              </NavLink>
               {user.role === "ADMIN" || user.role === "SUPER_ADMIN" ? (
                 <NavLink to="/admin" onClick={closeMenus}>
                   {t("nav.admin")}
@@ -352,20 +407,36 @@ export default function Layout() {
       </main>
 
       <footer className="footer">
-        <strong>AutoRent</strong>
-        <div className="footer-links">
-          <Link to="/contact">{t("nav.contact")}</Link>
-          <Link to="/faq">{t("nav.faq")}</Link>
-          <Link to="/terms">{t("footer.terms")}</Link>
-          <Link to="/marketplace">{t("nav.marketplace")}</Link>
-          <Link to="/cars">{t("nav.cars")}</Link>
-          <a
-            href={`https://wa.me/${whatsapp}`}
-            target="_blank"
-            rel="noreferrer"
-          >
-            WhatsApp
-          </a>
+        <div className="footer-cols">
+          <div>
+            <strong>AutoRent</strong>
+            <div className="footer-links">
+              <Link to="/cars">{t("nav.cars")}</Link>
+              <Link to="/contact">{t("nav.contact")}</Link>
+              <Link to="/faq">{t("nav.faq")}</Link>
+              <Link to="/terms">{t("footer.terms")}</Link>
+            </div>
+          </div>
+          <div>
+            <strong>{t("nav.productMarket")}</strong>
+            <div className="footer-links">
+              <Link to="/marketplace">{t("nav.marketHome")}</Link>
+              <Link to="/marketplace?tab=buy">{t("nav.marketBuy")}</Link>
+              {user ? <Link to="/seller">{t("nav.sell")}</Link> : null}
+            </div>
+          </div>
+          <div>
+            <strong>WhatsApp</strong>
+            <div className="footer-links">
+              <a
+                href={`https://wa.me/${whatsapp}`}
+                target="_blank"
+                rel="noreferrer"
+              >
+                WhatsApp
+              </a>
+            </div>
+          </div>
         </div>
         <p>{t("footer.rights")}</p>
       </footer>

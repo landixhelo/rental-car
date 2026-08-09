@@ -143,12 +143,19 @@ export default function SellerHubPage() {
   return (
     <div className="section seller-hub">
       {Toast}
+      <p className="product-eyebrow">{t("marketplace.eyebrow")}</p>
       <h1>{t("marketplace.sellerHub")}</h1>
       <p className="muted">{t("marketplace.sellerHubSub")}</p>
+      <p className="muted">{t("marketplace.sellerSplitNote")}</p>
       <p>
         <Link to="/marketplace" className="btn ghost">
           {t("marketplace.viewMarketplace")}
         </Link>
+        {canShop ? (
+          <Link to="/contractor" className="btn ghost" style={{ marginLeft: 8 }}>
+            {t("nav.fleet")}
+          </Link>
+        ) : null}
       </p>
 
       {canShop ? (

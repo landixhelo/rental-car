@@ -47,6 +47,7 @@ export default function SaleDetailsPage() {
         locale={locale}
       />
       {Toast}
+      <p className="product-eyebrow">{t("marketplace.eyebrow")}</p>
       <Link to="/marketplace?tab=buy" className="muted">
         ← {t("marketplace.back")}
       </Link>
