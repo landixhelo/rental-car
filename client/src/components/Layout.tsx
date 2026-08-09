@@ -109,6 +109,7 @@ export default function Layout() {
     "/contractor",
     "/dashboard",
     "/chats",
+    "/seller",
   ].some((p) => location.pathname.startsWith(p));
 
   const staffCrumb = useMemo(() => {
@@ -124,6 +125,9 @@ export default function Layout() {
     }
     if (path === "/chats" || path.startsWith("/chats/")) {
       return { label: t("nav.chats") };
+    }
+    if (path === "/seller" || path.startsWith("/seller/")) {
+      return { label: t("nav.sell") };
     }
     if (path === "/contractor" || path.startsWith("/contractor/")) {
       return { label: t("nav.fleet") };
@@ -189,6 +193,9 @@ export default function Layout() {
           <NavLink to="/cars" onClick={closeMenus}>
             {t("nav.cars")}
           </NavLink>
+          <NavLink to="/marketplace" onClick={closeMenus}>
+            {t("nav.marketplace")}
+          </NavLink>
 
           {user ? (
             <>
@@ -202,6 +209,9 @@ export default function Layout() {
                   {t("nav.chats")}
                 </NavLink>
               ) : null}
+              <NavLink to="/seller" onClick={closeMenus}>
+                {t("nav.sell")}
+              </NavLink>
               {user.role === "ADMIN" || user.role === "SUPER_ADMIN" ? (
                 <NavLink to="/admin" onClick={closeMenus}>
                   {t("nav.admin")}
@@ -291,6 +301,13 @@ export default function Layout() {
                     </>
                   ) : null}
                   <NavLink
+                    to="/seller"
+                    role="menuitem"
+                    onClick={closeMenus}
+                  >
+                    {t("nav.sell")}
+                  </NavLink>
+                  <NavLink
                     to="/favorites"
                     role="menuitem"
                     onClick={closeMenus}
@@ -340,6 +357,7 @@ export default function Layout() {
           <Link to="/contact">{t("nav.contact")}</Link>
           <Link to="/faq">{t("nav.faq")}</Link>
           <Link to="/terms">{t("footer.terms")}</Link>
+          <Link to="/marketplace">{t("nav.marketplace")}</Link>
           <Link to="/cars">{t("nav.cars")}</Link>
           <a
             href={`https://wa.me/${whatsapp}`}

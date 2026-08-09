@@ -1,5 +1,5 @@
 import { type FormEvent, useEffect, useState } from "react";
-import { api, type Account } from "../lib/api";
+import { api, type Account, type SaleListing } from "../lib/api";
 import { useT } from "../context/LocaleContext";
 import { useToast } from "../hooks/useToast";
 import { roleLabel, statusLabel } from "../lib/labels";
@@ -30,14 +30,17 @@ export default function SuperAdminPage() {
   } | null>(null);
   const [form, setForm] = useState(emptyForm);
   const [notify, setNotify] = useState({ title: "", message: "" });
+  const [saleQueue, setSaleQueue] = useState<SaleListing[]>([]);
 
   async function load() {
-    const [ov, list] = await Promise.all([
+    const [ov, list, sales] = await Promise.all([
       api.superOverview(),
       api.superAccounts({ role: filter, q }),
+      api.adminMarketplaceSales().catch(() => ({ listings: [] as SaleListing[] })),
     ]);
     setOverview(ov.overview);
     setAccounts(list.accounts);
+    setSaleQueue(sales.listings);
   }
 
   useEffect(() => {
@@ -385,6 +388,51 @@ export default function SuperAdminPage() {
           ))}
         </div>
       )}
+
+      <div className="panel" style={{ marginTop: 24 }}>
+        <h2>{t("marketplace.moderate")}</h2>
+        {!saleQueue.length ? (
+          <p className="muted">{t("marketplace.noSales")}</p>
+        ) : (
+          saleQueue.map((s) => (
+            <div key={s.id} className="review-item">
+              <strong>
+                {s.title} · €{s.price.toLocaleString()} · {s.status}
+              </strong>
+              <p className="muted">
+                {s.seller?.name || "-"} · {s.location}
+              </p>
+              <div className="reservation-actions">
+                {s.status !== "PUBLISHED" ? (
+                  <button
+                    type="button"
+                    className="btn"
+                    onClick={async () => {
+                      await api.adminUpdateSaleStatus(s.id, "PUBLISHED");
+                      show(t("marketplace.approve"));
+                      await load();
+                    }}
+                  >
+                    {t("marketplace.approve")}
+                  </button>
+                ) : null}
+                {s.status === "PUBLISHED" ? (
+                  <button
+                    type="button"
+                    className="btn ghost"
+                    onClick={async () => {
+                      await api.adminUpdateSaleStatus(s.id, "SUSPENDED");
+                      await load();
+                    }}
+                  >
+                    {t("marketplace.suspend")}
+                  </button>
+                ) : null}
+              </div>
+            </div>
+          ))
+        )}
+      </div>
     </div>
   );
 }

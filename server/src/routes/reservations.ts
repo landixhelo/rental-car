@@ -215,8 +215,16 @@ router.post(
       const totalDays = calcDays(start, end);
       if (totalDays <= 0) throw new AppError("Intervali i datave është i pavlefshëm");
 
-      const car = await prisma.car.findUnique({ where: { id: carId } });
+      const car = await prisma.car.findUnique({
+        where: { id: carId },
+        include: {
+          owner: { select: { commissionPercent: true } },
+        },
+      });
       if (!car) throw new AppError("Car not found", 404);
+      if (car.listingStatus !== "PUBLISHED") {
+        throw new AppError("Kjo makinë nuk është e disponueshme për rezervim");
+      }
       if (car.status === "MAINTENANCE") {
         throw new AppError("Makina është në mirëmbajtje");
       }
@@ -249,6 +257,15 @@ router.post(
       );
       const locationFees = pickup.fee + ret.fee;
       const totalPrice = carSubtotal + extrasTotal + locationFees;
+      const commissionPct = Number(car.owner?.commissionPercent ?? 10);
+      const platformFee =
+        car.ownerId && commissionPct > 0
+          ? Math.round(totalPrice * (commissionPct / 100) * 100) / 100
+          : 0;
+      const ownerPayout =
+        car.ownerId
+          ? Math.round((totalPrice - platformFee) * 100) / 100
+          : totalPrice;
 
       if (paymentMethod === "CARD" && !stripeEnabled()) {
         throw new AppError(
@@ -295,6 +312,8 @@ router.post(
           documentStatus: hasDocument ? "PENDING" : "NONE",
           depositAmount,
           depositStatus: depositAmount > 0 ? "HELD" : "NONE",
+          platformFee,
+          ownerPayout,
           status: bookingStatus,
         },
         include: {

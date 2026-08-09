@@ -45,6 +45,8 @@ export type Car = {
   imageUrl: string;
   images?: string[];
   companyName?: string | null;
+  shopSlug?: string | null;
+  listingStatus?: string | null;
   reservedUntil?: string | null;
   busyRanges?: Array<{ startDate: string; endDate: string }>;
   ratingAvg?: number;
@@ -448,6 +450,99 @@ export const api = {
       method: "POST",
       body: JSON.stringify(body),
     }),
+
+  marketplaceShops: () =>
+    request<{ shops: MarketplaceShop[] }>("/api/marketplace/shops"),
+  marketplaceShop: (slug: string) =>
+    request<{ shop: MarketplaceShop; cars: Car[] }>(
+      `/api/marketplace/shops/${encodeURIComponent(slug)}`
+    ),
+  marketplaceSales: (params?: Record<string, string>) => {
+    const q = new URLSearchParams(params || {}).toString();
+    return request<{ listings: SaleListing[] }>(
+      `/api/marketplace/sales${q ? `?${q}` : ""}`
+    );
+  },
+  marketplaceSale: (id: string) =>
+    request<{ listing: SaleListing }>(`/api/marketplace/sales/${id}`),
+  myShop: () => request<{ shop: MyShop }>("/api/marketplace/my-shop"),
+  updateMyShop: (body: Partial<MyShop> & { companyName?: string }) =>
+    request<{ shop: MyShop }>("/api/marketplace/my-shop", {
+      method: "PATCH",
+      body: JSON.stringify(body),
+    }),
+  mySales: () =>
+    request<{ listings: SaleListing[] }>("/api/marketplace/my-sales"),
+  createSale: (body: Record<string, unknown>) =>
+    request<{ listing: SaleListing }>("/api/marketplace/my-sales", {
+      method: "POST",
+      body: JSON.stringify(body),
+    }),
+  updateSale: (id: string, body: Record<string, unknown>) =>
+    request<{ listing: SaleListing }>(`/api/marketplace/my-sales/${id}`, {
+      method: "PATCH",
+      body: JSON.stringify(body),
+    }),
+  deleteSale: (id: string) =>
+    request<{ message: string }>(`/api/marketplace/my-sales/${id}`, {
+      method: "DELETE",
+    }),
+  adminMarketplaceSales: () =>
+    request<{ listings: SaleListing[] }>("/api/marketplace/admin/sales"),
+  adminUpdateSaleStatus: (
+    id: string,
+    status: SaleListing["status"]
+  ) =>
+    request<{ listing: SaleListing }>(`/api/marketplace/admin/sales/${id}`, {
+      method: "PATCH",
+      body: JSON.stringify({ status }),
+    }),
+};
+
+export type MarketplaceShop = {
+  slug: string;
+  name: string;
+  bio?: string | null;
+  logoUrl?: string | null;
+  city?: string | null;
+  phone?: string | null;
+  carsCount?: number;
+};
+
+export type MyShop = {
+  companyName?: string | null;
+  shopSlug?: string | null;
+  shopBio?: string | null;
+  shopLogoUrl?: string | null;
+  shopCity?: string | null;
+  shopIsPublic?: boolean;
+  commissionPercent?: number | null;
+  phone?: string | null;
+};
+
+export type SaleListing = {
+  id: string;
+  title: string;
+  brand: string;
+  model: string;
+  year: number;
+  price: number;
+  mileage?: string | null;
+  location: string;
+  fuel?: string | null;
+  transmission?: string | null;
+  type?: string | null;
+  color?: string | null;
+  description: string;
+  images: string[];
+  imageUrl?: string;
+  status: string;
+  createdAt?: string;
+  seller?: {
+    name: string;
+    phone?: string | null;
+    shopSlug?: string | null;
+  } | null;
 };
 
 export { API_URL };

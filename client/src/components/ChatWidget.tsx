@@ -11,6 +11,7 @@ const HIDDEN_PREFIXES = [
   "/contractor",
   "/dashboard",
   "/chats",
+  "/seller",
 ];
 
 export default function ChatWidget() {

@@ -20,6 +20,29 @@ export function carSlugBase(brand: string, model: string, year: number | string)
   return base || "makina";
 }
 
+/** Unique public shop slug for a contractor. */
+export async function uniqueShopSlug(
+  name: string,
+  excludeUserId?: string
+): Promise<string> {
+  const base = slugify(name) || "shop";
+  let candidate = base;
+  let n = 2;
+  for (;;) {
+    const existing = await prisma.user.findFirst({
+      where: {
+        shopSlug: candidate,
+        ...(excludeUserId ? { NOT: { id: excludeUserId } } : {}),
+      },
+      select: { id: true },
+    });
+    if (!existing) return candidate;
+    candidate = `${base}-${n}`;
+    n += 1;
+    if (n > 50) return `${base}-${Date.now().toString(36)}`;
+  }
+}
+
 /** Unique slug for create/update; excludes `excludeId` when updating. */
 export async function uniqueCarSlug(
   brand: string,

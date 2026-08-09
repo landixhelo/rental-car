@@ -9,7 +9,11 @@ import {
 import { uniqueCarSlug } from "../lib/slug.js";
 import { AppError } from "../middleware/error.js";
 import { prisma } from "../lib/prisma.js";
-import { carOwnerSelect, companyNameFromOwner } from "../lib/carOwner.js";
+import {
+  carOwnerSelect,
+  companyNameFromOwner,
+  shopSlugFromOwner,
+} from "../lib/carOwner.js";
 import {
   activeReservationSelect,
   currentReservationEnd,
@@ -73,7 +77,10 @@ router.get("/", optionalAuth, async (req, res, next) => {
       endDate,
     } = req.query as Record<string, string | undefined>;
 
-    const where: Prisma.CarWhereInput = {};
+    const where: Prisma.CarWhereInput = {
+      // Marketplace: only published rental listings on the public fleet.
+      listingStatus: "PUBLISHED",
+    };
 
     if (search) {
       where.OR = [
@@ -143,6 +150,7 @@ router.get("/", optionalAuth, async (req, res, next) => {
           reservedUntil: currentReservationEnd(car.reservations),
           pricePerDay: Number(car.pricePerDay),
           companyName: companyNameFromOwner(car.owner),
+          shopSlug: shopSlugFromOwner(car.owner),
           ratingAvg: avg,
           ratingCount: count,
           isFavorite: Array.isArray(car.favorites) && car.favorites.length > 0,
@@ -259,6 +267,19 @@ router.get("/:id", optionalAuth, validate(carPublicParamSchema), async (req, res
     });
     if (!car) throw new AppError("Car not found", 404);
 
+    const isStaff =
+      req.user &&
+      ["CONTRACTOR", "ADMIN", "SUPER_ADMIN"].includes(req.user.role);
+    const isOwner =
+      req.user && car.ownerId && req.user.id === car.ownerId;
+    if (
+      car.listingStatus !== "PUBLISHED" &&
+      !isStaff &&
+      !isOwner
+    ) {
+      throw new AppError("Car not found", 404);
+    }
+
     const count = car.reviews.length;
     const avg =
       count === 0
@@ -275,6 +296,7 @@ router.get("/:id", optionalAuth, validate(carPublicParamSchema), async (req, res
         busyRanges: toBusyRanges(car.reservations),
         pricePerDay: Number(car.pricePerDay),
         companyName: companyNameFromOwner(car.owner),
+        shopSlug: shopSlugFromOwner(car.owner),
         ratingAvg: avg,
         ratingCount: count,
         isFavorite: Array.isArray(car.favorites) && car.favorites.length > 0,

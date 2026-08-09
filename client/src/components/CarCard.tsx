@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import type { Car } from "../lib/api";
 import { mediaUrl } from "../lib/mediaUrl";
 import { carPath } from "../lib/carPath";
@@ -11,6 +11,7 @@ type Props = {
 
 export default function CarCard({ car, onToggleFavorite }: Props) {
   const t = useT();
+  const navigate = useNavigate();
 
   function statusLabel() {
     if (car.status === "RESERVED") {
@@ -36,7 +37,31 @@ export default function CarCard({ car, onToggleFavorite }: Props) {
             </h3>
             <strong className="car-price">€{car.pricePerDay}</strong>
           </div>
-          <span className="company-chip">
+          <span
+            className={`company-chip${car.shopSlug ? " is-link" : ""}`}
+            role={car.shopSlug ? "link" : undefined}
+            tabIndex={car.shopSlug ? 0 : undefined}
+            onClick={
+              car.shopSlug
+                ? (e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    navigate(`/shops/${car.shopSlug}`);
+                  }
+                : undefined
+            }
+            onKeyDown={
+              car.shopSlug
+                ? (e) => {
+                    if (e.key === "Enter" || e.key === " ") {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      navigate(`/shops/${car.shopSlug}`);
+                    }
+                  }
+                : undefined
+            }
+          >
             {car.companyName || "AutoRent"}
           </span>
           <span

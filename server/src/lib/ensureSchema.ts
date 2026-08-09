@@ -104,6 +104,116 @@ export async function ensureSchema() {
     `);
 
     await prisma.$executeRawUnsafe(`
+      DO $$ BEGIN
+        CREATE TYPE "ListingStatus" AS ENUM (
+          'DRAFT', 'PENDING_REVIEW', 'PUBLISHED', 'SUSPENDED', 'SOLD', 'ARCHIVED'
+        );
+      EXCEPTION WHEN duplicate_object THEN NULL;
+      END $$;
+    `);
+
+    await prisma.$executeRawUnsafe(`
+      ALTER TABLE "User"
+      ADD COLUMN IF NOT EXISTS "shopSlug" TEXT
+    `);
+    await prisma.$executeRawUnsafe(`
+      ALTER TABLE "User"
+      ADD COLUMN IF NOT EXISTS "shopBio" TEXT
+    `);
+    await prisma.$executeRawUnsafe(`
+      ALTER TABLE "User"
+      ADD COLUMN IF NOT EXISTS "shopLogoUrl" TEXT
+    `);
+    await prisma.$executeRawUnsafe(`
+      ALTER TABLE "User"
+      ADD COLUMN IF NOT EXISTS "shopCity" TEXT
+    `);
+    await prisma.$executeRawUnsafe(`
+      ALTER TABLE "User"
+      ADD COLUMN IF NOT EXISTS "shopIsPublic" BOOLEAN NOT NULL DEFAULT false
+    `);
+    await prisma.$executeRawUnsafe(`
+      ALTER TABLE "User"
+      ADD COLUMN IF NOT EXISTS "commissionPercent" DECIMAL(5,2)
+    `);
+    await prisma.$executeRawUnsafe(`
+      CREATE UNIQUE INDEX IF NOT EXISTS "User_shopSlug_key" ON "User"("shopSlug")
+    `);
+    await prisma.$executeRawUnsafe(`
+      CREATE INDEX IF NOT EXISTS "User_shopIsPublic_idx" ON "User"("shopIsPublic")
+    `);
+
+    await prisma.$executeRawUnsafe(`
+      ALTER TABLE "Car"
+      ADD COLUMN IF NOT EXISTS "listingStatus" "ListingStatus" NOT NULL DEFAULT 'PUBLISHED'
+    `);
+    await prisma.$executeRawUnsafe(`
+      CREATE INDEX IF NOT EXISTS "Car_listingStatus_idx" ON "Car"("listingStatus")
+    `);
+
+    await prisma.$executeRawUnsafe(`
+      ALTER TABLE "Reservation"
+      ADD COLUMN IF NOT EXISTS "platformFee" DECIMAL(10,2) NOT NULL DEFAULT 0
+    `);
+    await prisma.$executeRawUnsafe(`
+      ALTER TABLE "Reservation"
+      ADD COLUMN IF NOT EXISTS "ownerPayout" DECIMAL(10,2) NOT NULL DEFAULT 0
+    `);
+
+    await prisma.$executeRawUnsafe(`
+      CREATE TABLE IF NOT EXISTS "VehicleListing" (
+        "id" TEXT NOT NULL,
+        "sellerId" TEXT NOT NULL,
+        "title" TEXT NOT NULL,
+        "brand" TEXT NOT NULL,
+        "model" TEXT NOT NULL,
+        "year" INTEGER NOT NULL,
+        "price" DECIMAL(12,2) NOT NULL,
+        "mileage" TEXT,
+        "location" TEXT NOT NULL DEFAULT 'Tiranë',
+        "fuel" TEXT,
+        "transmission" TEXT,
+        "type" TEXT,
+        "color" TEXT,
+        "description" TEXT NOT NULL,
+        "images" JSONB NOT NULL DEFAULT '[]',
+        "status" "ListingStatus" NOT NULL DEFAULT 'PENDING_REVIEW',
+        "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+        "updatedAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+        CONSTRAINT "VehicleListing_pkey" PRIMARY KEY ("id")
+      )
+    `);
+    await prisma.$executeRawUnsafe(`
+      CREATE INDEX IF NOT EXISTS "VehicleListing_status_createdAt_idx"
+      ON "VehicleListing"("status", "createdAt")
+    `);
+    await prisma.$executeRawUnsafe(`
+      CREATE INDEX IF NOT EXISTS "VehicleListing_sellerId_idx"
+      ON "VehicleListing"("sellerId")
+    `);
+    await prisma.$executeRawUnsafe(`
+      CREATE INDEX IF NOT EXISTS "VehicleListing_location_idx"
+      ON "VehicleListing"("location")
+    `);
+    await prisma.$executeRawUnsafe(`
+      CREATE INDEX IF NOT EXISTS "VehicleListing_price_idx"
+      ON "VehicleListing"("price")
+    `);
+    await prisma.$executeRawUnsafe(`
+      DO $$
+      BEGIN
+        IF NOT EXISTS (
+          SELECT 1 FROM pg_constraint WHERE conname = 'VehicleListing_sellerId_fkey'
+        ) THEN
+          ALTER TABLE "VehicleListing"
+          ADD CONSTRAINT "VehicleListing_sellerId_fkey"
+          FOREIGN KEY ("sellerId") REFERENCES "User"("id")
+          ON DELETE CASCADE ON UPDATE CASCADE;
+        END IF;
+      END $$;
+    `);
+
+    await prisma.$executeRawUnsafe(`
       ALTER TABLE "Car"
       ADD COLUMN IF NOT EXISTS "slug" TEXT
     `);

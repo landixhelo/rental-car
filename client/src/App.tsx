@@ -23,6 +23,10 @@ import SuperAdminPage from "./pages/SuperAdminPage";
 import ContractorPage from "./pages/ContractorPage";
 import DashboardPage from "./pages/DashboardPage";
 import ChatsPage from "./pages/ChatsPage";
+import MarketplacePage from "./pages/MarketplacePage";
+import ShopPage from "./pages/ShopPage";
+import SaleDetailsPage from "./pages/SaleDetailsPage";
+import SellerHubPage from "./pages/SellerHubPage";
 import Analytics from "./components/Analytics";
 import CookieConsent from "./components/CookieConsent";
 
@@ -40,6 +44,9 @@ export default function App() {
                 <Route index element={<HomePage />} />
                 <Route path="cars" element={<CarsPage />} />
                 <Route path="cars/:id" element={<CarDetailsPage />} />
+                <Route path="marketplace" element={<MarketplacePage />} />
+                <Route path="marketplace/sales/:id" element={<SaleDetailsPage />} />
+                <Route path="shops/:slug" element={<ShopPage />} />
                 <Route path="login" element={<LoginPage />} />
                 <Route path="register" element={<RegisterPage />} />
                 <Route path="forgot-password" element={<ForgotPasswordPage />} />
@@ -84,6 +91,14 @@ export default function App() {
                   element={
                     <Protected contractor>
                       <ChatsPage />
+                    </Protected>
+                  }
+                />
+                <Route
+                  path="seller"
+                  element={
+                    <Protected>
+                      <SellerHubPage />
                     </Protected>
                   }
                 />
