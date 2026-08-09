@@ -175,6 +175,34 @@ export const api = {
       method: "PATCH",
       body: JSON.stringify(body),
     }),
+  passkeys: () =>
+    request<{
+      passkeys: Array<{ id: string; createdAt: string; transports: string[] }>;
+    }>("/api/auth/passkeys"),
+  passkeyRegisterOptions: () =>
+    request<Record<string, unknown>>("/api/auth/passkeys/register/options", {
+      method: "POST",
+    }),
+  passkeyRegisterVerify: (body: unknown) =>
+    request<{
+      verified: boolean;
+      passkeys: Array<{ id: string; createdAt: string; transports: string[] }>;
+    }>("/api/auth/passkeys/register/verify", {
+      method: "POST",
+      body: JSON.stringify(body),
+    }),
+  passkeyDelete: (id: string) =>
+    request<{ ok: boolean }>(`/api/auth/passkeys/${id}`, { method: "DELETE" }),
+  passkeyLoginOptions: (email?: string) =>
+    request<Record<string, unknown>>("/api/auth/passkeys/login/options", {
+      method: "POST",
+      body: JSON.stringify({ email: email || undefined }),
+    }),
+  passkeyLoginVerify: (body: unknown) =>
+    request<{ user: User }>("/api/auth/passkeys/login/verify", {
+      method: "POST",
+      body: JSON.stringify(body),
+    }),
   notifications: () =>
     request<{
       notifications: Array<{

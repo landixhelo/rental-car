@@ -137,6 +137,13 @@ export const en: Dict = {
     hasAccount: "Already have an account?",
     welcome: "Welcome!",
     accountCreated: "Account created!",
+    or: "or",
+    passkeyLogin: "Sign in with Face ID / Touch ID",
+    passkeyLoginHint:
+      "After enabling it in Profile, sign in quickly with biometrics on mobile.",
+    passkeyWaiting: "Waiting for Face ID…",
+    passkeyCancelled: "Authentication cancelled.",
+    passkeyFailed: "Face ID sign-in failed. Try again or use your password.",
     forgotLink: "Forgot password?",
     forgotTitle: "Reset password",
     forgotHint:
@@ -218,6 +225,14 @@ export const en: Dict = {
       "Add, edit or delete your cars and manage their reservations.",
     notifications: "Notifications",
     noNotifications: "No notifications.",
+    passkeyTitle: "Face ID / Touch ID",
+    passkeyHint:
+      "Link your phone’s Face ID or Touch ID to sign in without a password.",
+    passkeyEnable: "Enable Face ID",
+    passkeyAdded: "Face ID enabled.",
+    passkeyRemoved: "Passkey removed.",
+    passkeyNone: "No device linked yet.",
+    passkeyDevice: "Device",
   },
   dashboard: {
     title: "Dashboard",

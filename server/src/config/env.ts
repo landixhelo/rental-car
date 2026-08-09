@@ -54,6 +54,12 @@ const envSchema = z.object({
   CANCEL_FREE_HOURS: z.coerce.number().min(1).default(24),
   /** Default deposit in EUR when not overridden (0 = use 1 day rate). */
   DEFAULT_DEPOSIT_EUR: z.coerce.number().min(0).default(0),
+  /** WebAuthn RP ID, e.g. landixhelo.me (no www). */
+  WEBAUTHN_RP_ID: z.preprocess(emptyToUndef, z.string().optional()),
+  WEBAUTHN_RP_NAME: z.preprocess(
+    emptyToUndef,
+    z.string().optional().default("AutoRent")
+  ),
 });
 
 const parsed = envSchema.safeParse(process.env);

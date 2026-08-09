@@ -135,6 +135,13 @@ export const sq = {
     hasAccount: "Ke llogari?",
     welcome: "Mirësevini!",
     accountCreated: "Llogaria u krijua!",
+    or: "ose",
+    passkeyLogin: "Hyr me Face ID / Touch ID",
+    passkeyLoginHint:
+      "Pasi ta aktivizosh te Profili, hyr shpejt me biometri në celular.",
+    passkeyWaiting: "Duke pritur Face ID…",
+    passkeyCancelled: "Autentifikimi u anulua.",
+    passkeyFailed: "Hyrja me Face ID dështoi. Provo përsëri ose përdor fjalëkalimin.",
     forgotLink: "Harrova fjalëkalimin",
     forgotTitle: "Rivendos fjalëkalimin",
     forgotHint:
@@ -216,6 +223,14 @@ export const sq = {
       "Shto, edito ose fshi makinat e tua dhe menaxho rezervimet e tyre.",
     notifications: "Njoftimet",
     noNotifications: "Nuk ka njoftime.",
+    passkeyTitle: "Face ID / Touch ID",
+    passkeyHint:
+      "Lidh Face ID ose Touch ID të telefonit që të hysh pa fjalëkalim.",
+    passkeyEnable: "Aktivizo Face ID",
+    passkeyAdded: "Face ID u aktivizua.",
+    passkeyRemoved: "Passkey u hoq.",
+    passkeyNone: "Nuk ke asnjë pajisje të lidhur ende.",
+    passkeyDevice: "Pajisja",
   },
   dashboard: {
     title: "Dashboard",

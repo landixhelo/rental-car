@@ -20,6 +20,14 @@ import {
   resetPasswordSchema,
   updateProfileSchema,
 } from "../validators/schemas.js";
+import {
+  createAuthenticationOptions,
+  createRegistrationOptions,
+  deletePasskey,
+  listPasskeys,
+  verifyAndSaveRegistration,
+  verifyAuthentication,
+} from "../lib/webauthn.js";
 
 const router = Router();
 
@@ -303,5 +311,106 @@ router.patch("/notifications/read", requireAuth, async (req, res, next) => {
     next(err);
   }
 });
+
+/** WebAuthn / Face ID passkeys */
+router.get("/passkeys", requireAuth, async (req, res, next) => {
+  try {
+    const passkeys = await listPasskeys(req.user!.id);
+    res.json({ passkeys });
+  } catch (err) {
+    next(err);
+  }
+});
+
+router.post(
+  "/passkeys/register/options",
+  requireAuth,
+  async (req, res, next) => {
+    try {
+      const user = await prisma.user.findUnique({ where: { id: req.user!.id } });
+      if (!user || !user.isActive) throw new AppError("Unauthorized", 401);
+      const options = await createRegistrationOptions({
+        id: user.id,
+        email: user.email,
+        fullName: user.fullName,
+      });
+      res.json(options);
+    } catch (err) {
+      next(err);
+    }
+  }
+);
+
+router.post("/passkeys/register/verify", requireAuth, async (req, res, next) => {
+  try {
+    await verifyAndSaveRegistration(req.user!.id, req.body);
+    const passkeys = await listPasskeys(req.user!.id);
+    res.json({ verified: true, passkeys });
+  } catch (err) {
+    next(
+      err instanceof AppError
+        ? err
+        : new AppError(
+            err instanceof Error ? err.message : "Passkey registration failed",
+            400
+          )
+    );
+  }
+});
+
+router.delete("/passkeys/:id", requireAuth, async (req, res, next) => {
+  try {
+    const ok = await deletePasskey(req.user!.id, req.params.id);
+    if (!ok) throw new AppError("Passkey not found", 404);
+    res.json({ ok: true });
+  } catch (err) {
+    next(err);
+  }
+});
+
+router.post(
+  "/passkeys/login/options",
+  authAttemptLimiter,
+  async (req, res, next) => {
+    try {
+      const email =
+        typeof req.body?.email === "string" ? req.body.email : undefined;
+      const options = await createAuthenticationOptions(email);
+      res.json(options);
+    } catch (err) {
+      next(err);
+    }
+  }
+);
+
+router.post(
+  "/passkeys/login/verify",
+  authAttemptLimiter,
+  async (req, res, next) => {
+    try {
+      const user = await verifyAuthentication(req.body);
+      const token = signToken(
+        {
+          id: user.id,
+          email: user.email,
+          role: user.role,
+          fullName: user.fullName,
+        },
+        true
+      );
+      setAuthCookie(res, token, true);
+      res.json({ user: publicUser(user) });
+    } catch (err) {
+      next(
+        err instanceof AppError
+          ? err
+          : new AppError(
+              err instanceof Error ? err.message : "Passkey login failed",
+              401
+            )
+      );
+    }
+  }
+);
 
 export default router;

@@ -1755,6 +1755,49 @@ textarea { min-height: 90px; resize: vertical; }
   accent-color: var(--accent);
   cursor: pointer;
 }
+.auth-divider {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 14px 0 10px;
+  color: var(--muted);
+  font-size: 0.85rem;
+}
+.auth-divider::before,
+.auth-divider::after {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background: var(--border);
+}
+.passkey-btn {
+  width: 100%;
+}
+.passkey-hint {
+  margin: 8px 0 0;
+  font-size: 0.85rem;
+  text-align: center;
+}
+.passkey-list {
+  list-style: none;
+  margin: 16px 0 0;
+  padding: 0;
+  display: grid;
+  gap: 10px;
+}
+.passkey-list li {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 0;
+  border-top: 1px solid var(--border);
+}
+.btn.danger-text {
+  color: var(--danger) !important;
+  border-color: transparent;
+  padding: 6px 10px;
+}
 
 .reservation-list {
   display: grid;

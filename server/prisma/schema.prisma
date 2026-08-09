@@ -74,11 +74,26 @@ model User {
   favorites            Favorite[]
   notifications        Notification[]
   ownedCars            Car[]          @relation("CarOwner")
+  passkeys             Passkey[]
 
   @@index([email])
   @@index([role])
   @@index([isActive])
   @@index([passwordResetToken])
+}
+
+/** WebAuthn / Face ID / Touch ID passkey credentials */
+model Passkey {
+  id           String   @id @default(cuid())
+  userId       String
+  credentialId String   @unique
+  publicKey    Bytes
+  counter      BigInt   @default(0)
+  transports   String[] @default([])
+  createdAt    DateTime @default(now())
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
 }
 
 model Car {

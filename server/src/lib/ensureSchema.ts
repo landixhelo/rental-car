@@ -52,6 +52,44 @@ export async function ensureSchema() {
     `);
 
     await prisma.$executeRawUnsafe(`
+      ALTER TABLE "Reservation"
+      ADD COLUMN IF NOT EXISTS "cancelReason" TEXT
+    `);
+
+    await prisma.$executeRawUnsafe(`
+      CREATE TABLE IF NOT EXISTS "Passkey" (
+        "id" TEXT NOT NULL,
+        "userId" TEXT NOT NULL,
+        "credentialId" TEXT NOT NULL,
+        "publicKey" BYTEA NOT NULL,
+        "counter" BIGINT NOT NULL DEFAULT 0,
+        "transports" TEXT[] DEFAULT ARRAY[]::TEXT[],
+        "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+        CONSTRAINT "Passkey_pkey" PRIMARY KEY ("id")
+      )
+    `);
+    await prisma.$executeRawUnsafe(`
+      CREATE UNIQUE INDEX IF NOT EXISTS "Passkey_credentialId_key"
+      ON "Passkey"("credentialId")
+    `);
+    await prisma.$executeRawUnsafe(`
+      CREATE INDEX IF NOT EXISTS "Passkey_userId_idx" ON "Passkey"("userId")
+    `);
+    await prisma.$executeRawUnsafe(`
+      DO $$
+      BEGIN
+        IF NOT EXISTS (
+          SELECT 1 FROM pg_constraint WHERE conname = 'Passkey_userId_fkey'
+        ) THEN
+          ALTER TABLE "Passkey"
+          ADD CONSTRAINT "Passkey_userId_fkey"
+          FOREIGN KEY ("userId") REFERENCES "User"("id")
+          ON DELETE CASCADE ON UPDATE CASCADE;
+        END IF;
+      END $$;
+    `);
+
+    await prisma.$executeRawUnsafe(`
       DO $$
       BEGIN
         IF NOT EXISTS (
