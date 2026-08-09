@@ -9,6 +9,7 @@ import Seo from "../seo/Seo";
 import { breadcrumbJsonLd, carProductJsonLd } from "../seo/jsonLd";
 import { mediaUrl } from "../lib/mediaUrl";
 import { carPath } from "../lib/carPath";
+import { setFlash } from "../lib/flash";
 
 export default function CarDetailsPage() {
   const { id } = useParams();
@@ -127,16 +128,14 @@ export default function CarDetailsPage() {
         window.location.href = data.checkoutUrl;
         return;
       }
-      const flash =
-        data.emailSent && data.emailTo
-          ? t("details.successEmail", { email: data.emailTo })
-          : t("details.successNoEmail");
-      show(flash, 6000);
-      navigate("/reservations", {
-        state: { flash, emailSent: Boolean(data.emailSent) },
-      });
+      const message = data.emailTo
+        ? t("details.successEmailQueued", { email: data.emailTo })
+        : t("details.success");
+      setFlash({ title: t("details.confirmedTitle"), message });
+      show(message, 7000);
+      navigate("/reservations");
     } catch (err) {
-      show(err instanceof Error ? err.message : t("common.error"));
+      show(err instanceof Error ? err.message : t("common.error"), 7000);
     }
   }
 

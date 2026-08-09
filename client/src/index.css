@@ -1557,27 +1557,30 @@ th { color: var(--text-muted); font-weight: 600; }
 
 .flash-success {
   position: relative;
-  margin: 0 0 20px;
-  padding: 16px 18px 14px;
-  border-radius: 12px;
-  border: 1px solid color-mix(in srgb, var(--success-text) 35%, transparent);
+  margin: 0 0 22px;
+  padding: 18px 20px 16px;
+  border-radius: 14px;
+  border: 1px solid color-mix(in srgb, var(--success-text) 40%, transparent);
   background: var(--success-bg);
   color: var(--text);
+  box-shadow: 0 8px 24px rgba(16, 185, 129, 0.12);
+  animation: toast-in 0.3s ease both;
 }
 .flash-success strong {
   display: block;
   color: var(--success-text);
-  margin-bottom: 4px;
-  font-size: 1.05rem;
+  margin-bottom: 6px;
+  font-size: 1.15rem;
 }
 .flash-success p {
   margin: 0 2.5rem 0 0;
   color: var(--text);
+  line-height: 1.45;
 }
 .flash-success .link-btn {
   position: absolute;
-  top: 10px;
-  right: 12px;
+  top: 12px;
+  right: 14px;
   color: var(--text-muted);
 }
 .whatsapp { color: #25d366; font-weight: 600; display: inline-block; margin-top: 8px; }

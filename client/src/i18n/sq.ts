@@ -309,6 +309,8 @@ export const sq = {
     confirmedTitle: "Makina u rezervua me sukses",
     successEmail:
       "Rezervimi u konfirmua. Një email u dërgua te {email}. Kontrollo edhe Spam.",
+    successEmailQueued:
+      "Rezervimi u konfirmua. Konfirmimi me email po dërgohet te {email} (kontrollo edhe Spam).",
     successNoEmail:
       "Rezervimi u konfirmua në llogarinë tënde. Email nuk u dërgua — kontrollo Spam ose na shkruaj.",
     writeReview: "Shkruaj një vlerësim",

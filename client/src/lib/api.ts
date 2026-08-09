@@ -246,6 +246,7 @@ export const api = {
     request<{
       reservation: unknown;
       checkoutUrl?: string | null;
+      emailQueued?: boolean;
       emailSent?: boolean;
       emailTo?: string | null;
     }>("/api/reservations", {

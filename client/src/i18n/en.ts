@@ -311,6 +311,8 @@ export const en: Dict = {
     confirmedTitle: "Car reserved successfully",
     successEmail:
       "Reservation confirmed. An email was sent to {email}. Check Spam too.",
+    successEmailQueued:
+      "Reservation confirmed. A confirmation email is being sent to {email} (check Spam too).",
     successNoEmail:
       "Reservation confirmed in your account. Email was not sent — check Spam or contact us.",
     writeReview: "Write a review",

@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
-import { Link, useLocation, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { api } from "../lib/api";
+import { consumeFlash } from "../lib/flash";
 import { mediaUrl } from "../lib/mediaUrl";
 import { useAuth } from "../context/AuthContext";
 import { useT } from "../context/LocaleContext";
@@ -19,12 +20,13 @@ type Tab = "mine" | "fleet";
 export default function ReservationsPage() {
   const { user } = useAuth();
   const t = useT();
-  const location = useLocation();
-  const navigate = useNavigate();
   const [mine, setMine] = useState<any[]>([]);
   const [fleet, setFleet] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
-  const [flash, setFlash] = useState<string | null>(null);
+  const [flash, setFlashState] = useState<{
+    title: string;
+    message: string;
+  } | null>(null);
   const { show, Toast } = useToast();
 
   const isFleetManager =
@@ -63,12 +65,11 @@ export default function ReservationsPage() {
   }, [user?.id, user?.role]);
 
   useEffect(() => {
-    const state = location.state as { flash?: string } | null;
-    if (!state?.flash) return;
-    setFlash(state.flash);
-    show(state.flash, 6000);
-    navigate(".", { replace: true, state: null });
-  }, [location.state, navigate, show]);
+    const payload = consumeFlash();
+    if (!payload) return;
+    setFlashState(payload);
+    show(payload.message, 7000);
+  }, [show]);
 
   async function cancel(id: string) {
     if (!confirm(t("reservations.cancelConfirm"))) return;
@@ -163,12 +164,12 @@ export default function ReservationsPage() {
       {Toast}
       {flash ? (
         <div className="flash-success" role="status">
-          <strong>{t("details.confirmedTitle")}</strong>
-          <p>{flash}</p>
+          <strong>{flash.title}</strong>
+          <p>{flash.message}</p>
           <button
             type="button"
             className="link-btn"
-            onClick={() => setFlash(null)}
+            onClick={() => setFlashState(null)}
           >
             {t("common.close")}
           </button>

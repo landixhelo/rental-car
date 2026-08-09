@@ -312,6 +312,8 @@ export const it: Dict = {
     confirmedTitle: "Auto prenotata con successo",
     successEmail:
       "Prenotazione confermata. Email inviata a {email}. Controlla anche Spam.",
+    successEmailQueued:
+      "Prenotazione confermata. Email di conferma in invio a {email} (controlla anche Spam).",
     successNoEmail:
       "Prenotazione confermata nel tuo account. Email non inviata — controlla Spam o contattaci.",
     writeReview: "Scrivi una recensione",

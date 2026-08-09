@@ -14,6 +14,9 @@ function transporter() {
     port,
     secure: port === 465,
     requireTLS: port === 587,
+    connectionTimeout: 12_000,
+    greetingTimeout: 12_000,
+    socketTimeout: 20_000,
     auth: {
       user: env.SMTP_USER,
       pass: env.SMTP_PASS,

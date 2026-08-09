@@ -339,104 +339,8 @@ router.post(
         }
       }
 
-      // Notifications / email are best-effort (reservation already saved)
-      let emailSent = false;
+      // Respond immediately so the browser gets success even if SMTP/PDF is slow.
       const emailTo = created.user.email;
-      try {
-        const title =
-          bookingStatus === "PENDING"
-            ? "Rezervimi u krijua — prisni pagesën"
-            : "Rezervimi u konfirmua";
-        await prisma.notification.create({
-          data: {
-            userId: req.user!.id,
-            title,
-            message: `Rezervimi për ${created.car.brand} ${created.car.model} (${startDate} → ${endDate}) u ruajt. Pagesa: ${paymentMethod}.`,
-          },
-        });
-
-        if (created.car.ownerId && created.car.ownerId !== req.user!.id) {
-          await prisma.notification.create({
-            data: {
-              userId: created.car.ownerId,
-              title: "Rezervim i ri nga klienti",
-              message: `${created.user.fullName} rezervoi ${created.car.brand} ${created.car.model} (${startDate} → ${endDate}). Totali: €${Number(created.totalPrice)}.`,
-            },
-          });
-        }
-
-        const superAdmins = await prisma.user.findMany({
-          where: { role: "SUPER_ADMIN", isActive: true },
-          select: { id: true },
-        });
-        for (const admin of superAdmins) {
-          if (admin.id === req.user!.id || admin.id === created.car.ownerId) {
-            continue;
-          }
-          await prisma.notification.create({
-            data: {
-              userId: admin.id,
-              title: "Rezervim i ri",
-              message: `${created.user.fullName} rezervoi ${created.car.brand} ${created.car.model} (${startDate} → ${endDate}). Totali: €${Number(created.totalPrice)}.`,
-            },
-          });
-        }
-
-        let invoicePdf: Buffer | null = null;
-        try {
-          const extras = Array.isArray(created.extras)
-            ? (created.extras as Array<{ name?: string; price?: number }>)
-            : [];
-          invoicePdf = await buildReservationPdf({
-            id: created.id,
-            customerName: created.user.fullName,
-            customerEmail: created.user.email,
-            customerPhone: created.user.phone,
-            carLabel: `${created.car.brand} ${created.car.model} (${created.car.year})`,
-            startDate,
-            endDate,
-            totalDays: created.totalDays,
-            pickupLocation: created.pickupLocation,
-            returnLocation: created.returnLocation,
-            paymentMethod: created.paymentMethod,
-            paymentStatus: created.paymentStatus,
-            status: created.status,
-            carSubtotal: Number(created.carSubtotal),
-            extrasTotal: Number(created.extrasTotal),
-            locationFees: Number(created.locationFees),
-            totalPrice: Number(created.totalPrice),
-            depositAmount: Number(created.depositAmount || 0),
-            depositStatus: created.depositStatus,
-            extras,
-            createdAt: created.createdAt.toISOString().slice(0, 10),
-          });
-        } catch (pdfErr) {
-          console.error(
-            "[mail] invoice PDF failed — sending reservation email without attachment:",
-            pdfErr instanceof Error ? pdfErr.message : pdfErr
-          );
-        }
-
-        const mailResult = await sendReservationEmails({
-          customerEmail: created.user.email,
-          customerName: created.user.fullName,
-          carLabel: `${created.car.brand} ${created.car.model}`,
-          startDate,
-          endDate,
-          totalPrice: Number(created.totalPrice),
-          paymentMethod,
-          paymentStatus,
-          status: bookingStatus,
-          adminEmail: env.ADMIN_EMAIL || env.BUSINESS_EMAIL,
-          ownerEmail: created.car.owner?.email,
-          invoicePdf,
-          invoiceFilename: `autorent-fature-${created.id.slice(0, 8)}.pdf`,
-        });
-        emailSent = Boolean(mailResult?.sent);
-      } catch (notifyErr) {
-        console.error("Notification/email failed after reservation:", notifyErr);
-      }
-
       res.status(201).json({
         reservation: {
           ...created,
@@ -446,9 +350,109 @@ router.post(
           totalPrice: Number(created.totalPrice),
         },
         checkoutUrl,
-        emailSent,
+        emailQueued: true,
         emailTo,
       });
+
+      // Notifications / email are best-effort after the response is sent.
+      void (async () => {
+        try {
+          const title =
+            bookingStatus === "PENDING"
+              ? "Rezervimi u krijua — prisni pagesën"
+              : "Rezervimi u konfirmua";
+          await prisma.notification.create({
+            data: {
+              userId: req.user!.id,
+              title,
+              message: `Rezervimi për ${created.car.brand} ${created.car.model} (${startDate} → ${endDate}) u ruajt. Pagesa: ${paymentMethod}.`,
+            },
+          });
+
+          if (created.car.ownerId && created.car.ownerId !== req.user!.id) {
+            await prisma.notification.create({
+              data: {
+                userId: created.car.ownerId,
+                title: "Rezervim i ri nga klienti",
+                message: `${created.user.fullName} rezervoi ${created.car.brand} ${created.car.model} (${startDate} → ${endDate}). Totali: €${Number(created.totalPrice)}.`,
+              },
+            });
+          }
+
+          const superAdmins = await prisma.user.findMany({
+            where: { role: "SUPER_ADMIN", isActive: true },
+            select: { id: true },
+          });
+          for (const admin of superAdmins) {
+            if (admin.id === req.user!.id || admin.id === created.car.ownerId) {
+              continue;
+            }
+            await prisma.notification.create({
+              data: {
+                userId: admin.id,
+                title: "Rezervim i ri",
+                message: `${created.user.fullName} rezervoi ${created.car.brand} ${created.car.model} (${startDate} → ${endDate}). Totali: €${Number(created.totalPrice)}.`,
+              },
+            });
+          }
+
+          let invoicePdf: Buffer | null = null;
+          try {
+            const extras = Array.isArray(created.extras)
+              ? (created.extras as Array<{ name?: string; price?: number }>)
+              : [];
+            invoicePdf = await buildReservationPdf({
+              id: created.id,
+              customerName: created.user.fullName,
+              customerEmail: created.user.email,
+              customerPhone: created.user.phone,
+              carLabel: `${created.car.brand} ${created.car.model} (${created.car.year})`,
+              startDate,
+              endDate,
+              totalDays: created.totalDays,
+              pickupLocation: created.pickupLocation,
+              returnLocation: created.returnLocation,
+              paymentMethod: created.paymentMethod,
+              paymentStatus: created.paymentStatus,
+              status: created.status,
+              carSubtotal: Number(created.carSubtotal),
+              extrasTotal: Number(created.extrasTotal),
+              locationFees: Number(created.locationFees),
+              totalPrice: Number(created.totalPrice),
+              depositAmount: Number(created.depositAmount || 0),
+              depositStatus: created.depositStatus,
+              extras,
+              createdAt: created.createdAt.toISOString().slice(0, 10),
+            });
+          } catch (pdfErr) {
+            console.error(
+              "[mail] invoice PDF failed — sending reservation email without attachment:",
+              pdfErr instanceof Error ? pdfErr.message : pdfErr
+            );
+          }
+
+          await sendReservationEmails({
+            customerEmail: created.user.email,
+            customerName: created.user.fullName,
+            carLabel: `${created.car.brand} ${created.car.model}`,
+            startDate,
+            endDate,
+            totalPrice: Number(created.totalPrice),
+            paymentMethod,
+            paymentStatus,
+            status: bookingStatus,
+            adminEmail: env.ADMIN_EMAIL || env.BUSINESS_EMAIL,
+            ownerEmail: created.car.owner?.email,
+            invoicePdf,
+            invoiceFilename: `autorent-fature-${created.id.slice(0, 8)}.pdf`,
+          });
+        } catch (notifyErr) {
+          console.error(
+            "Notification/email failed after reservation:",
+            notifyErr
+          );
+        }
+      })();
     } catch (err) {
       next(err);
     }
