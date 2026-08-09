@@ -33,23 +33,36 @@ export async function sendMail(options: {
   attachments?: MailAttachment[];
 }) {
   if (!isMailConfigured()) {
-    console.warn("[mail] SMTP not configured — skipped:", options.subject);
+    console.warn("[mail] SMTP not configured — skipped:", options.subject, "→", options.to);
     return { sent: false as const };
   }
 
-  await transporter().sendMail({
-    from: env.SMTP_FROM || env.SMTP_USER,
-    to: options.to,
-    subject: options.subject,
-    text: options.text,
-    html: options.html || options.text.replace(/\n/g, "<br/>"),
-    attachments: options.attachments?.map((a) => ({
-      filename: a.filename,
-      content: a.content,
-      contentType: a.contentType || "application/pdf",
-    })),
-  });
-  return { sent: true as const };
+  try {
+    await transporter().sendMail({
+      from: env.SMTP_FROM || env.SMTP_USER,
+      to: options.to,
+      subject: options.subject,
+      text: options.text,
+      html: options.html || options.text.replace(/\n/g, "<br/>"),
+      attachments: options.attachments?.map((a) => ({
+        filename: a.filename,
+        content: a.content,
+        contentType: a.contentType || "application/pdf",
+      })),
+    });
+    console.info(
+      "[mail] sent:",
+      options.subject,
+      "→",
+      options.to,
+      options.attachments?.length ? `(${options.attachments.length} attachment)` : ""
+    );
+    return { sent: true as const };
+  } catch (err) {
+    const reason = err instanceof Error ? err.message : String(err);
+    console.error("[mail] failed:", options.subject, "→", options.to, reason);
+    return { sent: false as const, error: reason };
+  }
 }
 
 export async function sendReservationEmails(input: {
@@ -101,7 +114,7 @@ export async function sendReservationEmails(input: {
       ]
     : undefined;
 
-  await sendMail({
+  const customerResult = await sendMail({
     to: input.customerEmail,
     subject: `AutoRent — konfirmim rezervimi (${input.carLabel})`,
     text: `Përshëndetje ${input.customerName},\n\nRezervimi u regjistrua me sukses.\n${invoiceNote}\n${summary}\n\nPolitika e anulimit:\n${policy}\n\nNa kontakto:\n${contactLine}\n\nwww.landixhelo.me\n\nFaleminderit,\nAutoRent`,
@@ -120,4 +133,6 @@ export async function sendReservationEmails(input: {
       attachments: customerAttachments,
     });
   }
+
+  return customerResult;
 }

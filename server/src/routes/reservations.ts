@@ -380,32 +380,40 @@ router.post(
           });
         }
 
-        const extras = Array.isArray(created.extras)
-          ? (created.extras as Array<{ name?: string; price?: number }>)
-          : [];
-        const invoicePdf = await buildReservationPdf({
-          id: created.id,
-          customerName: created.user.fullName,
-          customerEmail: created.user.email,
-          customerPhone: created.user.phone,
-          carLabel: `${created.car.brand} ${created.car.model} (${created.car.year})`,
-          startDate,
-          endDate,
-          totalDays: created.totalDays,
-          pickupLocation: created.pickupLocation,
-          returnLocation: created.returnLocation,
-          paymentMethod: created.paymentMethod,
-          paymentStatus: created.paymentStatus,
-          status: created.status,
-          carSubtotal: Number(created.carSubtotal),
-          extrasTotal: Number(created.extrasTotal),
-          locationFees: Number(created.locationFees),
-          totalPrice: Number(created.totalPrice),
-          depositAmount: Number(created.depositAmount || 0),
-          depositStatus: created.depositStatus,
-          extras,
-          createdAt: created.createdAt.toISOString().slice(0, 10),
-        });
+        let invoicePdf: Buffer | null = null;
+        try {
+          const extras = Array.isArray(created.extras)
+            ? (created.extras as Array<{ name?: string; price?: number }>)
+            : [];
+          invoicePdf = await buildReservationPdf({
+            id: created.id,
+            customerName: created.user.fullName,
+            customerEmail: created.user.email,
+            customerPhone: created.user.phone,
+            carLabel: `${created.car.brand} ${created.car.model} (${created.car.year})`,
+            startDate,
+            endDate,
+            totalDays: created.totalDays,
+            pickupLocation: created.pickupLocation,
+            returnLocation: created.returnLocation,
+            paymentMethod: created.paymentMethod,
+            paymentStatus: created.paymentStatus,
+            status: created.status,
+            carSubtotal: Number(created.carSubtotal),
+            extrasTotal: Number(created.extrasTotal),
+            locationFees: Number(created.locationFees),
+            totalPrice: Number(created.totalPrice),
+            depositAmount: Number(created.depositAmount || 0),
+            depositStatus: created.depositStatus,
+            extras,
+            createdAt: created.createdAt.toISOString().slice(0, 10),
+          });
+        } catch (pdfErr) {
+          console.error(
+            "[mail] invoice PDF failed — sending reservation email without attachment:",
+            pdfErr instanceof Error ? pdfErr.message : pdfErr
+          );
+        }
 
         await sendReservationEmails({
           customerEmail: created.user.email,
@@ -417,7 +425,7 @@ router.post(
           paymentMethod,
           paymentStatus,
           status: bookingStatus,
-          adminEmail: env.ADMIN_EMAIL,
+          adminEmail: env.ADMIN_EMAIL || env.BUSINESS_EMAIL,
           ownerEmail: created.car.owner?.email,
           invoicePdf,
           invoiceFilename: `autorent-fature-${created.id.slice(0, 8)}.pdf`,
