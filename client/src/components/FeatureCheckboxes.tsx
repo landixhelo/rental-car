@@ -1,4 +1,5 @@
 import { mergeFeatureOptions } from "../lib/carFeatures";
+import { useT } from "../context/LocaleContext";
 
 type Props = {
   value: string[];
@@ -6,6 +7,7 @@ type Props = {
 };
 
 export default function FeatureCheckboxes({ value, onChange }: Props) {
+  const t = useT();
   const options = mergeFeatureOptions(value);
 
   function toggle(feature: string) {
@@ -18,7 +20,7 @@ export default function FeatureCheckboxes({ value, onChange }: Props) {
 
   return (
     <div className="feature-picker">
-      <h4 className="feature-picker-title">Pajisjet / Features</h4>
+      <h4 className="feature-picker-title">{t("carForm.features")}</h4>
       <div className="feature-picker-grid">
         {options.map((feature) => {
           const checked = value.includes(feature);

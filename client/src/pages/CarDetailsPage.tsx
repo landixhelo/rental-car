@@ -12,6 +12,7 @@ import { mediaUrl } from "../lib/mediaUrl";
 import { carPath } from "../lib/carPath";
 import { setFlash } from "../lib/flash";
 import { rangeOverlapsBusy, tiraneToday } from "../lib/dates";
+import { fuelLabel, transmissionLabel } from "../lib/labels";
 
 export default function CarDetailsPage() {
   const { id } = useParams();
@@ -345,10 +346,10 @@ export default function CarDetailsPage() {
           <label>
             {t("details.payment")}
             <select value={paymentMethod} onChange={(e) => setPaymentMethod(e.target.value)}>
-              <option value="CASH">Cash në marrje</option>
-              <option value="BANK_TRANSFER">Transfer bankar</option>
+              <option value="CASH">{t("labels.payment.CASH")}</option>
+              <option value="BANK_TRANSFER">{t("labels.payment.BANK_TRANSFER")}</option>
               {meta?.cardEnabled ? (
-                <option value="CARD">Kartë (Stripe)</option>
+                <option value="CARD">{t("labels.payment.CARD")}</option>
               ) : null}
             </select>
           </label>
@@ -388,8 +389,8 @@ export default function CarDetailsPage() {
       <div className="details-info">
         <div className="specs">
           <div><strong>{car.seats}</strong><span>{t("details.seats")}</span></div>
-          <div><strong>{car.fuel}</strong><span>{t("details.fuel")}</span></div>
-          <div><strong>{car.transmission}</strong><span>{t("details.transmission")}</span></div>
+          <div><strong>{fuelLabel(t, car.fuel)}</strong><span>{t("details.fuel")}</span></div>
+          <div><strong>{transmissionLabel(t, car.transmission)}</strong><span>{t("details.transmission")}</span></div>
           <div><strong>{car.doors}</strong><span>{t("details.doors")}</span></div>
           <div><strong>{car.luggage}</strong><span>{t("details.luggage")}</span></div>
           <div><strong>{car.horsepower || "-"}</strong><span>{t("details.hp")}</span></div>

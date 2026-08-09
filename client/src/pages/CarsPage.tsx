@@ -137,20 +137,20 @@ export default function CarsPage() {
           onChange={(e) => setFilters({ ...filters, type: e.target.value })}
         >
           <option value="all">{t("cars.type")}</option>
-          <option>SUV</option>
-          <option>Sedan</option>
-          <option>Sports</option>
-          <option>Luxury</option>
+          <option value="SUV">{t("labels.type.SUV")}</option>
+          <option value="Sedan">{t("labels.type.Sedan")}</option>
+          <option value="Sports">{t("labels.type.Sports")}</option>
+          <option value="Luxury">{t("labels.type.Luxury")}</option>
         </select>
         <select
           value={filters.fuel}
           onChange={(e) => setFilters({ ...filters, fuel: e.target.value })}
         >
           <option value="all">{t("cars.fuel")}</option>
-          <option>Petrol</option>
-          <option>Diesel</option>
-          <option>Hybrid</option>
-          <option>Electric</option>
+          <option value="Petrol">{t("labels.fuel.Petrol")}</option>
+          <option value="Diesel">{t("labels.fuel.Diesel")}</option>
+          <option value="Hybrid">{t("labels.fuel.Hybrid")}</option>
+          <option value="Electric">{t("labels.fuel.Electric")}</option>
         </select>
         <select
           value={filters.transmission}
@@ -159,8 +159,8 @@ export default function CarsPage() {
           }
         >
           <option value="all">{t("cars.transmission")}</option>
-          <option>Automatic</option>
-          <option>Manual</option>
+          <option value="Automatic">{t("labels.transmission.Automatic")}</option>
+          <option value="Manual">{t("labels.transmission.Manual")}</option>
         </select>
         <select
           value={filters.location}

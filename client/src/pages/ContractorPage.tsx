@@ -6,7 +6,9 @@ import { mediaUrl } from "../lib/mediaUrl";
 import FeatureCheckboxes from "../components/FeatureCheckboxes";
 import FleetCalendar from "../components/FleetCalendar";
 import { useAuth } from "../context/AuthContext";
+import { useT } from "../context/LocaleContext";
 import { useToast } from "../hooks/useToast";
+import { statusLabel } from "../lib/labels";
 
 const emptyCar = {
   brand: "",
@@ -30,6 +32,7 @@ const emptyCar = {
 };
 
 export default function ContractorPage() {
+  const t = useT();
   const { user } = useAuth();
   const { show, Toast } = useToast();
   const [cars, setCars] = useState<Car[]>([]);
@@ -42,7 +45,7 @@ export default function ContractorPage() {
 
   async function load() {
     const carsRes = await api.myCars().catch((e) => {
-      show(e instanceof Error ? e.message : "Gabim te makinat");
+      show(e instanceof Error ? e.message : t("contractor.loadError"));
       return { cars: [] as Car[] };
     });
     setCars(carsRes.cars);
@@ -75,7 +78,7 @@ export default function ContractorPage() {
   async function saveCar(e: FormEvent) {
     e.preventDefault();
     if (!existingImages.length && !imageFiles.length && !form.imageUrl.trim()) {
-      show("Shto të paktën një foto (upload ose URL)");
+      show(t("carForm.needPhoto"));
       return;
     }
     setSaving(true);
@@ -89,10 +92,10 @@ export default function ContractorPage() {
       setEditId(null);
       setExistingImages([]);
       setImageFiles([]);
-      show(editId ? "Makina u përditësua" : "Makina u shtua");
+      show(editId ? t("carForm.updated") : t("carForm.added"));
       await load();
     } catch (err) {
-      show(err instanceof Error ? err.message : "Error");
+      show(err instanceof Error ? err.message : t("common.error"));
     } finally {
       setSaving(false);
     }
@@ -101,50 +104,52 @@ export default function ContractorPage() {
   return (
     <div className="section">
       {Toast}
-      <h1>Paneli i Kontraktorit</h1>
+      <h1>{t("contractor.title")}</h1>
       <p className="muted">
-        Menaxho flotën tënde — {user?.companyName || user?.fullName}.
+        {t("contractor.subtitle", {
+          name: user?.companyName || user?.fullName || "",
+        })}
       </p>
       <p>
         <Link to="/profile" className="btn ghost">
-          ← Kthehu te profili
+          {t("contractor.backProfile")}
         </Link>
       </p>
 
       <div className="stats-grid">
         <div className="card">
           <h2>{stats.cars}</h2>
-          <p>Makina në flotë</p>
+          <p>{t("contractor.fleetCars")}</p>
         </div>
         <div className="card">
           <h2>{stats.available}</h2>
-          <p>Të lira</p>
+          <p>{t("contractor.free")}</p>
         </div>
         <div className="card">
           <h2>{stats.active}</h2>
-          <p>Rezervime aktive</p>
+          <p>{t("contractor.activeBookings")}</p>
         </div>
         <div className="card">
           <h2>€{stats.revenue}</h2>
-          <p>Të ardhura (konfirmuara)</p>
+          <p>{t("contractor.revenue")}</p>
         </div>
       </div>
 
       <p style={{ marginBottom: 20 }}>
         <Link to="/reservations" className="btn">
-          Shiko rezervimet e klientëve
+          {t("contractor.viewBookings")}
         </Link>
       </p>
 
       <FleetCalendar reservations={reservations} />
 
       <form className="panel" onSubmit={saveCar} style={{ marginTop: 24 }}>
-        <h2>{editId ? "Edito makinën" : "Shto makinë të re"}</h2>
+        <h2>{editId ? t("carForm.editTitle") : t("carForm.addTitle")}</h2>
         <div className="form-fields">
           <label className="field">
-            <span>Marka</span>
+            <span>{t("carForm.brand")}</span>
             <input
-              placeholder="p.sh. BMW, Mercedes"
+              placeholder={t("carForm.brandPh")}
               value={form.brand}
               onChange={(e) => setForm({ ...form, brand: e.target.value })}
               required
@@ -152,9 +157,9 @@ export default function ContractorPage() {
             />
           </label>
           <label className="field">
-            <span>Modeli</span>
+            <span>{t("carForm.model")}</span>
             <input
-              placeholder="p.sh. X5, C-Class"
+              placeholder={t("carForm.modelPh")}
               value={form.model}
               onChange={(e) => setForm({ ...form, model: e.target.value })}
               required
@@ -162,7 +167,7 @@ export default function ContractorPage() {
             />
           </label>
           <label className="field">
-            <span>Viti</span>
+            <span>{t("carForm.year")}</span>
             <input
               type="number"
               placeholder="2024"
@@ -174,7 +179,7 @@ export default function ContractorPage() {
             />
           </label>
           <label className="field">
-            <span>Çmimi / ditë (€)</span>
+            <span>{t("carForm.price")}</span>
             <input
               type="number"
               placeholder="50"
@@ -187,7 +192,7 @@ export default function ContractorPage() {
             />
           </label>
           <label className="field">
-            <span>Ndenjëse</span>
+            <span>{t("carForm.seats")}</span>
             <input
               type="number"
               placeholder="5"
@@ -198,7 +203,7 @@ export default function ContractorPage() {
             />
           </label>
           <label className="field">
-            <span>Dyer</span>
+            <span>{t("carForm.doors")}</span>
             <input
               type="number"
               placeholder="4"
@@ -209,7 +214,7 @@ export default function ContractorPage() {
             />
           </label>
           <label className="field">
-            <span>Bagazh</span>
+            <span>{t("carForm.luggage")}</span>
             <input
               type="number"
               placeholder="2"
@@ -222,82 +227,82 @@ export default function ContractorPage() {
             />
           </label>
           <label className="field">
-            <span>Kuaj fuqi (HP)</span>
+            <span>{t("carForm.hp")}</span>
             <input
-              placeholder="p.sh. 190"
+              placeholder={t("carForm.hpPh")}
               value={form.horsepower}
               onChange={(e) => setForm({ ...form, horsepower: e.target.value })}
             />
           </label>
           <label className="field">
-            <span>Ngjyra</span>
+            <span>{t("carForm.color")}</span>
             <input
-              placeholder="p.sh. e zezë, e bardhë"
+              placeholder={t("carForm.colorPh")}
               value={form.color}
               onChange={(e) => setForm({ ...form, color: e.target.value })}
             />
           </label>
           <label className="field">
-            <span>Kilometrazhi</span>
+            <span>{t("carForm.mileage")}</span>
             <input
-              placeholder="p.sh. 45.000 km"
+              placeholder={t("carForm.mileagePh")}
               value={form.mileage}
               onChange={(e) => setForm({ ...form, mileage: e.target.value })}
             />
           </label>
           <label className="field">
-            <span>Lokacioni</span>
+            <span>{t("carForm.location")}</span>
             <input
-              placeholder="p.sh. Tiranë"
+              placeholder={t("carForm.locationPh")}
               value={form.location}
               onChange={(e) => setForm({ ...form, location: e.target.value })}
             />
           </label>
           <label className="field">
-            <span>Karburanti</span>
+            <span>{t("carForm.fuel")}</span>
             <select
               value={form.fuel}
               onChange={(e) => setForm({ ...form, fuel: e.target.value })}
             >
-              <option value="Petrol">Benzinë</option>
-              <option value="Diesel">Naftë</option>
-              <option value="Hybrid">Hibrid</option>
-              <option value="Electric">Elektrike</option>
+              <option value="Petrol">{t("labels.fuel.Petrol")}</option>
+              <option value="Diesel">{t("labels.fuel.Diesel")}</option>
+              <option value="Hybrid">{t("labels.fuel.Hybrid")}</option>
+              <option value="Electric">{t("labels.fuel.Electric")}</option>
             </select>
           </label>
           <label className="field">
-            <span>Transmisioni</span>
+            <span>{t("carForm.transmission")}</span>
             <select
               value={form.transmission}
               onChange={(e) => setForm({ ...form, transmission: e.target.value })}
             >
-              <option value="Automatic">Automatik</option>
-              <option value="Manual">Manual</option>
+              <option value="Automatic">{t("labels.transmission.Automatic")}</option>
+              <option value="Manual">{t("labels.transmission.Manual")}</option>
             </select>
           </label>
           <label className="field">
-            <span>Tipi i makinës</span>
+            <span>{t("carForm.type")}</span>
             <select
               value={form.type}
               onChange={(e) => setForm({ ...form, type: e.target.value })}
             >
-              <option value="Sedan">Sedan</option>
-              <option value="SUV">SUV</option>
-              <option value="Sports">Sportive</option>
-              <option value="Luxury">Luksoze</option>
+              <option value="Sedan">{t("labels.type.Sedan")}</option>
+              <option value="SUV">{t("labels.type.SUV")}</option>
+              <option value="Sports">{t("labels.type.Sports")}</option>
+              <option value="Luxury">{t("labels.type.Luxury")}</option>
             </select>
           </label>
           <label className="field">
-            <span>Statusi</span>
+            <span>{t("carForm.status")}</span>
             <select
               value={form.status}
               onChange={(e) =>
                 setForm({ ...form, status: e.target.value as Car["status"] })
               }
             >
-              <option value="AVAILABLE">E lirë</option>
-              <option value="RESERVED">E rezervuar</option>
-              <option value="MAINTENANCE">Në mirëmbajtje</option>
+              <option value="AVAILABLE">{t("status.AVAILABLE")}</option>
+              <option value="RESERVED">{t("status.RESERVED")}</option>
+              <option value="MAINTENANCE">{t("status.MAINTENANCE")}</option>
             </select>
           </label>
         </div>
@@ -309,7 +314,7 @@ export default function ContractorPage() {
 
         <div className="image-picker">
           <label className="image-picker-label">
-            Foto (deri 8) — zgjidh nga pajisja
+            {t("carForm.photos")}
             <input
               type="file"
               accept="image/jpeg,image/png,image/webp"
@@ -321,7 +326,7 @@ export default function ContractorPage() {
           </label>
           <label className="field" style={{ display: "block", marginTop: 10 }}>
             <span style={{ fontSize: "0.82rem", fontWeight: 600, color: "var(--muted)" }}>
-              ose URL e fotos (opsionale)
+              {t("carForm.imageUrl")}
             </span>
             <input
               placeholder="https://..."
@@ -354,10 +359,10 @@ export default function ContractorPage() {
 
         <label className="field field-wide" style={{ display: "block" }}>
           <span style={{ fontSize: "0.82rem", fontWeight: 600, color: "var(--muted)" }}>
-            Përshkrimi
+            {t("carForm.description")}
           </span>
           <textarea
-            placeholder="Shkruaj një përshkrim të shkurtër për makinën"
+            placeholder={t("carForm.descriptionPh")}
             value={form.description}
             onChange={(e) => setForm({ ...form, description: e.target.value })}
             required
@@ -366,10 +371,10 @@ export default function ContractorPage() {
         <div style={{ display: "flex", gap: 10, flexWrap: "wrap" }}>
           <button className="btn" type="submit" disabled={saving}>
             {saving
-              ? "Duke ngarkuar..."
+              ? t("carForm.uploading")
               : editId
-                ? "Përditëso"
-                : "Shto makinën"}
+                ? t("carForm.update")
+                : t("carForm.add")}
           </button>
           {editId ? (
             <button
@@ -382,25 +387,25 @@ export default function ContractorPage() {
                 setImageFiles([]);
               }}
             >
-              Anulo editimin
+              {t("carForm.cancelEdit")}
             </button>
           ) : null}
         </div>
       </form>
 
       <div className="panel">
-        <h2>Flota ime</h2>
+        <h2>{t("contractor.myFleet")}</h2>
         {!cars.length && (
-          <p className="muted">Nuk ke makina ende. Shto të parën më sipër.</p>
+          <p className="muted">{t("contractor.empty")}</p>
         )}
         <div className="table-wrap">
           <table>
             <thead>
               <tr>
-                <th>Makina</th>
-                <th>Çmimi</th>
-                <th>Status</th>
-                <th>Rezervime</th>
+                <th>{t("admin.cars")}</th>
+                <th>{t("admin.price")}</th>
+                <th>{t("carForm.status")}</th>
+                <th>{t("contractor.bookingsCol")}</th>
                 <th></th>
               </tr>
             </thead>
@@ -410,8 +415,8 @@ export default function ContractorPage() {
                   <td>
                     {c.brand} {c.model} ({c.year})
                   </td>
-                  <td>€{c.pricePerDay}/ditë</td>
-                  <td>{c.status}</td>
+                  <td>€{c.pricePerDay}{t("common.perDay")}</td>
+                  <td>{statusLabel(t, c.status)}</td>
                   <td>{(c as any).reservationsCount ?? "-"}</td>
                   <td>
                     <button
@@ -436,23 +441,23 @@ export default function ContractorPage() {
                         window.scrollTo({ top: 0, behavior: "smooth" });
                       }}
                     >
-                      Edit
+                      {t("common.edit")}
                     </button>
                     <button
                       className="btn danger"
                       type="button"
                       onClick={async () => {
-                        if (!confirm(`Fshi ${c.brand} ${c.model}?`)) return;
+                        if (!confirm(t("carForm.confirmDelete"))) return;
                         try {
                           await api.deleteCar(c.id);
-                          show("Makina u fshi");
+                          show(t("carForm.deleted"));
                           await load();
                         } catch (err) {
-                          show(err instanceof Error ? err.message : "Error");
+                          show(err instanceof Error ? err.message : t("common.error"));
                         }
                       }}
                     >
-                      Fshi
+                      {t("common.delete")}
                     </button>
                   </td>
                 </tr>

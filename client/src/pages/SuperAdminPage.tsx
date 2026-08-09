@@ -1,6 +1,8 @@
 import { type FormEvent, useEffect, useState } from "react";
 import { api, type Account } from "../lib/api";
+import { useT } from "../context/LocaleContext";
 import { useToast } from "../hooks/useToast";
+import { roleLabel, statusLabel } from "../lib/labels";
 
 type Filter = "all" | "clients" | "contractors" | "admins";
 
@@ -15,6 +17,7 @@ const emptyForm = {
 };
 
 export default function SuperAdminPage() {
+  const t = useT();
   const { show, Toast } = useToast();
   const [overview, setOverview] = useState<Record<string, number> | null>(null);
   const [filter, setFilter] = useState<Filter>("all");
@@ -50,14 +53,14 @@ export default function SuperAdminPage() {
         cars: res.cars,
       });
     } catch (e) {
-      show(e instanceof Error ? e.message : "Error");
+      show(e instanceof Error ? e.message : t("common.error"));
     }
   }
 
   async function createAccount(e: FormEvent) {
     e.preventDefault();
     if (form.role === "CONTRACTOR" && !form.companyName.trim()) {
-      show("Për kontraktorin, emri i kompanisë është i detyrueshëm");
+      show(t("superAdmin.companyRequiredToast"));
       return;
     }
     try {
@@ -70,13 +73,13 @@ export default function SuperAdminPage() {
       setForm(emptyForm);
       show(
         form.role === "CONTRACTOR"
-          ? "Kontraktori u krijua"
-          : "Llogaria u krijua"
+          ? t("superAdmin.contractorCreated")
+          : t("superAdmin.accountCreated")
       );
       setFilter(form.role === "CONTRACTOR" ? "contractors" : filter);
       await load();
     } catch (err) {
-      show(err instanceof Error ? err.message : "Error");
+      show(err instanceof Error ? err.message : t("common.error"));
     }
   }
 
@@ -88,32 +91,28 @@ export default function SuperAdminPage() {
   return (
     <div className="section">
       {Toast}
-      <h1>Super Admin Panel</h1>
-      <p className="muted">
-        Kontroll i plotë mbi klientët, kontraktorët dhe adminët e platformës.
-      </p>
+      <h1>{t("superAdmin.title")}</h1>
+      <p className="muted">{t("superAdmin.subtitle")}</p>
 
       {overview && (
         <div className="stats-grid">
-          <div className="card"><h2>{overview.clients}</h2><p>Klientë</p></div>
-          <div className="card"><h2>{overview.contractors}</h2><p>Kontraktorë</p></div>
-          <div className="card"><h2>{overview.admins}</h2><p>Adminë</p></div>
-          <div className="card"><h2>{overview.activeUsers}</h2><p>Aktivë</p></div>
-          <div className="card"><h2>{overview.inactiveUsers}</h2><p>Pezulluar</p></div>
-          <div className="card"><h2>€{overview.revenue}</h2><p>Të ardhura</p></div>
+          <div className="card"><h2>{overview.clients}</h2><p>{t("superAdmin.clients")}</p></div>
+          <div className="card"><h2>{overview.contractors}</h2><p>{t("superAdmin.contractors")}</p></div>
+          <div className="card"><h2>{overview.admins}</h2><p>{t("superAdmin.admins")}</p></div>
+          <div className="card"><h2>{overview.activeUsers}</h2><p>{t("superAdmin.active")}</p></div>
+          <div className="card"><h2>{overview.inactiveUsers}</h2><p>{t("superAdmin.suspended")}</p></div>
+          <div className="card"><h2>€{overview.revenue}</h2><p>{t("superAdmin.revenue")}</p></div>
         </div>
       )}
 
       <form className="panel" onSubmit={createAccount}>
-        <h2>Krijo llogari (klient / kontraktor / admin)</h2>
+        <h2>{t("superAdmin.createTitle")}</h2>
         <p className="muted" style={{ marginTop: 0 }}>
-          Për kontraktor: zgjidh rolin <strong>Kontraktor</strong> dhe plotëso
-          emrin e kompanisë. Password: min. 10 karaktere, shkronjë e madhe/e vogël,
-          numër dhe simbol (p.sh. <code>Contractor@123</code>).
+          {t("superAdmin.createHint")}
         </p>
         <div className="filters">
           <input
-            placeholder="Emri"
+            placeholder={t("admin.name")}
             value={form.fullName}
             onChange={(e) => setForm({ ...form, fullName: e.target.value })}
             required
@@ -127,18 +126,18 @@ export default function SuperAdminPage() {
           />
           <input
             type="password"
-            placeholder="Password"
+            placeholder={t("superAdmin.password")}
             value={form.password}
             onChange={(e) => setForm({ ...form, password: e.target.value })}
             required
           />
           <input
-            placeholder="Telefon"
+            placeholder={t("auth.phone")}
             value={form.phone}
             onChange={(e) => setForm({ ...form, phone: e.target.value })}
           />
           <input
-            placeholder="Kompania (e detyrueshme për kontraktor)"
+            placeholder={t("superAdmin.companyRequired")}
             value={form.companyName}
             onChange={(e) => setForm({ ...form, companyName: e.target.value })}
             required={form.role === "CONTRACTOR"}
@@ -149,19 +148,21 @@ export default function SuperAdminPage() {
               setForm({ ...form, role: e.target.value as typeof form.role })
             }
           >
-            <option value="USER">Klient</option>
-            <option value="CONTRACTOR">Kontraktor</option>
-            <option value="ADMIN">Admin</option>
+            <option value="USER">{t("roles.USER")}</option>
+            <option value="CONTRACTOR">{t("roles.CONTRACTOR")}</option>
+            <option value="ADMIN">{t("roles.ADMIN")}</option>
           </select>
         </div>
         <textarea
-          placeholder="Shënime interne"
+          placeholder={t("superAdmin.notes")}
           value={form.notes}
           onChange={(e) => setForm({ ...form, notes: e.target.value })}
         />
         <div style={{ display: "flex", gap: 10, flexWrap: "wrap" }}>
           <button className="btn" type="submit">
-            {form.role === "CONTRACTOR" ? "Shto kontraktor" : "Krijo llogari"}
+            {form.role === "CONTRACTOR"
+              ? t("superAdmin.addContractor")
+              : t("superAdmin.createAccount")}
           </button>
           <button
             type="button"
@@ -174,32 +175,32 @@ export default function SuperAdminPage() {
               })
             }
           >
-            Formë për kontraktor
+            {t("superAdmin.contractorForm")}
           </button>
         </div>
       </form>
 
       <div className="panel">
         <div className="row-between" style={{ marginBottom: 12 }}>
-          <h2>Llogaritë</h2>
+          <h2>{t("superAdmin.accounts")}</h2>
           <div className="filters" style={{ margin: 0, flex: 1, maxWidth: 520 }}>
             <select
               value={filter}
               onChange={(e) => setFilter(e.target.value as Filter)}
             >
-              <option value="all">Të gjitha</option>
-              <option value="clients">Klientë</option>
-              <option value="contractors">Kontraktorë</option>
-              <option value="admins">Adminë</option>
+              <option value="all">{t("common.all")}</option>
+              <option value="clients">{t("superAdmin.clients")}</option>
+              <option value="contractors">{t("superAdmin.contractors")}</option>
+              <option value="admins">{t("superAdmin.admins")}</option>
             </select>
             <form onSubmit={search} style={{ display: "contents" }}>
               <input
-                placeholder="Kërko emër/email/kompani"
+                placeholder={t("superAdmin.searchPh")}
                 value={q}
                 onChange={(e) => setQ(e.target.value)}
               />
               <button className="btn" type="submit">
-                Kërko
+                {t("superAdmin.search")}
               </button>
             </form>
           </div>
@@ -209,13 +210,13 @@ export default function SuperAdminPage() {
           <table>
             <thead>
               <tr>
-                <th>Emri</th>
-                <th>Roli</th>
-                <th>Kompania</th>
-                <th>Status</th>
-                <th>Rezervime</th>
-                <th>Makina</th>
-                <th>Veprime</th>
+                <th>{t("admin.name")}</th>
+                <th>{t("admin.role")}</th>
+                <th>{t("superAdmin.company")}</th>
+                <th>{t("carForm.status")}</th>
+                <th>{t("admin.reservations")}</th>
+                <th>{t("admin.cars")}</th>
+                <th>{t("superAdmin.actions")}</th>
               </tr>
             </thead>
             <tbody>
@@ -225,18 +226,20 @@ export default function SuperAdminPage() {
                     <strong>{a.fullName}</strong>
                     <div className="muted">{a.email}</div>
                   </td>
-                  <td>{a.role}</td>
+                  <td>{roleLabel(t, a.role)}</td>
                   <td>{a.companyName || "-"}</td>
                   <td>
                     <span className={`badge ${a.isActive ? "" : "badge-off"}`}>
-                      {a.isActive ? "Aktiv" : "Pezulluar"}
+                      {a.isActive
+                        ? t("superAdmin.activeBadge")
+                        : t("superAdmin.suspendedBadge")}
                     </span>
                   </td>
                   <td>{a.reservationsCount || 0}</td>
                   <td>{a.carsCount || 0}</td>
                   <td>
                     <button className="btn ghost" onClick={() => openAccount(a.id)}>
-                      Hap
+                      {t("superAdmin.open")}
                     </button>
                     {a.role !== "SUPER_ADMIN" && (
                       <>
@@ -248,19 +251,21 @@ export default function SuperAdminPage() {
                             if (selected?.id === a.id) await openAccount(a.id);
                           }}
                         >
-                          {a.isActive ? "Pezullo" : "Aktivizo"}
+                          {a.isActive
+                            ? t("superAdmin.suspend")
+                            : t("superAdmin.activate")}
                         </button>
                         <button
                           className="btn danger"
                           onClick={async () => {
-                            if (!confirm("Fshi llogarinë?")) return;
+                            if (!confirm(t("superAdmin.confirmDelete"))) return;
                             await api.deleteAccount(a.id);
                             setSelected(null);
                             setDetails(null);
                             await load();
                           }}
                         >
-                          Fshi
+                          {t("common.delete")}
                         </button>
                       </>
                     )}
@@ -275,11 +280,12 @@ export default function SuperAdminPage() {
       {selected && details && (
         <div className="panel">
           <h2>
-            Ndërhyrje: {selected.fullName} ({selected.role})
+            {t("superAdmin.intervene")}: {selected.fullName} (
+            {roleLabel(t, selected.role)})
           </h2>
           <p className="muted">
-            {selected.email} · {selected.phone || "pa telefon"} ·{" "}
-            {selected.companyName || "pa kompani"}
+            {selected.email} · {selected.phone || t("superAdmin.noPhone")} ·{" "}
+            {selected.companyName || t("superAdmin.noCompany")}
           </p>
 
           <div className="filters">
@@ -293,24 +299,24 @@ export default function SuperAdminPage() {
                 await load();
               }}
             >
-              <option value="USER">Klient</option>
-              <option value="CONTRACTOR">Kontraktor</option>
-              <option value="ADMIN">Admin</option>
+              <option value="USER">{t("roles.USER")}</option>
+              <option value="CONTRACTOR">{t("roles.CONTRACTOR")}</option>
+              <option value="ADMIN">{t("roles.ADMIN")}</option>
             </select>
             <input
-              placeholder="Ndrysho fjalëkalimin"
+              placeholder={t("superAdmin.changePassword")}
               type="password"
               onBlur={async (e) => {
                 if (!e.target.value) return;
                 await api.updateAccount(selected.id, { password: e.target.value });
                 e.target.value = "";
-                show("Fjalëkalimi u ndryshua");
+                show(t("superAdmin.passwordChanged"));
               }}
             />
           </div>
 
           <textarea
-            placeholder="Shënime interne"
+            placeholder={t("superAdmin.notes")}
             defaultValue={selected.notes || ""}
             onBlur={async (e) => {
               const res = await api.updateAccount(selected.id, {
@@ -325,29 +331,31 @@ export default function SuperAdminPage() {
               e.preventDefault();
               await api.notifyAccount(selected.id, notify);
               setNotify({ title: "", message: "" });
-              show("Njoftimi u dërgua");
+              show(t("superAdmin.notifySent"));
             }}
           >
-            <h3>Dërgo njoftim</h3>
+            <h3>{t("superAdmin.notify")}</h3>
             <input
-              placeholder="Titulli"
+              placeholder={t("superAdmin.notifyTitle")}
               value={notify.title}
               onChange={(e) => setNotify({ ...notify, title: e.target.value })}
               required
             />
             <textarea
-              placeholder="Mesazhi"
+              placeholder={t("superAdmin.notifyMessage")}
               value={notify.message}
               onChange={(e) => setNotify({ ...notify, message: e.target.value })}
               required
             />
             <button className="btn" type="submit">
-              Dërgo
+              {t("common.send")}
             </button>
           </form>
 
-          <h3 style={{ marginTop: 20 }}>Rezervimet e fundit</h3>
-          {!details.reservations.length && <p className="muted">Asnjë rezervim</p>}
+          <h3 style={{ marginTop: 20 }}>{t("superAdmin.recentBookings")}</h3>
+          {!details.reservations.length && (
+            <p className="muted">{t("superAdmin.noBookings")}</p>
+          )}
           {details.reservations.map((r) => (
             <div key={r.id} className="review-item">
               <strong>
@@ -355,20 +363,23 @@ export default function SuperAdminPage() {
               </strong>
               <p>
                 {String(r.startDate).slice(0, 10)} → {String(r.endDate).slice(0, 10)} ·{" "}
-                {r.status}
+                {statusLabel(t, r.status)}
               </p>
             </div>
           ))}
 
-          <h3 style={{ marginTop: 20 }}>Makinat e kontraktorit</h3>
-          {!details.cars.length && <p className="muted">Asnjë makinë</p>}
+          <h3 style={{ marginTop: 20 }}>{t("superAdmin.contractorCars")}</h3>
+          {!details.cars.length && (
+            <p className="muted">{t("superAdmin.noCars")}</p>
+          )}
           {details.cars.map((c) => (
             <div key={c.id} className="review-item">
               <strong>
                 {c.brand} {c.model}
               </strong>
               <p>
-                €{c.pricePerDay}/ditë · {c.status}
+                €{c.pricePerDay}
+                {t("common.perDay")} · {statusLabel(t, c.status)}
               </p>
             </div>
           ))}

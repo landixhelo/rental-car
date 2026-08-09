@@ -49,7 +49,7 @@ export default function Breadcrumbs({ items }: { items: Crumb[] }) {
   const crumbs: Crumb[] = [{ label: t("nav.home"), to: "/" }, ...items];
 
   return (
-    <nav className="breadcrumbs" aria-label="Breadcrumb">
+    <nav className="breadcrumbs" aria-label="Breadcrumbs">
       <ol className="breadcrumbs-list">
         {crumbs.map((crumb, i) => {
           const last = i === crumbs.length - 1;

@@ -1,27 +1,27 @@
-/** Shared car feature checklist for Admin / Contractor forms. */
+/** Shared car feature checklist for Admin / Contractor forms (Albanian UI). */
 export const CAR_FEATURE_OPTIONS = [
   "Klimë automatike",
-  "AC",
+  "Ajër i kondicionuar",
   "Navigacion GPS",
   "Bluetooth",
   "Apple CarPlay",
   "Android Auto",
   "Kamera parkimi",
   "Sensorë parkimi",
-  "Park Assist",
-  "Blindspot",
+  "Ndihmës parkimi",
+  "Sensor këndi i verbër",
   "Ngrohje sediljesh",
   "Sedilje lëkure",
-  "Cruise control",
-  "Keyless entry",
-  "LED lights",
+  "Kontroll cruise",
+  "Hyrje pa çelës",
+  "Drita LED",
   "Sensor shiu",
   "Start/Stop",
   "ISOFIX",
-  "Panoramic roof",
+  "Çati panoramike",
   "4x4",
   "Virtual Cockpit",
-  "Sound System Bose",
+  "Sistem audio Bose",
 ] as const;
 
 export function mergeFeatureOptions(selected: string[]): string[] {

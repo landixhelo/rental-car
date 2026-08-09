@@ -109,7 +109,7 @@ async function request<T>(
 /** Hide secrets / opaque "AI password" strings from toasts. */
 function publicErrorMessage(raw: string | undefined, status: number): string {
   const msg = (raw || "").trim();
-  if (!msg) return `Request failed (${status})`;
+  if (!msg) return `Kërkesa dështoi (${status})`;
   if (
     /sk_live_|sk_test_|whsec_|postgres(ql)?:\/\//i.test(msg) ||
     /Invalid API Key|API key/i.test(msg) ||

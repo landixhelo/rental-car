@@ -9,6 +9,7 @@ import { mediaUrl } from "../lib/mediaUrl";
 import { useAuth } from "../context/AuthContext";
 import { useT } from "../context/LocaleContext";
 import { useToast } from "../hooks/useToast";
+import { paymentLabel } from "../lib/labels";
 
 const STATUSES = [
   "PENDING",
@@ -423,7 +424,7 @@ export default function ReservationsPage() {
                   <div>
                     <dt>{t("details.payment")}</dt>
                     <dd>
-                      {r.paymentMethod} · {r.paymentStatus}
+                      {paymentLabel(t, r.paymentMethod)} · {r.paymentStatus}
                     </dd>
                   </div>
                   <div>

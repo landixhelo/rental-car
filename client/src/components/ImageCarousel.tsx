@@ -62,7 +62,7 @@ export default function ImageCarousel({ images, alt, className = "" }: Props) {
             type="button"
             className="carousel-nav prev"
             onClick={prev}
-            aria-label="Previous"
+            aria-label={t("labels.prev")}
           >
             ‹
           </button>
@@ -70,7 +70,7 @@ export default function ImageCarousel({ images, alt, className = "" }: Props) {
             type="button"
             className="carousel-nav next"
             onClick={next}
-            aria-label="Next"
+            aria-label={t("labels.next")}
           >
             ›
           </button>

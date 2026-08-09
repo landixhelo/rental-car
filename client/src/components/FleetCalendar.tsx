@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react";
-import { useT } from "../context/LocaleContext";
+import { useLocale, useT } from "../context/LocaleContext";
 import { formatDay, monthMatrix, tiraneToday } from "../lib/dates";
 
 type ResItem = {
@@ -25,6 +25,7 @@ export default function FleetCalendar({
   reservations: ResItem[];
 }) {
   const t = useT();
+  const { locale } = useLocale();
   const today = tiraneToday();
   const now = new Date(`${today}T12:00:00`);
   const [cursor, setCursor] = useState({
@@ -41,7 +42,17 @@ export default function FleetCalendar({
     ["PENDING", "CONFIRMED"].includes(r.status)
   );
 
-  const title = new Intl.DateTimeFormat(undefined, {
+  const intlLocale =
+    locale === "sq" ? "sq-AL" : locale === "it" ? "it-IT" : "en-GB";
+  const weekdayLabels = useMemo(() => {
+    const fmt = new Intl.DateTimeFormat(intlLocale, { weekday: "short" });
+    return Array.from({ length: 7 }, (_, i) => {
+      const d = new Date(Date.UTC(2024, 0, 1 + i));
+      return fmt.format(d);
+    });
+  }, [intlLocale]);
+
+  const title = new Intl.DateTimeFormat(intlLocale, {
     month: "long",
     year: "numeric",
   }).format(new Date(cursor.y, cursor.m, 1));
@@ -79,7 +90,7 @@ export default function FleetCalendar({
         </div>
       </div>
       <div className="calendar-grid calendar-head">
-        {["Mo", "Tu", "We", "Th", "Fr", "Sa", "Su"].map((d) => (
+        {weekdayLabels.map((d) => (
           <div key={d}>{d}</div>
         ))}
       </div>
