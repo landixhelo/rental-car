@@ -123,12 +123,18 @@ export default function CarDetailsPage() {
 
       const data = await api.createReservation(fd);
       if (data.checkoutUrl) {
-        show(t("reservations.payRedirect"));
+        show(t("reservations.payRedirect"), 5000);
         window.location.href = data.checkoutUrl;
         return;
       }
-      show(t("details.success"));
-      navigate("/reservations");
+      const flash =
+        data.emailSent && data.emailTo
+          ? t("details.successEmail", { email: data.emailTo })
+          : t("details.successNoEmail");
+      show(flash, 6000);
+      navigate("/reservations", {
+        state: { flash, emailSent: Boolean(data.emailSent) },
+      });
     } catch (err) {
       show(err instanceof Error ? err.message : t("common.error"));
     }

@@ -13,6 +13,7 @@ export const en: Dict = {
     all: "All",
     send: "Send",
     requiredLogin: "Please sign in",
+    close: "Close",
   },
   nav: {
     home: "Home",
@@ -307,6 +308,11 @@ export const en: Dict = {
     until: "until",
     conflict: "Selected dates overlap an existing reservation.",
     success: "Reservation created!",
+    confirmedTitle: "Car reserved successfully",
+    successEmail:
+      "Reservation confirmed. An email was sent to {email}. Check Spam too.",
+    successNoEmail:
+      "Reservation confirmed in your account. Email was not sent — check Spam or contact us.",
     writeReview: "Write a review",
     yourRating: "Your rating",
     comment: "Comment",

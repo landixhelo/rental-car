@@ -8,10 +8,12 @@ export function isMailConfigured() {
 }
 
 function transporter() {
+  const port = env.SMTP_PORT;
   return nodemailer.createTransport({
     host: env.SMTP_HOST,
-    port: env.SMTP_PORT,
-    secure: env.SMTP_PORT === 465,
+    port,
+    secure: port === 465,
+    requireTLS: port === 587,
     auth: {
       user: env.SMTP_USER,
       pass: env.SMTP_PASS,
@@ -98,9 +100,9 @@ export async function sendReservationEmails(input: {
     .filter(Boolean)
     .join("\n");
 
-  const invoiceNote = input.invoicePdf
-    ? "\nFatura e rezervimit është bashkangjitur si PDF.\n"
-    : "";
+  const baseText = `Përshëndetje ${input.customerName},\n\nRezervimi u regjistrua me sukses.\n`;
+  const tail = `\n${summary}\n\nPolitika e anulimit:\n${policy}\n\nNa kontakto:\n${contactLine}\n\nwww.landixhelo.me\n\nFaleminderit,\nAutoRent`;
+  const subject = `AutoRent — konfirmim rezervimi (${input.carLabel})`;
 
   const customerAttachments: MailAttachment[] | undefined = input.invoicePdf
     ? [
@@ -114,24 +116,43 @@ export async function sendReservationEmails(input: {
       ]
     : undefined;
 
-  const customerResult = await sendMail({
+  let customerResult = await sendMail({
     to: input.customerEmail,
-    subject: `AutoRent — konfirmim rezervimi (${input.carLabel})`,
-    text: `Përshëndetje ${input.customerName},\n\nRezervimi u regjistrua me sukses.\n${invoiceNote}\n${summary}\n\nPolitika e anulimit:\n${policy}\n\nNa kontakto:\n${contactLine}\n\nwww.landixhelo.me\n\nFaleminderit,\nAutoRent`,
+    subject,
+    text: `${baseText}${
+      customerAttachments ? "\nFatura e rezervimit është bashkangjitur si PDF.\n" : ""
+    }${tail}`,
     attachments: customerAttachments,
   });
+
+  // Attachment or size issues: retry plain email so customer still gets confirmation.
+  if (!customerResult.sent && customerAttachments) {
+    console.warn("[mail] retrying customer email without PDF attachment");
+    customerResult = await sendMail({
+      to: input.customerEmail,
+      subject,
+      text: `${baseText}${tail}`,
+    });
+  }
 
   const staff = [input.adminEmail, input.ownerEmail].filter(
     (e): e is string => Boolean(e)
   );
   for (const to of Array.from(new Set(staff))) {
     if (to === input.customerEmail) continue;
-    await sendMail({
+    const staffResult = await sendMail({
       to,
       subject: `Rezervim i ri — ${input.carLabel}`,
       text: `Rezervim i ri nga ${input.customerName} (${input.customerEmail}).\n\n${summary}`,
       attachments: customerAttachments,
     });
+    if (!staffResult.sent && customerAttachments) {
+      await sendMail({
+        to,
+        subject: `Rezervim i ri — ${input.carLabel}`,
+        text: `Rezervim i ri nga ${input.customerName} (${input.customerEmail}).\n\n${summary}`,
+      });
+    }
   }
 
   return customerResult;

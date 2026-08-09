@@ -340,6 +340,8 @@ router.post(
       }
 
       // Notifications / email are best-effort (reservation already saved)
+      let emailSent = false;
+      const emailTo = created.user.email;
       try {
         const title =
           bookingStatus === "PENDING"
@@ -415,7 +417,7 @@ router.post(
           );
         }
 
-        await sendReservationEmails({
+        const mailResult = await sendReservationEmails({
           customerEmail: created.user.email,
           customerName: created.user.fullName,
           carLabel: `${created.car.brand} ${created.car.model}`,
@@ -430,6 +432,7 @@ router.post(
           invoicePdf,
           invoiceFilename: `autorent-fature-${created.id.slice(0, 8)}.pdf`,
         });
+        emailSent = Boolean(mailResult?.sent);
       } catch (notifyErr) {
         console.error("Notification/email failed after reservation:", notifyErr);
       }
@@ -443,6 +446,8 @@ router.post(
           totalPrice: Number(created.totalPrice),
         },
         checkoutUrl,
+        emailSent,
+        emailTo,
       });
     } catch (err) {
       next(err);

@@ -243,13 +243,15 @@ export const api = {
     request<{ message: string }>(`/api/cars/${id}`, { method: "DELETE" }),
 
   createReservation: (formData: FormData) =>
-    request<{ reservation: unknown; checkoutUrl?: string | null }>(
-      "/api/reservations",
-      {
-        method: "POST",
-        body: formData,
-      }
-    ),
+    request<{
+      reservation: unknown;
+      checkoutUrl?: string | null;
+      emailSent?: boolean;
+      emailTo?: string | null;
+    }>("/api/reservations", {
+      method: "POST",
+      body: formData,
+    }),
   myReservations: () =>
     request<{ reservations: any[] }>("/api/reservations/mine"),
   fleetReservations: () =>

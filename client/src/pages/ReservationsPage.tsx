@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { api } from "../lib/api";
 import { mediaUrl } from "../lib/mediaUrl";
 import { useAuth } from "../context/AuthContext";
@@ -19,9 +19,12 @@ type Tab = "mine" | "fleet";
 export default function ReservationsPage() {
   const { user } = useAuth();
   const t = useT();
+  const location = useLocation();
+  const navigate = useNavigate();
   const [mine, setMine] = useState<any[]>([]);
   const [fleet, setFleet] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [flash, setFlash] = useState<string | null>(null);
   const { show, Toast } = useToast();
 
   const isFleetManager =
@@ -58,6 +61,14 @@ export default function ReservationsPage() {
     setTab("mine");
     load().catch((e) => show(e.message));
   }, [user?.id, user?.role]);
+
+  useEffect(() => {
+    const state = location.state as { flash?: string } | null;
+    if (!state?.flash) return;
+    setFlash(state.flash);
+    show(state.flash, 6000);
+    navigate(".", { replace: true, state: null });
+  }, [location.state, navigate, show]);
 
   async function cancel(id: string) {
     if (!confirm(t("reservations.cancelConfirm"))) return;
@@ -150,6 +161,19 @@ export default function ReservationsPage() {
   return (
     <div className="section">
       {Toast}
+      {flash ? (
+        <div className="flash-success" role="status">
+          <strong>{t("details.confirmedTitle")}</strong>
+          <p>{flash}</p>
+          <button
+            type="button"
+            className="link-btn"
+            onClick={() => setFlash(null)}
+          >
+            {t("common.close")}
+          </button>
+        </div>
+      ) : null}
       <div className="row-between" style={{ alignItems: "center", gap: 12 }}>
         <h1 style={{ marginBottom: 0 }}>
           {tab === "fleet" ? t("reservations.fleet") : t("reservations.mine")}

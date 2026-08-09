@@ -2,6 +2,7 @@ import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 import { AuthProvider } from "./context/AuthContext";
 import { ThemeProvider } from "./context/ThemeContext";
 import { LocaleProvider } from "./context/LocaleContext";
+import { ToastProvider } from "./context/ToastContext";
 import Layout from "./components/Layout";
 import { Protected } from "./components/Protected";
 import HomePage from "./pages/HomePage";
@@ -29,6 +30,7 @@ export default function App() {
       <LocaleProvider>
         <AuthProvider>
           <BrowserRouter>
+            <ToastProvider>
             <Analytics />
             <Routes>
               <Route element={<Layout />}>
@@ -101,6 +103,7 @@ export default function App() {
                 <Route path="*" element={<Navigate to="/" replace />} />
               </Route>
             </Routes>
+            </ToastProvider>
           </BrowserRouter>
         </AuthProvider>
       </LocaleProvider>

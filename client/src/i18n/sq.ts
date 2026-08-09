@@ -11,6 +11,7 @@ export const sq = {
     all: "Të gjitha",
     send: "Dërgo",
     requiredLogin: "Duhet të identifikoheni",
+    close: "Mbyll",
   },
   nav: {
     home: "Kryefaqja",
@@ -305,6 +306,11 @@ export const sq = {
     until: "deri",
     conflict: "Datat e zgjedhura përputhen me një rezervim ekzistues.",
     success: "Rezervimi u krijua!",
+    confirmedTitle: "Makina u rezervua me sukses",
+    successEmail:
+      "Rezervimi u konfirmua. Një email u dërgua te {email}. Kontrollo edhe Spam.",
+    successNoEmail:
+      "Rezervimi u konfirmua në llogarinë tënde. Email nuk u dërgua — kontrollo Spam ose na shkruaj.",
     writeReview: "Shkruaj një vlerësim",
     yourRating: "Vlerësimi yt",
     comment: "Komenti",
