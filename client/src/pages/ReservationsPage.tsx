@@ -217,16 +217,18 @@ export default function ReservationsPage() {
           </Link>
         </div>
       ) : tab === "fleet" ? (
-        <div className="reservation-list" style={{ marginTop: 18 }}>
+        <div className="reservation-list">
           {items.map((r) => (
-            <div key={r.id} className="reservation-card fleet-reservation-card">
-              {r.car?.imageUrl ? (
-                <img src={mediaUrl(r.car.imageUrl)} alt="" />
-              ) : (
-                <div className="fleet-reservation-fallback" />
-              )}
-              <div>
-                <div className="row-between">
+            <article key={r.id} className="reservation-card fleet-reservation-card">
+              <div className="reservation-card-media">
+                {r.car?.imageUrl ? (
+                  <img src={mediaUrl(r.car.imageUrl)} alt="" />
+                ) : (
+                  <div className="fleet-reservation-fallback" />
+                )}
+              </div>
+              <div className="reservation-card-body">
+                <div className="reservation-card-head">
                   <h3>
                     {r.car?.brand} {r.car?.model}
                   </h3>
@@ -234,42 +236,57 @@ export default function ReservationsPage() {
                     {statusText(r.status)}
                   </span>
                 </div>
-                <p>
-                  <strong>
-                    {t("reservations.customer")}: {r.user?.fullName}
-                  </strong>
-                  {r.user?.email ? ` · ${r.user.email}` : ""}
-                  {r.user?.phone ? ` · ${r.user.phone}` : ""}
+                <p className="reservation-customer">
+                  <strong>{r.user?.fullName}</strong>
+                  {r.user?.email ? (
+                    <span className="muted"> · {r.user.email}</span>
+                  ) : null}
+                  {r.user?.phone ? (
+                    <span className="muted"> · {r.user.phone}</span>
+                  ) : null}
                 </p>
-                <p>
-                  {String(r.startDate).slice(0, 10)} →{" "}
-                  {String(r.endDate).slice(0, 10)}
-                </p>
-                <p>
-                  {r.pickupLocation} → {r.returnLocation}
-                </p>
+                <dl className="reservation-meta">
+                  <div>
+                    <dt>{t("reservations.dates")}</dt>
+                    <dd>
+                      {String(r.startDate).slice(0, 10)} →{" "}
+                      {String(r.endDate).slice(0, 10)}
+                    </dd>
+                  </div>
+                  <div>
+                    <dt>{t("reservations.route")}</dt>
+                    <dd>
+                      {r.pickupLocation} → {r.returnLocation}
+                    </dd>
+                  </div>
+                  <div>
+                    <dt>{t("reservations.deposit")}</dt>
+                    <dd>
+                      €{Number(r.depositAmount || 0)} · {depLabel(r.depositStatus)}
+                    </dd>
+                  </div>
+                  <div>
+                    <dt>{t("reservations.document")}</dt>
+                    <dd>
+                      {docLabel(r.documentStatus)}
+                      {r.documentUrl ? (
+                        <>
+                          {" · "}
+                          <a
+                            href={mediaUrl(r.documentUrl)}
+                            target="_blank"
+                            rel="noreferrer"
+                          >
+                            {t("reservations.viewDocument")}
+                          </a>
+                        </>
+                      ) : (
+                        <> · {t("reservations.noDocument")}</>
+                      )}
+                    </dd>
+                  </div>
+                </dl>
                 <p className="total">€{r.totalPrice}</p>
-                <p>
-                  {t("reservations.deposit")}: €{Number(r.depositAmount || 0)} ·{" "}
-                  {depLabel(r.depositStatus)}
-                </p>
-                <p>
-                  {t("reservations.document")}: {docLabel(r.documentStatus)}
-                  {r.documentUrl ? (
-                    <>
-                      {" · "}
-                      <a
-                        href={mediaUrl(r.documentUrl)}
-                        target="_blank"
-                        rel="noreferrer"
-                      >
-                        {t("reservations.viewDocument")}
-                      </a>
-                    </>
-                  ) : (
-                    <> · {t("reservations.noDocument")}</>
-                  )}
-                </p>
                 <label className="fleet-status-label">
                   {t("reservations.status")}
                   <select
@@ -326,54 +343,77 @@ export default function ReservationsPage() {
                   ) : null}
                 </div>
               </div>
-            </div>
+            </article>
           ))}
         </div>
       ) : (
-        <div className="reservation-list" style={{ marginTop: 18 }}>
+        <div className="reservation-list">
           {items.map((r) => (
-            <div key={r.id} className="reservation-card">
-              <img src={mediaUrl(r.car.imageUrl)} alt={t("details.noPhoto")} />
-              <div>
-                <h3>
-                  {r.car.brand} {r.car.model}
-                </h3>
+            <article key={r.id} className="reservation-card">
+              <div className="reservation-card-media">
+                <img
+                  src={mediaUrl(r.car.imageUrl)}
+                  alt={`${r.car.brand} ${r.car.model}`}
+                />
+              </div>
+              <div className="reservation-card-body">
+                <div className="reservation-card-head">
+                  <h3>
+                    {r.car.brand} {r.car.model}
+                  </h3>
+                  <span className={`badge status-${r.status}`}>
+                    {statusText(r.status)}
+                  </span>
+                </div>
                 <span className="company-chip">
                   {r.car.companyName || "AutoRent"}
                 </span>
-                <p>
-                  {String(r.startDate).slice(0, 10)} →{" "}
-                  {String(r.endDate).slice(0, 10)}
-                </p>
-                <p>
-                  {r.pickupLocation} → {r.returnLocation}
-                </p>
-                <p>
-                  {r.paymentMethod} · {r.paymentStatus}
-                </p>
-                <p>
-                  {t("reservations.deposit")}: €{Number(r.depositAmount || 0)} ·{" "}
-                  {depLabel(r.depositStatus)}
-                </p>
-                <p>
-                  {t("reservations.document")}: {docLabel(r.documentStatus)}
-                  {r.documentUrl ? (
-                    <>
-                      {" · "}
-                      <a
-                        href={mediaUrl(r.documentUrl)}
-                        target="_blank"
-                        rel="noreferrer"
-                      >
-                        {t("reservations.viewDocument")}
-                      </a>
-                    </>
-                  ) : null}
-                </p>
+                <dl className="reservation-meta">
+                  <div>
+                    <dt>{t("reservations.dates")}</dt>
+                    <dd>
+                      {String(r.startDate).slice(0, 10)} →{" "}
+                      {String(r.endDate).slice(0, 10)}
+                    </dd>
+                  </div>
+                  <div>
+                    <dt>{t("reservations.route")}</dt>
+                    <dd>
+                      {r.pickupLocation} → {r.returnLocation}
+                    </dd>
+                  </div>
+                  <div>
+                    <dt>{t("details.payment")}</dt>
+                    <dd>
+                      {r.paymentMethod} · {r.paymentStatus}
+                    </dd>
+                  </div>
+                  <div>
+                    <dt>{t("reservations.deposit")}</dt>
+                    <dd>
+                      €{Number(r.depositAmount || 0)} · {depLabel(r.depositStatus)}
+                    </dd>
+                  </div>
+                  <div>
+                    <dt>{t("reservations.document")}</dt>
+                    <dd>
+                      {docLabel(r.documentStatus)}
+                      {r.documentUrl ? (
+                        <>
+                          {" · "}
+                          <a
+                            href={mediaUrl(r.documentUrl)}
+                            target="_blank"
+                            rel="noreferrer"
+                          >
+                            {t("reservations.viewDocument")}
+                          </a>
+                        </>
+                      ) : null}
+                    </dd>
+                  </div>
+                </dl>
                 <p className="total">€{r.totalPrice}</p>
-                <span className={`badge status-${r.status}`}>
-                  {statusText(r.status)}
-                </span>
                 <div className="reservation-actions">
                   <button
                     type="button"
@@ -384,6 +424,7 @@ export default function ReservationsPage() {
                   </button>
                   {!["CANCELLED", "COMPLETED", "REJECTED"].includes(r.status) && (
                     <button
+                      type="button"
                       className="btn danger"
                       onClick={() => cancel(r.id)}
                     >
@@ -392,7 +433,7 @@ export default function ReservationsPage() {
                   )}
                 </div>
               </div>
-            </div>
+            </article>
           ))}
         </div>
       )}

@@ -252,6 +252,7 @@ export const en: Dict = {
     customer: "Customer",
     car: "Car",
     dates: "Dates",
+    route: "Route",
     total: "Total",
     status: "Status",
     actions: "Actions",

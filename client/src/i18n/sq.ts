@@ -250,6 +250,7 @@ export const sq = {
     customer: "Klienti",
     car: "Makina",
     dates: "Datat",
+    route: "Itinerari",
     total: "Totali",
     status: "Statusi",
     actions: "Veprime",

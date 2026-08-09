@@ -852,8 +852,13 @@ main { flex: 1; width: 100%; }
 .reservation-actions {
   display: flex;
   flex-wrap: wrap;
-  gap: 8px;
-  margin-top: 12px;
+  gap: 10px;
+  margin-top: 16px;
+}
+.reservation-actions .btn {
+  flex: 1 1 140px;
+  justify-content: center;
+  text-align: center;
 }
 
 .fleet-calendar { margin: 8px 0 28px; }
@@ -1614,26 +1619,96 @@ textarea { min-height: 90px; resize: vertical; }
 }
 .auth-page .panel { width: min(420px, 100%); }
 
-.reservation-list { display: grid; gap: 16px; }
+.reservation-list {
+  display: grid;
+  gap: 16px;
+  margin-top: 18px;
+  padding-bottom: 72px; /* clear WhatsApp FAB on mobile */
+}
 .reservation-card {
   display: grid;
-  grid-template-columns: 220px 1fr;
+  grid-template-columns: 200px minmax(0, 1fr);
   gap: 0;
   overflow: hidden;
   background: var(--bg-elevated);
   border: 1px solid var(--border);
   border-radius: 16px;
+  box-shadow: var(--shadow);
 }
-.reservation-card img { height: 100%; min-height: 180px; }
-.reservation-card > div { padding: 18px; }
-.fleet-reservation-card { margin-top: 0; }
-.fleet-reservation-fallback {
-  min-height: 180px;
+.reservation-card-media {
+  min-height: 160px;
+  max-height: 100%;
   background: var(--bg-soft);
+  overflow: hidden;
 }
+.reservation-card-media img,
+.fleet-reservation-fallback {
+  width: 100%;
+  height: 100%;
+  min-height: 160px;
+  object-fit: cover;
+  display: block;
+}
+.fleet-reservation-fallback {
+  background: linear-gradient(145deg, var(--bg-soft), var(--bg-elevated));
+}
+.reservation-card-body {
+  padding: 16px 18px 18px;
+  background: var(--bg-elevated);
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.reservation-card-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 10px;
+}
+.reservation-card-head h3 {
+  margin: 0;
+  font-size: 1.15rem;
+  line-height: 1.25;
+}
+.reservation-card-body .company-chip {
+  margin: 0;
+}
+.reservation-customer {
+  margin: 0;
+  font-size: 0.92rem;
+}
+.reservation-meta {
+  margin: 0;
+  display: grid;
+  gap: 8px;
+}
+.reservation-meta > div {
+  display: grid;
+  gap: 2px;
+}
+.reservation-meta dt {
+  margin: 0;
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+.reservation-meta dd {
+  margin: 0;
+  font-size: 0.92rem;
+  color: var(--text);
+  word-break: break-word;
+}
+.reservation-card-body .total {
+  margin: 4px 0 0;
+  font-size: 1.35rem;
+}
+.fleet-reservation-card { margin-top: 0; }
 .fleet-status-label {
   display: block;
-  margin-top: 10px;
+  margin-top: 4px;
   font-size: 0.9rem;
   color: var(--text-muted);
 }
@@ -1642,12 +1717,29 @@ textarea { min-height: 90px; resize: vertical; }
   margin-bottom: 0;
 }
 .badge {
-  display: inline-block;
-  padding: 4px 10px;
+  display: inline-flex;
+  align-items: center;
+  flex-shrink: 0;
+  padding: 5px 10px;
   border-radius: 999px;
   background: var(--success-bg);
   color: var(--success-text);
-  margin: 8px 0;
+  font-size: 0.78rem;
+  font-weight: 700;
+  margin: 0;
+}
+.badge.status-PENDING {
+  background: rgba(245, 158, 11, 0.16);
+  color: #d97706;
+}
+.badge.status-CANCELLED,
+.badge.status-REJECTED {
+  background: rgba(220, 53, 69, 0.14);
+  color: var(--danger);
+}
+.badge.status-COMPLETED {
+  background: rgba(59, 130, 246, 0.14);
+  color: #3b82f6;
 }
 
 .table-wrap { width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; }
@@ -1740,9 +1832,35 @@ th { color: var(--text-muted); font-weight: 600; }
       "booking"
       "info";
   }
-  .contact-grid,
+  .contact-grid {
+    grid-template-columns: 1fr;
+  }
   .reservation-card {
     grid-template-columns: 1fr;
+  }
+  .reservation-card-media {
+    height: 168px;
+    max-height: 168px;
+  }
+  .reservation-card-media img,
+  .fleet-reservation-fallback {
+    height: 168px;
+    min-height: 168px;
+  }
+  .reservation-card-body {
+    padding: 16px;
+  }
+  .reservation-actions {
+    flex-direction: column;
+  }
+  .reservation-actions .btn {
+    flex: 1 1 auto;
+    width: 100%;
+  }
+  .reservation-actions .btn.ghost {
+    background: var(--bg-soft);
+    border-color: var(--border-strong);
+    color: var(--text);
   }
   .specs {
     grid-template-columns: repeat(2, 1fr);
