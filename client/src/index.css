@@ -1772,6 +1772,20 @@ textarea { min-height: 90px; resize: vertical; }
   word-break: break-all;
 }
 
+.terms-panel .terms-section + .terms-section {
+  margin-top: 22px;
+  padding-top: 18px;
+  border-top: 1px solid var(--border);
+}
+.terms-panel h3 {
+  margin: 0 0 8px;
+  font-size: 1.05rem;
+}
+.terms-panel .terms-section p {
+  margin: 0;
+  line-height: 1.55;
+}
+
 .cookie-banner {
   position: fixed;
   left: 0;

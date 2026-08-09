@@ -39,7 +39,7 @@ export const it: Dict = {
     language: "Lingua",
   },
   footer: {
-    terms: "Termini",
+    terms: "Termini e politiche",
     rights: "© 2026 AutoRent. Tutti i diritti riservati.",
   },
   cookies: {
@@ -198,23 +198,43 @@ export const it: Dict = {
     a4: "Contanti al ritiro, bonifico, o carta quando Stripe è attivo.",
   },
   terms: {
-    title: "Termini di noleggio",
+    title: "Termini e politiche",
     intro:
-      "Utilizzando AutoRent, accetti i seguenti termini per il noleggio auto.",
-    s1: "1. Prenotazione",
+      "Questi termini regolano l'uso della piattaforma AutoRent e il noleggio auto nella Repubblica d'Albania. Creando un account o prenotando, accetti questi termini.",
+    updated: "Aggiornato: agosto 2026 · Legge applicabile: Repubblica d'Albania.",
+    s1: "1. Piattaforma e operatore",
     s1Text:
-      "La prenotazione è valida una volta registrata sulla piattaforma. La disponibilità viene verificata per le date scelte.",
-    s2: "2. Documenti",
+      "AutoRent è una piattaforma online per prenotare auto a noleggio in Albania (Tirana, Durazzo, Valona e altre aree indicate). Il servizio è offerto dall'operatore e/o dai contractor partner. Contatti e NIPT (se disponibili) compaiono sul sito o su fattura/contratto.",
+    s2: "2. Prenotazione",
     s2Text:
-      "Al ritiro servono patente valida e documento d'identità. Puoi anche caricarli online.",
-    s3: "3. Pagamento e deposito",
+      "La prenotazione è registrata quando confermata sulla piattaforma. La disponibilità dipende dalle date e dallo stato dell'auto. AutoRent può rifiutare o annullare per documenti non validi, pagamento fallito o sospetto abuso — con avviso al cliente.",
+    s3: "3. Requisiti del conducente",
     s3Text:
-      "Pagamento in contanti al ritiro, bonifico o carta (se attiva). L'eventuale deposito viene restituito dopo il controllo.",
-    s4: "4. Cancellazione e rimborsi",
+      "Il conducente deve avere patente valida (albanese o riconosciuta/internazionale secondo le norme) e documento d'identità. Età e esperienza minime possono variare per categoria e saranno comunicate prima della consegna. Solo le persone autorizzate nel contratto possono guidare.",
+    s4: "4. Documenti",
     s4Text:
-      "Cancellazione gratuita fino a 24 ore prima del ritiro — gli importi pagati vengono rimborsati con lo stesso metodo. Entro 24 ore: annullamento consentito senza rimborso automatico. Dopo la data di inizio il cliente non può annullare dalla piattaforma. I casi speciali sono gestiti da AutoRent.",
-    s5: "5. Responsabilità",
-    s5Text: "Il cliente è responsabile dei danni durante il periodo di noleggio.",
+      "Al ritiro servono patente e ID validi. Puoi caricarli online. Senza documenti validi la consegna può essere rifiutata senza responsabilità di AutoRent per ritardi causati dal cliente.",
+    s5: "5. Pagamento e deposito",
+    s5Text:
+      "I prezzi sono in euro (€) al giorno, più extra e costi di località se applicabili. Pagamento in contanti al ritiro, bonifico o carta (se attiva). L'eventuale deposito è una garanzia e viene restituito dopo il controllo, meno danni o multe giustificati dal contratto.",
+    s6: "6. Cancellazione e rimborsi",
+    s6Text:
+      "Cancellazione gratuita fino a 24 ore prima del ritiro — importi rimborsati con lo stesso metodo. Entro 24 ore: annullamento dall'account consentito senza rimborso automatico. Dopo la data di inizio non si annulla dall'app. Casi speciali gestiti da AutoRent.",
+    s7: "7. Uso del veicolo",
+    s7Text:
+      "L'auto si usa solo su strade consentite secondo il Codice della Strada albanese. Vietato: guida sotto alcol/droghe, gare, uso fuori scopo, subaffitto senza permesso. Carburante, multe, parcheggio e danni da uso scorretto sono a carico del cliente. Riconsegna nel luogo/ora concordati con carburante secondo contratto.",
+    s8: "8. Assicurazione e responsabilità",
+    s8Text:
+      "Le auto sono coperte dalla polizza dell'operatore/contractor (di solito RCA e condizioni di contratto). Il cliente resta responsabile di franchigia, danni non coperti, smarrimento chiavi/documenti e costi fuori assicurazione. Dettagli nel contratto di consegna.",
+    s9: "9. Privacy e cookie",
+    s9Text:
+      "Trattiamo dati personali (nome, email, telefono, documenti) per account, prenotazione, fatturazione e comunicazione. I dati non si vendono per marketing terzi. Cookie necessari per login/sessione; cookie analitici (es. Google/Meta) solo con consenso dal banner. Richieste dati: email aziendale sul sito.",
+    s10: "10. Contractor e piattaforma",
+    s10Text:
+      "Alcune auto sono di contractor partner. AutoRent facilita prenotazione e comunicazione; consegna, stato veicolo e assicurazione possono spettare all'operatore indicato. I reclami possono essere inviati ad AutoRent, che li inoltra al partner se necessario.",
+    s11: "11. Legge e controversie",
+    s11Text:
+      "Questi termini sono regolati dalla legge della Repubblica d'Albania. Le parti cercano prima una soluzione amichevole; in mancanza, sono competenti i tribunali di Tirana salvo diversa legge imperativa. AutoRent può aggiornare i termini; vale la versione pubblicata sul sito.",
   },
   favorites: {
     title: "Preferiti",

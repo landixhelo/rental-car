@@ -39,7 +39,7 @@ export const en: Dict = {
     language: "Language",
   },
   footer: {
-    terms: "Terms",
+    terms: "Terms & Policies",
     rights: "© 2026 AutoRent. All rights reserved.",
   },
   cookies: {
@@ -196,23 +196,43 @@ export const en: Dict = {
     a4: "Cash on pickup, bank transfer, or card when Stripe is enabled.",
   },
   terms: {
-    title: "Rental Terms",
+    title: "Terms & Policies",
     intro:
-      "By using AutoRent, you accept the following terms for car rental.",
-    s1: "1. Booking",
+      "These terms govern the use of the AutoRent platform and car rental in the Republic of Albania. By creating an account or booking, you accept these terms.",
+    updated: "Updated: August 2026 · Governing law: Republic of Albania.",
+    s1: "1. Platform & operator",
     s1Text:
-      "A reservation is valid once registered on the platform. Availability is checked for your selected dates.",
-    s2: "2. Documents",
+      "AutoRent is an online platform for booking rental cars in Albania (Tirana, Durrës, Vlorë and other listed areas). The service is provided by the platform operator and/or listed contractor partners. Contact details and NIPT (when available) appear on the site or on the invoice/contract.",
+    s2: "2. Booking",
     s2Text:
-      "A valid driver’s license and ID are required at pickup. You may also upload them during online booking.",
-    s3: "3. Payment & Deposit",
+      "A reservation is registered once confirmed on the platform. Availability depends on selected dates and car status. AutoRent may refuse or cancel a booking for invalid documents, failed payment, or suspected misuse — with notice to the customer.",
+    s3: "3. Driver requirements",
     s3Text:
-      "Pay by cash on pickup, bank transfer, or card (when enabled). Any deposit is returned after vehicle inspection.",
-    s4: "4. Cancellation & refunds",
+      "The driver must hold a valid licence (Albanian or recognised/international as applicable) and ID (ID card or passport). Minimum age and experience may vary by car category and will be communicated before handover. Only authorised persons named in the contract may drive.",
+    s4: "4. Documents",
     s4Text:
-      "Free cancellation until 24 hours before pickup — paid amounts are refunded via the original method. Within 24 hours: cancellation is allowed but without automatic refund. After the start date, customers cannot cancel from the platform. Special cases are handled by AutoRent.",
-    s5: "5. Liability",
-    s5Text: "The customer is responsible for damage during the rental period.",
+      "A valid licence and ID are required at pickup. You may upload them during online booking. Without valid documents, handover may be refused without AutoRent liability for delays caused by the customer.",
+    s5: "5. Payment & deposit",
+    s5Text:
+      "Prices are shown in euros (€) per day, plus extras and location fees when applicable. Payment may be cash on pickup, bank transfer, or card (when enabled). Any deposit is held as security and returned after inspection, minus justified damage or fines under the contract.",
+    s6: "6. Cancellation & refunds",
+    s6Text:
+      "Free cancel until 24 hours before pickup — paid amounts are refunded via the original method. Within 24 hours: cancel from your account is allowed, but without automatic refund. After the start date, customers cannot cancel in-app. Special cases are handled by AutoRent.",
+    s7: "7. Vehicle use",
+    s7Text:
+      "The car may only be used on permitted roads under Albania’s Road Code. Prohibited: driving under alcohol/drugs, racing, use outside the rental purpose, or sub-renting without permission. Fuel, traffic fines, parking and misuse damage are the customer’s responsibility. Return the car to the agreed place/time with fuel as per contract.",
+    s8: "8. Insurance & liability",
+    s8Text:
+      "Cars are covered under the operator/contractor insurance policy (typically TPL plus contract terms). The customer remains responsible for excess (franchise), uncovered damage, lost keys/documents, and costs outside insurance. Exact details are in the handover contract.",
+    s9: "9. Privacy & cookies",
+    s9Text:
+      "We process personal data (name, email, phone, documents) for account, booking, billing and communication. Data is not sold for third-party marketing. Necessary cookies are used for login/session; analytics cookies (e.g. Google/Meta) load only with your consent via the cookie banner. Data requests: contact the business email on the site.",
+    s10: "10. Contractors & platform",
+    s10Text:
+      "Some cars are offered by partner contractors. AutoRent facilitates booking and communication; handover, vehicle condition and insurance obligations may sit with the relevant operator as noted on the booking/contract. Complaints may be sent to AutoRent, which forwards them to the partner when needed.",
+    s11: "11. Law & disputes",
+    s11Text:
+      "These terms are governed by the laws of the Republic of Albania. Parties first seek an amicable solution; failing that, Tirana courts have jurisdiction unless mandatory law provides otherwise. AutoRent may update these terms; the version published on the site is the one in force.",
   },
   favorites: {
     title: "Favorites",

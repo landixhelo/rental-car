@@ -37,7 +37,7 @@ export const sq = {
     language: "Gjuha",
   },
   footer: {
-    terms: "Kushtet",
+    terms: "Kushtet & Politikat",
     rights: "© 2026 AutoRent. Të gjitha të drejtat e rezervuara.",
   },
   cookies: {
@@ -194,23 +194,43 @@ export const sq = {
     a4: "Cash në marrje, transfer bankar, ose kartë kur Stripe është aktiv.",
   },
   terms: {
-    title: "Kushtet e Qirasë",
+    title: "Kushtet & Politikat",
     intro:
-      "Duke përdorur AutoRent, pranoni kushtet e mëposhtme për qiranë e makinave.",
-    s1: "1. Rezervimi",
+      "Këto kushte rregullojnë përdorimin e platformës AutoRent dhe qiranë e makinave në Republikën e Shqipërisë. Duke krijuar llogari ose duke bërë rezervim, ju pranoni këto kushte.",
+    updated: "Përditësuar: Gusht 2026 · Ligji i zbatueshëm: Republika e Shqipërisë.",
+    s1: "1. Platforma & operatori",
     s1Text:
-      "Rezervimi është i vlefshëm pasi regjistrohet në platformë. Disponueshmëria verifikohet sipas datave të zgjedhura.",
-    s2: "2. Dokumentet",
+      "AutoRent është platformë online për rezervimin e makinave me qira në Shqipëri (Tiranë, Durrës, Vlorë dhe zona të tjera të shpallura). Shërbimi ofrohet nga operatori i platformës / partnerët kontraktorë të listuar te makina. Të dhënat e kontaktit dhe NIPT (kur disponohen) shfaqen në faqe ose në faturë/kontratë.",
+    s2: "2. Rezervimi",
     s2Text:
-      "Në marrje kërkohet patentë e vlefshme dhe dokument identifikimi. Mund t’i ngarkosh edhe gjatë rezervimit online.",
-    s3: "3. Pagesa & Depozita",
+      "Rezervimi konsiderohet i regjistruar kur konfirmohet në platformë. Disponueshmëria varet nga datat e zgjedhura dhe statusi i makinës. AutoRent mund të refuzojë ose anulojë një rezervim në rast dokumentesh të pavlefshme, pagese të dështuar, ose dyshimi për keqpërdorim — me njoftim te klienti.",
+    s3: "3. Kushtet e shoferit",
     s3Text:
-      "Pagesa bëhet me cash në marrje, transfer bankar, ose kartë (kur është aktive). Depozita (nëse zbatohet) kthehet pas kontrollit të makinës.",
-    s4: "4. Anulimi & rimbursimi",
+      "Shoferi duhet të ketë patentë të vlefshme (shqiptare ose të njohur/ndërkombëtare sipas rregullave në fuqi) dhe dokument identifikimi (kartë ID ose pasaportë). Mosha minimale dhe përvoja e kërkuar mund të ndryshojnë sipas kategorisë së makinës dhe do të komunikohen para dorëzimit. Makina përdoret vetëm nga personat e autorizuar në kontratë.",
+    s4: "4. Dokumentet",
     s4Text:
-      "Anulim falas deri 24 orë para datës së marrjes — pagesa e kryer kthehet sipas metodës së pagesës. Nën 24 orë para marrjes: anulimi lejohet, por pa rimbursim automatik. Pas datës së fillimit, klienti nuk mund ta anulojë rezervimin nga platforma. Rastet speciale trajtohen nga AutoRent.",
-    s5: "5. Përgjegjësia",
-    s5Text: "Klienti është përgjegjës për dëmet gjatë periudhës së qirasë.",
+      "Në marrje kërkohet patentë e vlefshme dhe dokument identifikimi. Mund t’i ngarkoni edhe gjatë rezervimit online. Në mungesë të dokumenteve të vlefshme, dorëzimi mund të refuzohet pa përgjegjësi të AutoRent për vonesa që shkaktohen nga klienti.",
+    s5: "5. Pagesa & depozita",
+    s5Text:
+      "Çmimet shfaqen në euro (€) për ditë, plus ekstra dhe tarifa lokacioni kur zbatohen. Pagesa mund të bëhet me cash në marrje, transfer bankar, ose kartë (kur është aktive në platformë). Depozita (nëse zbatohet) mbahet si garanci dhe kthehet pas kontrollit të makinës, duke zbritur dëmet ose gjobat e justifikuara sipas kontratës.",
+    s6: "6. Anulimi & rimbursimi",
+    s6Text:
+      "Anulim falas deri 24 orë para datës së marrjes — shuma e paguar kthehet sipas metodës së pagesës (cash/transfer/kartë). Nën 24 orë para marrjes: anulimi lejohet nga llogaria, por pa rimbursim automatik. Pas datës së fillimit, klienti nuk mund ta anulojë rezervimin nga platforma. Rastet speciale (forcë madhore, probleme mjekësore me dokumente, etj.) trajtohen nga AutoRent.",
+    s7: "7. Përdorimi i makinës",
+    s7Text:
+      "Makina përdoret vetëm në rrugë të lejuara, sipas Kodit Rrugor të Shqipërisë. Ndalohet: vozitja nën ndikimin e alkoolit/drogave, gara, përdorim jashtë qëllimit të qirasë, ose nën-qiraja pa leje. Karburanti, gjobat e trafikut, parkimi dhe dëmet nga keqpërdorimi janë përgjegjësi e klientit. Makina kthehet në të njëjtin lokacion/orë të dakordësuar, me nivel karburanti sipas kontratës.",
+    s8: "8. Sigurimi & përgjegjësia",
+    s8Text:
+      "Makinat mbulohen sipas politikës së sigurimit të operatorit/kontraktorit (zakonisht TPL dhe kushte shtesë sipas kontratës). Klienti mbetet përgjegjës për pjesën e zbritjes (franchise), dëmet jashtë mbulimit, humbjen e çelësave/dokumenteve, dhe shpenzimet që nuk mbulohen nga sigurimi. Detajet e sakta jepen në kontratën e dorëzimit.",
+    s9: "9. Privatësia & cookies",
+    s9Text:
+      "Përpunojmë të dhëna personale (emër, email, telefon, dokumente) për llogari, rezervim, faturim dhe komunikim. Të dhënat nuk shiten te palë të treta për marketing. Cookies të nevojshme përdoren për hyrje/sesion; cookies analitike (p.sh. Google/Meta) aktivizohen vetëm me pëlqimin tuaj nga banner-i i cookies. Për kërkesa mbi të dhënat: kontaktoni email-in e biznesit në faqe.",
+    s10: "10. Kontraktorët & platforma",
+    s10Text:
+      "Disa makina ofrohen nga kontraktorë partnerë. AutoRent lehtëson rezervimin dhe komunikimin; detyrimet e dorëzimit, gjendjes së makinës dhe sigurimit mund të jenë të operatorit përkatës, siç shënohet në rezervim/kontratë. Ankesat mund të dërgohen te AutoRent, e cila i përcjell te partneri kur është e nevojshme.",
+    s11: "11. Ligji & mosmarrëveshjet",
+    s11Text:
+      "Këto kushte rregullohen nga legjislacioni i Republikës së Shqipërisë. Për mosmarrëveshjet, palët përpiqen së pari për zgjidhje miqësore; në mungesë të marrëveshjes, kompetente janë gjykatat e Tiranës, përveçse kur ligji i detyrueshëm thotë ndryshe. AutoRent mund të përditësojë këto kushte; versioni i publikuar në faqe është ai në fuqi.",
   },
   favorites: {
     title: "Favoritet",

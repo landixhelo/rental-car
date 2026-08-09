@@ -2,6 +2,20 @@ import { useLocale, useT } from "../context/LocaleContext";
 import Seo from "../seo/Seo";
 import { breadcrumbJsonLd } from "../seo/jsonLd";
 
+const SECTIONS = [
+  "s1",
+  "s2",
+  "s3",
+  "s4",
+  "s5",
+  "s6",
+  "s7",
+  "s8",
+  "s9",
+  "s10",
+  "s11",
+] as const;
+
 export default function TermsPage() {
   const t = useT();
   const { locale } = useLocale();
@@ -18,17 +32,17 @@ export default function TermsPage() {
         ])}
       />
       <h1>{t("terms.title")}</h1>
-      <div className="panel">
-        <h3>{t("terms.s1")}</h3>
-        <p className="muted">{t("terms.s1Text")}</p>
-        <h3>{t("terms.s2")}</h3>
-        <p className="muted">{t("terms.s2Text")}</p>
-        <h3>{t("terms.s3")}</h3>
-        <p className="muted">{t("terms.s3Text")}</p>
-        <h3>{t("terms.s4")}</h3>
-        <p className="muted">{t("terms.s4Text")}</p>
-        <h3>{t("terms.s5")}</h3>
-        <p className="muted">{t("terms.s5Text")}</p>
+      <p className="muted">{t("terms.intro")}</p>
+      <p className="muted" style={{ marginTop: 0 }}>
+        {t("terms.updated")}
+      </p>
+      <div className="panel terms-panel">
+        {SECTIONS.map((key) => (
+          <section key={key} className="terms-section">
+            <h3>{t(`terms.${key}`)}</h3>
+            <p className="muted">{t(`terms.${key}Text`)}</p>
+          </section>
+        ))}
       </div>
     </div>
   );
