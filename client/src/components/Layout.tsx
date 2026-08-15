@@ -171,34 +171,18 @@ export default function Layout() {
           </Link>
 
           <div className="nav-center">
-            {isHome ? (
-              <>
-                <NavLink to="/cars" onClick={closeMenus}>
-                  {t("nav.cars")}
-                </NavLink>
-                <a href="#cities" onClick={closeMenus}>
-                  {t("nav.locations")}
-                </a>
-                <a href="#how" onClick={closeMenus}>
-                  {t("nav.how")}
-                </a>
-                <a href="#why" onClick={closeMenus}>
-                  {t("nav.about")}
-                </a>
-              </>
-            ) : (
-              <>
-                <NavLink to="/cars" onClick={closeMenus}>
-                  {t("nav.cars")}
-                </NavLink>
-                <NavLink to="/faq" onClick={closeMenus}>
-                  {t("nav.faq")}
-                </NavLink>
-                <NavLink to="/contact" onClick={closeMenus}>
-                  {t("nav.contact")}
-                </NavLink>
-              </>
-            )}
+            <NavLink to="/cars" onClick={closeMenus}>
+              {t("nav.cars")}
+            </NavLink>
+            <Link to="/#cities" onClick={closeMenus}>
+              {t("nav.locations")}
+            </Link>
+            <Link to="/#how" onClick={closeMenus}>
+              {t("nav.how")}
+            </Link>
+            <Link to="/#why" onClick={closeMenus}>
+              {t("nav.about")}
+            </Link>
           </div>
 
           <div className="nav-end">
@@ -222,7 +206,10 @@ export default function Layout() {
                   onClick={() => setProfileOpen((v) => !v)}
                 >
                   <span className="nav-item-badge">
-                    {t("nav.profile")}
+                    <span className="nav-avatar" aria-hidden>
+                      {(user.fullName || "U").charAt(0).toUpperCase()}
+                    </span>
+                    <span className="nav-user-name">{user.fullName}</span>
                     {showReservationBadge && reservationBadge > 0 ? (
                       <span
                         className="nav-badge"
@@ -337,34 +324,24 @@ export default function Layout() {
           </div>
 
           <div className={`nav-links ${menuOpen ? "open" : ""}`}>
-            {isHome ? (
-              <>
-                <NavLink to="/cars" onClick={closeMenus}>
-                  {t("nav.cars")}
-                </NavLink>
-                <a href="#cities" onClick={closeMenus}>
-                  {t("nav.locations")}
-                </a>
-                <a href="#how" onClick={closeMenus}>
-                  {t("nav.how")}
-                </a>
-                <a href="#why" onClick={closeMenus}>
-                  {t("nav.about")}
-                </a>
-              </>
-            ) : (
-              <>
-                <NavLink to="/cars" onClick={closeMenus}>
-                  {t("nav.cars")}
-                </NavLink>
-                <NavLink to="/faq" onClick={closeMenus}>
-                  {t("nav.faq")}
-                </NavLink>
-                <NavLink to="/contact" onClick={closeMenus}>
-                  {t("nav.contact")}
-                </NavLink>
-              </>
-            )}
+            <NavLink to="/cars" onClick={closeMenus}>
+              {t("nav.cars")}
+            </NavLink>
+            <Link to="/#cities" onClick={closeMenus}>
+              {t("nav.locations")}
+            </Link>
+            <Link to="/#how" onClick={closeMenus}>
+              {t("nav.how")}
+            </Link>
+            <Link to="/#why" onClick={closeMenus}>
+              {t("nav.about")}
+            </Link>
+            <NavLink to="/faq" onClick={closeMenus}>
+              {t("nav.faq")}
+            </NavLink>
+            <NavLink to="/contact" onClick={closeMenus}>
+              {t("nav.contact")}
+            </NavLink>
 
             {user ? (
               <>
