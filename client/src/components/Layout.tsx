@@ -186,7 +186,9 @@ export default function Layout() {
           </div>
 
           <div className="nav-end">
-            <div className="nav-lang">{langSwitch}</div>
+            {!isMobileNav ? (
+              <div className="nav-lang">{langSwitch}</div>
+            ) : null}
 
             {!isMobileNav ? (
             <div className="nav-desktop-only">
@@ -363,6 +365,11 @@ export default function Layout() {
                 </div>
               </div>
             ) : null}
+
+            <div className="nav-menu-lang">
+              <p className="nav-menu-section">{t("nav.language")}</p>
+              {langSwitch}
+            </div>
 
             <p className="nav-menu-section">{t("footer.explore")}</p>
             <NavLink to="/cars" onClick={closeMenus}>

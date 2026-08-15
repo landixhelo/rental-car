@@ -5512,31 +5512,46 @@ th { color: var(--text-muted); font-weight: 600; }
 @media (max-width: 980px) {
   body.nav-menu-open {
     overflow: hidden;
+    overflow-x: hidden;
+    overscroll-behavior: none;
+    touch-action: pan-y;
+  }
+
+  .app-shell {
+    overflow-x: hidden;
+    max-width: 100vw;
   }
 
   .navbar {
     flex-direction: column;
     align-items: stretch;
     padding: 10px 4%;
+    overflow: visible;
   }
 
   .navbar-shell {
     gap: 0;
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    position: relative;
   }
 
   .nav-bar-row {
     gap: 10px;
+    min-width: 0;
   }
 
   .brand {
     font-size: 1.05rem;
     max-width: none;
-    flex: 0 0 auto;
+    flex: 1 1 auto;
+    min-width: 0;
   }
 
   .brand-text {
-    overflow: visible;
-    text-overflow: clip;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 
   .app-shell.is-home .navbar {
@@ -5547,6 +5562,7 @@ th { color: var(--text-muted); font-weight: 600; }
     border-radius: 18px;
     padding: 8px 10px 8px 14px;
     width: 100%;
+    max-width: 100%;
   }
   .app-shell.is-home .navbar-shell:has(.nav-links.open) {
     border-radius: 18px;
@@ -5563,15 +5579,7 @@ th { color: var(--text-muted); font-weight: 600; }
   }
 
   .nav-lang {
-    display: flex;
-  }
-  .nav-lang .lang-switch {
-    --nav-chip-h: 30px;
-  }
-  .nav-lang .lang-switch button {
-    min-width: 1.7rem;
-    padding: 0 6px;
-    font-size: 0.66rem;
+    display: none;
   }
 
   .nav-end {
@@ -5623,15 +5631,19 @@ th { color: var(--text-muted); font-weight: 600; }
     display: none;
     flex-direction: column;
     align-items: stretch;
+    box-sizing: border-box;
     width: 100%;
+    max-width: 100%;
     gap: 2px;
     margin-top: 10px;
     padding: 12px 8px 14px;
     border-radius: 16px;
     border: 1px solid var(--border);
     background: var(--bg-elevated, var(--bg-soft));
-    max-height: min(72vh, 560px);
+    max-height: min(70dvh, 560px);
+    overflow-x: hidden;
     overflow-y: auto;
+    overscroll-behavior: contain;
     -webkit-overflow-scrolling: touch;
     position: relative;
     z-index: 36;
@@ -5655,6 +5667,30 @@ th { color: var(--text-muted); font-weight: 600; }
 
   .nav-links.open {
     display: flex;
+  }
+
+  .nav-menu-lang {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 8px;
+    padding: 4px 12px 12px;
+    margin-bottom: 4px;
+    border-bottom: 1px solid var(--border);
+  }
+  .nav-menu-lang .nav-menu-section {
+    margin: 6px 0 0;
+  }
+  .nav-menu-lang .lang-switch {
+    width: 100%;
+    justify-content: stretch;
+    height: 40px;
+    --nav-chip-h: 40px;
+  }
+  .nav-menu-lang .lang-switch button {
+    flex: 1 1 0;
+    min-width: 0;
+    font-size: 0.78rem;
   }
 
   .nav-menu-user {
@@ -5697,6 +5733,8 @@ th { color: var(--text-muted); font-weight: 600; }
   .nav-links .btn,
   .nav-links .link-btn {
     width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
     text-align: left;
     padding: 12px 12px;
     border-radius: 12px;
@@ -5744,9 +5782,6 @@ th { color: var(--text-muted); font-weight: 600; }
 }
 
 @media (max-width: 420px) {
-  .nav-lang .lang-switch button:not(.active) {
-    display: none;
-  }
   .nav-login-mobile {
     padding: 8px 8px;
     font-size: 0.82rem;
