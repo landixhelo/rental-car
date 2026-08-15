@@ -25,7 +25,7 @@ export default function FavoritesPage() {
   }
 
   return (
-    <div className="section">
+    <div className="ops-page">
       {Toast}
       <h1>{t("favorites.title")}</h1>
       {!cars.length && (

@@ -101,7 +101,7 @@ export default function AdminPage() {
   }
 
   return (
-    <div className="section">
+    <div className="ops-page">
       {Toast}
       <h1>{t("admin.title")}</h1>
 

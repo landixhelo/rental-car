@@ -87,7 +87,7 @@ export default function ProfilePage() {
     user?.role === "SUPER_ADMIN";
 
   return (
-    <div className="section narrow">
+    <div className="ops-page ops-page-narrow">
       {Toast}
       <h1>{t("profile.title")}</h1>
 

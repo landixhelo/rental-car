@@ -440,6 +440,7 @@ export const en: Dict = {
     scopePlatform: "Platform-wide view",
     scopeFleet: "Your fleet view",
     fleetManagement: "Fleet Management",
+    accountArea: "My Account",
     addVehicle: "Add New Vehicle",
     adminUser: "Admin User",
     searchPh: "Search reservations, customers, vehicles...",

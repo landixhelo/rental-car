@@ -4,6 +4,7 @@ import { ThemeProvider } from "./context/ThemeContext";
 import { LocaleProvider } from "./context/LocaleContext";
 import { ToastProvider } from "./context/ToastContext";
 import Layout from "./components/Layout";
+import OpsLayout from "./components/OpsLayout";
 import CheckoutDetailsPage from "./pages/CheckoutDetailsPage";
 import CheckoutConfirmedPage from "./pages/CheckoutConfirmedPage";
 import { Protected } from "./components/Protected";
@@ -35,108 +36,126 @@ export default function App() {
         <AuthProvider>
           <BrowserRouter>
             <ToastProvider>
-            <Analytics />
-            <CookieConsent />
-            <Routes>
-              <Route element={<Layout />}>
-                <Route index element={<HomePage />} />
-                <Route path="cars" element={<CarsPage />} />
-                <Route path="cars/:id" element={<CarDetailsPage />} />
-                <Route
-                  path="checkout"
-                  element={
-                    <Protected>
-                      <CheckoutDetailsPage />
-                    </Protected>
-                  }
-                />
-                <Route
-                  path="checkout/confirmed"
-                  element={
-                    <Protected>
-                      <CheckoutConfirmedPage />
-                    </Protected>
-                  }
-                />
-                {/* Market/sale temporarily disabled — redirect to rental */}
-                <Route path="marketplace" element={<Navigate to="/cars" replace />} />
-                <Route path="marketplace/*" element={<Navigate to="/cars" replace />} />
-                <Route path="shops/:slug" element={<Navigate to="/cars" replace />} />
-                <Route path="seller" element={<Navigate to="/" replace />} />
-                <Route path="login" element={<LoginPage />} />
-                <Route path="register" element={<RegisterPage />} />
-                <Route path="forgot-password" element={<ForgotPasswordPage />} />
-                <Route path="reset-password" element={<ResetPasswordPage />} />
-                <Route path="contact" element={<ContactPage />} />
-                <Route path="faq" element={<FaqPage />} />
-                <Route path="terms" element={<TermsPage />} />
-                <Route
-                  path="reservations"
-                  element={
-                    <Protected>
-                      <ReservationsPage />
-                    </Protected>
-                  }
-                />
-                <Route
-                  path="favorites"
-                  element={
-                    <Protected>
-                      <FavoritesPage />
-                    </Protected>
-                  }
-                />
-                <Route
-                  path="profile"
-                  element={
-                    <Protected>
-                      <ProfilePage />
-                    </Protected>
-                  }
-                />
-                <Route
-                  path="dashboard"
-                  element={
-                    <Protected contractor>
-                      <DashboardPage />
-                    </Protected>
-                  }
-                />
-                <Route
-                  path="chats"
-                  element={
-                    <Protected contractor>
-                      <ChatsPage />
-                    </Protected>
-                  }
-                />
-                <Route
-                  path="contractor"
-                  element={
-                    <Protected contractor>
-                      <ContractorPage />
-                    </Protected>
-                  }
-                />
-                <Route
-                  path="admin"
-                  element={
-                    <Protected admin>
-                      <AdminPage />
-                    </Protected>
-                  }
-                />
-                <Route
-                  path="super-admin"
-                  element={
-                    <Protected superAdmin>
-                      <SuperAdminPage />
-                    </Protected>
-                  }
-                />
-                <Route path="*" element={<Navigate to="/" replace />} />
-              </Route>
-            </Routes>
+              <Analytics />
+              <CookieConsent />
+              <Routes>
+                <Route element={<Layout />}>
+                  <Route index element={<HomePage />} />
+                  <Route path="cars" element={<CarsPage />} />
+                  <Route path="cars/:id" element={<CarDetailsPage />} />
+                  <Route
+                    path="checkout"
+                    element={
+                      <Protected>
+                        <CheckoutDetailsPage />
+                      </Protected>
+                    }
+                  />
+                  <Route
+                    path="checkout/confirmed"
+                    element={
+                      <Protected>
+                        <CheckoutConfirmedPage />
+                      </Protected>
+                    }
+                  />
+                  <Route
+                    path="marketplace"
+                    element={<Navigate to="/cars" replace />}
+                  />
+                  <Route
+                    path="marketplace/*"
+                    element={<Navigate to="/cars" replace />}
+                  />
+                  <Route
+                    path="shops/:slug"
+                    element={<Navigate to="/cars" replace />}
+                  />
+                  <Route path="seller" element={<Navigate to="/" replace />} />
+                  <Route path="login" element={<LoginPage />} />
+                  <Route path="register" element={<RegisterPage />} />
+                  <Route
+                    path="forgot-password"
+                    element={<ForgotPasswordPage />}
+                  />
+                  <Route
+                    path="reset-password"
+                    element={<ResetPasswordPage />}
+                  />
+                  <Route path="contact" element={<ContactPage />} />
+                  <Route path="faq" element={<FaqPage />} />
+                  <Route path="terms" element={<TermsPage />} />
+
+                  <Route element={<OpsLayout />}>
+                    <Route
+                      path="reservations"
+                      element={
+                        <Protected>
+                          <ReservationsPage />
+                        </Protected>
+                      }
+                    />
+                    <Route
+                      path="favorites"
+                      element={
+                        <Protected>
+                          <FavoritesPage />
+                        </Protected>
+                      }
+                    />
+                    <Route
+                      path="profile"
+                      element={
+                        <Protected>
+                          <ProfilePage />
+                        </Protected>
+                      }
+                    />
+                    <Route
+                      path="dashboard"
+                      element={
+                        <Protected contractor>
+                          <DashboardPage />
+                        </Protected>
+                      }
+                    />
+                    <Route
+                      path="chats"
+                      element={
+                        <Protected contractor>
+                          <ChatsPage />
+                        </Protected>
+                      }
+                    />
+                    <Route
+                      path="contractor"
+                      element={
+                        <Protected contractor>
+                          <ContractorPage />
+                        </Protected>
+                      }
+                    />
+                    <Route
+                      path="admin"
+                      element={
+                        <Protected admin>
+                          <AdminPage />
+                        </Protected>
+                      }
+                    />
+                    <Route
+                      path="super-admin"
+                      element={
+                        <Protected superAdmin>
+                          <SuperAdminPage />
+                        </Protected>
+                      }
+                    />
+                  </Route>
+
+                  <Route path="*" element={<Navigate to="/" replace />} />
+                </Route>
+              </Routes>
             </ToastProvider>
           </BrowserRouter>
         </AuthProvider>

@@ -440,6 +440,7 @@ export const sq = {
     scopePlatform: "Pamje e të gjithë platformës",
     scopeFleet: "Pamje e flotës sate",
     fleetManagement: "Menaxhimi i flotës",
+    accountArea: "Llogaria ime",
     addVehicle: "Shto makinë të re",
     adminUser: "Admin",
     searchPh: "Kërko rezervime, klientë, makina...",

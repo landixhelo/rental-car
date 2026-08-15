@@ -109,7 +109,7 @@ export default function ContractorPage() {
   }
 
   return (
-    <div className="section">
+    <div className="ops-page">
       {Toast}
       <h1>{t("contractor.title")}</h1>
       <p className="muted">

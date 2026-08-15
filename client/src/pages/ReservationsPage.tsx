@@ -257,7 +257,7 @@ export default function ReservationsPage() {
   }
 
   return (
-    <div className={`reservations-page${tab === "mine" ? " is-mine" : ""}`}>
+    <div className={`ops-page reservations-page${tab === "mine" ? " is-mine" : ""}`}>
       {Toast}
       <CancelReservationModal
         reservation={cancelTarget}

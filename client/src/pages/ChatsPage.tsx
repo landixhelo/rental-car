@@ -101,7 +101,7 @@ export default function ChatsPage() {
     locale === "en" ? "en-GB" : locale === "it" ? "it-IT" : "sq-AL";
 
   return (
-    <div className="section chats-page">
+    <div className="ops-page chats-page">
       {Toast}
       <div className="chats-header">
         <div>

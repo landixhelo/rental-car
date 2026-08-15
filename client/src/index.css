@@ -510,22 +510,48 @@ main { flex: 1; width: 100%; }
 }
 .ops-sidebar-user {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
   gap: 10px;
   margin-top: 14px;
   padding: 12px 10px;
   border-top: 1px solid rgba(255, 255, 255, 0.08);
 }
+.ops-sidebar-user-text {
+  flex: 1;
+  min-width: 0;
+}
 .ops-sidebar-user strong {
   display: block;
   font-size: 0.88rem;
   line-height: 1.2;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 .ops-sidebar-user span {
   display: block;
   color: rgba(255, 255, 255, 0.5);
   font-size: 0.72rem;
   margin-top: 2px;
+}
+.ops-logout {
+  width: 100%;
+  margin-top: 4px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: transparent;
+  color: rgba(255, 255, 255, 0.75);
+  border-radius: 8px;
+  padding: 8px 10px;
+  font: inherit;
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  text-align: left;
+}
+.ops-logout:hover {
+  background: rgba(255, 255, 255, 0.06);
+  color: #fff;
 }
 .ops-avatar {
   width: 36px;
@@ -625,6 +651,38 @@ main { flex: 1; width: 100%; }
 }
 .ops-content {
   padding: 20px 22px 32px;
+}
+.ops-page {
+  color: #121212;
+}
+.ops-page > h1,
+.ops-page .ops-page-title,
+.ops-page .chats-header h1,
+.reservations-page > header h1,
+.reservations-page .res-hero h1 {
+  margin-top: 0;
+}
+.ops-page-narrow {
+  max-width: 720px;
+}
+.ops-page .panel,
+.ops-page .dash-kpi-card {
+  background: #fff;
+  border: 1px solid rgba(16, 24, 40, 0.06);
+  border-radius: 16px;
+  box-shadow: 0 8px 28px rgba(16, 24, 40, 0.05);
+}
+.ops-page .panel {
+  padding: 18px;
+}
+.ops-page .btn {
+  border-radius: 10px;
+}
+.ops-page table {
+  width: 100%;
+}
+.ops-page .muted {
+  color: #667085;
 }
 .ops-grid {
   display: grid;

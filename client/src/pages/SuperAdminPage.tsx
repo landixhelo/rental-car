@@ -89,7 +89,7 @@ export default function SuperAdminPage() {
   }
 
   return (
-    <div className="section">
+    <div className="ops-page">
       {Toast}
       <h1>{t("superAdmin.title")}</h1>
       <p className="muted">{t("superAdmin.subtitle")}</p>

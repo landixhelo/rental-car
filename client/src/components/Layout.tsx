@@ -8,6 +8,7 @@ import { useTheme } from "../context/ThemeContext";
 import { useLocale } from "../context/LocaleContext";
 import { applyBusinessMeta } from "../seo/site";
 import type { Locale } from "../i18n";
+import { isOpsPath } from "./OpsLayout";
 
 export default function Layout() {
   const { user, logout } = useAuth();
@@ -29,7 +30,7 @@ export default function Layout() {
     user?.role === "ADMIN" ||
     user?.role === "SUPER_ADMIN";
   const isHome = location.pathname === "/";
-  const isOps = location.pathname.startsWith("/dashboard");
+  const isOps = isOpsPath(location.pathname);
 
   async function refreshBadge() {
     if (!showReservationBadge) {
