@@ -136,71 +136,74 @@ export default function HomePage() {
           <span className="eyebrow">{t("home.eyebrow")}</span>
           <h1>
             {t("home.titleBefore")} <span>{t("home.titleAccent")}</span>
+            {(() => {
+              const after = t("home.titleAfter");
+              return after && after !== "home.titleAfter" ? ` ${after}` : "";
+            })()}
           </h1>
           <p>{t("home.subtitle")}</p>
           <div className="hero-actions">
             <Link to="/cars" className="btn">
               {t("home.explore")}
             </Link>
-            <Link to="/register" className="btn ghost">
-              {t("home.createAccount")}
-            </Link>
+            <a href="#how" className="btn ghost">
+              {t("home.howCta")}
+            </a>
           </div>
         </div>
-      </section>
 
-      <section className="section home-reveal home-search-section">
-        <div className="section-head">
-          <h2>{t("home.searchTitle")}</h2>
-          <p className="section-sub">{t("home.searchSub")}</p>
+        <div className="hero-search-wrap">
+          <form className="home-search" onSubmit={onSearch}>
+            <div className="home-search-head">
+              <strong>{t("home.searchTitle")}</strong>
+              <span>{t("home.searchSub")}</span>
+            </div>
+            <label>
+              {t("home.searchPickup")}
+              <input
+                type="date"
+                min={today}
+                value={search.startDate}
+                onChange={(e) => onStartChange(e.target.value)}
+                required
+              />
+            </label>
+            <label>
+              {t("home.searchReturn")}
+              <input
+                type="date"
+                min={
+                  search.startDate
+                    ? addDays(search.startDate, 1)
+                    : addDays(today, 1)
+                }
+                value={search.endDate}
+                onChange={(e) => onEndChange(e.target.value)}
+                required
+              />
+            </label>
+            <label>
+              {t("home.searchCity")}
+              <select
+                value={search.location}
+                onChange={(e) =>
+                  setSearch({ ...search, location: e.target.value })
+                }
+              >
+                <option value="all">{t("home.searchAnyCity")}</option>
+                <option value="Tiranë">Tiranë</option>
+                <option value="Durrës">Durrës</option>
+                <option value="Vlorë">Vlorë</option>
+              </select>
+            </label>
+            <button className="btn" type="submit">
+              {t("home.searchBtn")}
+            </button>
+          </form>
         </div>
-        <form className="home-search" onSubmit={onSearch}>
-          <label>
-            {t("home.searchPickup")}
-            <input
-              type="date"
-              min={today}
-              value={search.startDate}
-              onChange={(e) => onStartChange(e.target.value)}
-              required
-            />
-          </label>
-          <label>
-            {t("home.searchReturn")}
-            <input
-              type="date"
-              min={
-                search.startDate
-                  ? addDays(search.startDate, 1)
-                  : addDays(today, 1)
-              }
-              value={search.endDate}
-              onChange={(e) => onEndChange(e.target.value)}
-              required
-            />
-          </label>
-          <label>
-            {t("home.searchCity")}
-            <select
-              value={search.location}
-              onChange={(e) =>
-                setSearch({ ...search, location: e.target.value })
-              }
-            >
-              <option value="all">{t("home.searchAnyCity")}</option>
-              <option value="Tiranë">Tiranë</option>
-              <option value="Durrës">Durrës</option>
-              <option value="Vlorë">Vlorë</option>
-            </select>
-          </label>
-          <button className="btn" type="submit">
-            {t("home.searchBtn")}
-          </button>
-        </form>
-        <p className="home-search-hint muted">{t("home.searchHint")}</p>
       </section>
 
-      <section className="section home-reveal">
+      <section id="why" className="section home-reveal">
         <h2>{t("home.why")}</h2>
         <div className="feature-grid home-cards">
           <div className="home-card home-card--rose">
@@ -218,7 +221,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      <section className="section home-reveal">
+      <section id="how" className="section home-reveal">
         <div className="section-head">
           <h2>{t("home.howTitle")}</h2>
           <p className="section-sub">{t("home.howSub")}</p>
@@ -287,7 +290,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      <section className="home-band home-reveal">
+      <section id="cities" className="home-band home-reveal">
         <div className="section">
           <div className="section-head">
             <h2>{t("home.citiesTitle")}</h2>

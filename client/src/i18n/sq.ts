@@ -16,6 +16,9 @@ export const sq = {
   nav: {
     home: "Kryefaqja",
     cars: "Makinat",
+    locations: "Lokacionet",
+    how: "Si funksionon",
+    about: "Rreth nesh",
     contact: "Kontakt",
     faq: "Pyetje",
     favorites: "Favoritet",
@@ -59,9 +62,11 @@ export const sq = {
     eyebrow: "QIRA MAKINASH PREMIUM",
     titleBefore: "Përvoja e Drejtimit",
     titleAccent: "Premium",
+    titleAfter: "",
     subtitle:
-      "Zbuloni koleksionin tonë të makinave luksoze. Nga sedan elegante deri te SUV të fuqishme.",
+      "Zbuloni koleksionin tonë të makinave premium dhe rezervoni lehtë në Shqipëri.",
     explore: "Eksploro Makinat",
+    howCta: "Si funksionon",
     createAccount: "Krijo Llogari",
     why: "Pse AutoRent?",
     feature1Title: "Flota Premium",

@@ -18,6 +18,9 @@ export const it: Dict = {
   nav: {
     home: "Home",
     cars: "Auto",
+    locations: "Località",
+    how: "Come funziona",
+    about: "Chi siamo",
     contact: "Contatti",
     faq: "FAQ",
     favorites: "Preferiti",
@@ -61,9 +64,11 @@ export const it: Dict = {
     eyebrow: "NOLEGGIO AUTO PREMIUM",
     titleBefore: "L'esperienza di guida",
     titleAccent: "Premium",
+    titleAfter: "",
     subtitle:
       "Scopri la nostra collezione di auto di lusso — dalle berline eleganti ai potenti SUV.",
     explore: "Esplora le auto",
+    howCta: "Come funziona",
     createAccount: "Crea account",
     why: "Perché AutoRent?",
     feature1Title: "Flotta Premium",
