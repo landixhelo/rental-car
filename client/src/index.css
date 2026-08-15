@@ -525,6 +525,260 @@ main { flex: 1; width: 100%; }
   color: #fff;
 }
 
+/* My Reservations (customer) */
+.reservations-page {
+  width: min(1100px, 94%);
+  margin: 0 auto 56px;
+  padding-top: 18px;
+  color: #121212;
+}
+.res-hero {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 16px;
+  flex-wrap: wrap;
+  margin-bottom: 22px;
+}
+.res-hero h1 {
+  margin: 0 0 6px;
+  font-family: Sora, "DM Sans", system-ui, sans-serif;
+  font-size: clamp(1.8rem, 3.5vw, 2.4rem);
+  letter-spacing: -0.03em;
+}
+.res-hero p {
+  margin: 0;
+  color: #667085;
+}
+.res-new {
+  border-radius: 12px;
+  white-space: nowrap;
+}
+.res-stats {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px;
+  margin-bottom: 28px;
+}
+.res-stat {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 18px 16px;
+  border-radius: 16px;
+  background: #fff;
+  border: 1px solid rgba(16, 24, 40, 0.08);
+  box-shadow: 0 8px 22px rgba(16, 24, 40, 0.04);
+}
+.res-stat-ico {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  display: grid;
+  place-items: center;
+  font-size: 1.1rem;
+}
+.res-stat--upcoming .res-stat-ico {
+  background: rgba(233, 30, 77, 0.1);
+}
+.res-stat--active .res-stat-ico {
+  background: rgba(47, 128, 237, 0.12);
+}
+.res-stat--completed .res-stat-ico {
+  background: rgba(18, 183, 106, 0.12);
+}
+.res-stat strong {
+  display: block;
+  font-size: 1.5rem;
+  font-family: Sora, "DM Sans", system-ui, sans-serif;
+  letter-spacing: -0.02em;
+}
+.res-stat span {
+  color: #667085;
+  font-size: 0.88rem;
+}
+.res-section-title {
+  margin: 0 0 14px;
+  font-size: 0.78rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #98a2b3;
+}
+.res-list {
+  display: grid;
+  gap: 16px;
+}
+.res-card {
+  display: grid;
+  grid-template-columns: 180px minmax(0, 1fr) 180px;
+  gap: 18px;
+  padding: 16px;
+  border-radius: 18px;
+  background: #fff;
+  border: 1px solid rgba(16, 24, 40, 0.08);
+  box-shadow: 0 10px 28px rgba(16, 24, 40, 0.05);
+  align-items: center;
+}
+.res-card-media {
+  position: relative;
+  border-radius: 14px;
+  overflow: hidden;
+  aspect-ratio: 1.2;
+  background: #eceef2;
+}
+.res-card-media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+.res-card.phase-completed .res-card-media img {
+  filter: grayscale(0.85);
+}
+.res-phase-tag {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  padding: 5px 10px;
+  border-radius: 999px;
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  background: rgba(255, 255, 255, 0.92);
+}
+.res-phase-tag.phase-upcoming {
+  color: var(--accent);
+  background: rgba(233, 30, 77, 0.12);
+}
+.res-phase-tag.phase-active {
+  color: #175cd3;
+  background: #eff8ff;
+}
+.res-phase-tag.phase-completed,
+.res-phase-tag.phase-cancelled {
+  color: #475467;
+  background: #f2f4f7;
+}
+.res-card-top {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  align-items: start;
+}
+.res-card-top h3 {
+  margin: 0 0 4px;
+  font-size: 1.15rem;
+}
+.res-id {
+  margin: 0;
+  color: #98a2b3;
+  font-size: 0.85rem;
+}
+.res-price {
+  text-align: right;
+}
+.res-price strong {
+  display: block;
+  color: var(--accent);
+  font-size: 1.25rem;
+}
+.res-price span {
+  color: #98a2b3;
+  font-size: 0.72rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  font-weight: 700;
+}
+.res-card-meta {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin: 12px 0;
+}
+.res-card-meta span {
+  display: block;
+  font-size: 0.7rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: #98a2b3;
+  font-weight: 700;
+  margin-bottom: 4px;
+}
+.res-card-meta strong {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #344054;
+}
+.res-status-pill {
+  display: inline-flex;
+  padding: 5px 10px;
+  border-radius: 999px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+.res-status-pill.phase-upcoming {
+  background: #ecfdf3;
+  color: #027a48;
+}
+.res-status-pill.phase-active {
+  background: #eff8ff;
+  color: #175cd3;
+}
+.res-status-pill.phase-completed,
+.res-status-pill.phase-cancelled {
+  background: #f2f4f7;
+  color: #475467;
+}
+.res-card-actions {
+  display: grid;
+  gap: 8px;
+}
+.res-card-actions .btn {
+  width: 100%;
+  border-radius: 10px;
+  justify-content: center;
+  text-align: center;
+  font-size: 0.88rem;
+  padding: 10px 12px;
+}
+.res-btn-dark {
+  background: #121212 !important;
+  border-color: #121212 !important;
+}
+.res-btn-muted {
+  background: #f2f4f7 !important;
+  color: #344054 !important;
+  border-color: #e4e7ec !important;
+}
+.res-empty {
+  padding: 36px 20px;
+  text-align: center;
+  background: #fff;
+  border-radius: 16px;
+  border: 1px solid rgba(16, 24, 40, 0.08);
+}
+.res-pager {
+  margin-top: 22px;
+}
+
+@media (max-width: 900px) {
+  .res-stats {
+    grid-template-columns: 1fr;
+  }
+  .res-card {
+    grid-template-columns: 1fr;
+  }
+  .res-card-media {
+    max-width: 280px;
+  }
+  .res-card-meta {
+    grid-template-columns: 1fr;
+  }
+}
+
 .lang-switch {
   --nav-chip-h: 30px;
   display: inline-flex;
