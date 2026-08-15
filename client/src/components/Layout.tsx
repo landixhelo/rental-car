@@ -178,152 +178,163 @@ export default function Layout() {
           <div className="nav-end">
             <div className="nav-lang">{langSwitch}</div>
 
-            {user ? (
-              <div
-                className={`nav-dropdown nav-dropdown-desktop${
-                  profileOpen ? " open" : ""
-                }${profileActive ? " active" : ""}`}
-                ref={profileRef}
-              >
-                <button
-                  type="button"
-                  className="nav-dropdown-trigger"
-                  aria-expanded={profileOpen}
-                  aria-haspopup="menu"
-                  onClick={() => setProfileOpen((v) => !v)}
+            <div className="nav-desktop-only">
+              {user ? (
+                <div
+                  className={`nav-dropdown${profileOpen ? " open" : ""}${
+                    profileActive ? " active" : ""
+                  }`}
+                  ref={profileRef}
                 >
-                  <span className="nav-item-badge">
-                    <span className="nav-avatar" aria-hidden>
-                      {(user.fullName || "U").charAt(0).toUpperCase()}
-                    </span>
-                    <span className="nav-user-name">{user.fullName}</span>
-                    {showReservationBadge && reservationBadge > 0 ? (
-                      <span
-                        className="nav-badge"
-                        aria-label={`${reservationBadge} ${t("nav.notifications")}`}
-                      >
-                        {badgeLabel}
-                      </span>
-                    ) : null}
-                  </span>
-                  <span className="nav-caret" aria-hidden>
-                    ▾
-                  </span>
-                </button>
-                <div className="nav-dropdown-menu" role="menu">
-                  <NavLink to="/profile" role="menuitem" onClick={closeMenus}>
-                    {t("nav.profile")}
-                  </NavLink>
-                  <NavLink
-                    to="/reservations"
-                    role="menuitem"
-                    onClick={closeMenus}
-                    className={({ isActive }) =>
-                      `nav-item-badge${isActive ? " active" : ""}`
-                    }
+                  <button
+                    type="button"
+                    className="nav-dropdown-trigger"
+                    aria-expanded={profileOpen}
+                    aria-haspopup="menu"
+                    onClick={() => setProfileOpen((v) => !v)}
                   >
-                    {t("nav.reservations")}
-                    {showReservationBadge && reservationBadge > 0 ? (
-                      <span className="nav-badge" aria-hidden>
-                        {badgeLabel}
+                    <span className="nav-item-badge">
+                      <span className="nav-avatar" aria-hidden>
+                        {(user.fullName || "U").charAt(0).toUpperCase()}
                       </span>
-                    ) : null}
-                  </NavLink>
-                  {canManageFleet ? (
-                    <>
-                      <NavLink
-                        to="/dashboard"
-                        role="menuitem"
-                        onClick={closeMenus}
-                      >
-                        {t("nav.dashboard")}
-                      </NavLink>
-                      <NavLink
-                        to="/chats"
-                        role="menuitem"
-                        onClick={closeMenus}
-                      >
-                        {t("nav.chats")}
-                      </NavLink>
-                      <NavLink
-                        to="/contractor"
-                        role="menuitem"
-                        onClick={closeMenus}
-                      >
-                        {t("nav.fleet")}
-                      </NavLink>
-                    </>
-                  ) : null}
-                  {user.role === "ADMIN" || user.role === "SUPER_ADMIN" ? (
-                    <NavLink to="/admin" role="menuitem" onClick={closeMenus}>
-                      {t("nav.admin")}
+                      <span className="nav-user-name">{user.fullName}</span>
+                      {showReservationBadge && reservationBadge > 0 ? (
+                        <span
+                          className="nav-badge"
+                          aria-label={`${reservationBadge} ${t("nav.notifications")}`}
+                        >
+                          {badgeLabel}
+                        </span>
+                      ) : null}
+                    </span>
+                    <span className="nav-caret" aria-hidden>
+                      ▾
+                    </span>
+                  </button>
+                  <div className="nav-dropdown-menu" role="menu">
+                    <NavLink to="/profile" role="menuitem" onClick={closeMenus}>
+                      {t("nav.profile")}
                     </NavLink>
-                  ) : null}
-                  {user.role === "SUPER_ADMIN" ? (
                     <NavLink
-                      to="/super-admin"
+                      to="/reservations"
+                      role="menuitem"
+                      onClick={closeMenus}
+                      className={({ isActive }) =>
+                        `nav-item-badge${isActive ? " active" : ""}`
+                      }
+                    >
+                      {t("nav.reservations")}
+                      {showReservationBadge && reservationBadge > 0 ? (
+                        <span className="nav-badge" aria-hidden>
+                          {badgeLabel}
+                        </span>
+                      ) : null}
+                    </NavLink>
+                    {canManageFleet ? (
+                      <>
+                        <NavLink
+                          to="/dashboard"
+                          role="menuitem"
+                          onClick={closeMenus}
+                        >
+                          {t("nav.dashboard")}
+                        </NavLink>
+                        <NavLink
+                          to="/chats"
+                          role="menuitem"
+                          onClick={closeMenus}
+                        >
+                          {t("nav.chats")}
+                        </NavLink>
+                        <NavLink
+                          to="/contractor"
+                          role="menuitem"
+                          onClick={closeMenus}
+                        >
+                          {t("nav.fleet")}
+                        </NavLink>
+                      </>
+                    ) : null}
+                    {user.role === "ADMIN" || user.role === "SUPER_ADMIN" ? (
+                      <NavLink to="/admin" role="menuitem" onClick={closeMenus}>
+                        {t("nav.admin")}
+                      </NavLink>
+                    ) : null}
+                    {user.role === "SUPER_ADMIN" ? (
+                      <NavLink
+                        to="/super-admin"
+                        role="menuitem"
+                        onClick={closeMenus}
+                      >
+                        {t("nav.superAdmin")}
+                      </NavLink>
+                    ) : null}
+                    <NavLink
+                      to="/favorites"
                       role="menuitem"
                       onClick={closeMenus}
                     >
-                      {t("nav.superAdmin")}
+                      {t("nav.favorites")}
                     </NavLink>
-                  ) : null}
-                  <NavLink to="/favorites" role="menuitem" onClick={closeMenus}>
-                    {t("nav.favorites")}
-                  </NavLink>
-                  <button
-                    type="button"
-                    className="nav-dropdown-logout"
-                    role="menuitem"
-                    onClick={() => {
-                      closeMenus();
-                      logout();
-                    }}
-                  >
-                    {t("nav.logout")}
-                  </button>
+                    <button
+                      type="button"
+                      className="nav-dropdown-logout"
+                      role="menuitem"
+                      onClick={() => {
+                        closeMenus();
+                        logout();
+                      }}
+                    >
+                      {t("nav.logout")}
+                    </button>
+                  </div>
                 </div>
-              </div>
-            ) : (
-              <div className="nav-auth nav-auth-desktop">
-                <NavLink to="/login" className="nav-login" onClick={closeMenus}>
-                  {t("nav.login")}
-                </NavLink>
+              ) : (
+                <div className="nav-auth">
+                  <NavLink
+                    to="/login"
+                    className="nav-login"
+                    onClick={closeMenus}
+                  >
+                    {t("nav.login")}
+                  </NavLink>
+                  <NavLink
+                    to="/register"
+                    className="btn nav-signup"
+                    onClick={closeMenus}
+                  >
+                    {t("nav.register")}
+                  </NavLink>
+                </div>
+              )}
+            </div>
+
+            <div className="nav-mobile-only">
+              {!user ? (
                 <NavLink
-                  to="/register"
-                  className="btn nav-signup"
+                  to="/login"
+                  className="nav-login-mobile"
                   onClick={closeMenus}
                 >
-                  {t("nav.register")}
+                  {t("nav.login")}
                 </NavLink>
-              </div>
-            )}
-
-            {!user ? (
-              <NavLink
-                to="/login"
-                className="nav-login-mobile"
-                onClick={closeMenus}
-              >
-                {t("nav.login")}
-              </NavLink>
-            ) : null}
-
-            <button
-              type="button"
-              className="icon-btn menu-toggle"
-              onClick={() => setMenuOpen((v) => !v)}
-              aria-expanded={menuOpen}
-              aria-controls="mobile-nav-menu"
-              aria-label={t("nav.toggleMenu")}
-            >
-              {menuOpen ? "✕" : "☰"}
-              {user && showReservationBadge && reservationBadge > 0 ? (
-                <span className="nav-badge menu-toggle-badge" aria-hidden>
-                  {badgeLabel}
-                </span>
               ) : null}
-            </button>
+              <button
+                type="button"
+                className="icon-btn menu-toggle"
+                onClick={() => setMenuOpen((v) => !v)}
+                aria-expanded={menuOpen}
+                aria-controls="mobile-nav-menu"
+                aria-label={t("nav.toggleMenu")}
+              >
+                {menuOpen ? "✕" : "☰"}
+                {user && showReservationBadge && reservationBadge > 0 ? (
+                  <span className="nav-badge menu-toggle-badge" aria-hidden>
+                    {badgeLabel}
+                  </span>
+                ) : null}
+              </button>
+            </div>
           </div>
           </div>
 
@@ -333,9 +344,6 @@ export default function Layout() {
           >
             {user ? (
               <div className="nav-menu-user">
-                <span className="nav-avatar" aria-hidden>
-                  {(user.fullName || "U").charAt(0).toUpperCase()}
-                </span>
                 <div className="nav-menu-user-text">
                   <strong>{user.fullName}</strong>
                   {user.email ? <span>{user.email}</span> : null}
