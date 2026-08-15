@@ -84,6 +84,11 @@ export default function Layout() {
   }, [location.pathname]);
 
   useEffect(() => {
+    document.body.classList.toggle("nav-menu-open", menuOpen);
+    return () => document.body.classList.remove("nav-menu-open");
+  }, [menuOpen]);
+
+  useEffect(() => {
     function onDocClick(e: MouseEvent) {
       if (!profileRef.current?.contains(e.target as Node)) {
         setProfileOpen(false);
@@ -193,9 +198,9 @@ export default function Layout() {
 
             {user ? (
               <div
-                className={`nav-dropdown${profileOpen ? " open" : ""}${
-                  profileActive ? " active" : ""
-                }`}
+                className={`nav-dropdown nav-dropdown-desktop${
+                  profileOpen ? " open" : ""
+                }${profileActive ? " active" : ""}`}
                 ref={profileRef}
               >
                 <button
@@ -298,7 +303,7 @@ export default function Layout() {
                 </div>
               </div>
             ) : (
-              <div className="nav-auth">
+              <div className="nav-auth nav-auth-desktop">
                 <NavLink to="/login" className="nav-login" onClick={closeMenus}>
                   {t("nav.login")}
                 </NavLink>
@@ -312,18 +317,61 @@ export default function Layout() {
               </div>
             )}
 
+            {!user ? (
+              <NavLink
+                to="/login"
+                className="nav-login-mobile"
+                onClick={closeMenus}
+              >
+                {t("nav.login")}
+              </NavLink>
+            ) : (
+              <button
+                type="button"
+                className="nav-avatar-mobile nav-item-badge"
+                onClick={() => setMenuOpen(true)}
+                aria-label={user.fullName}
+              >
+                <span className="nav-avatar" aria-hidden>
+                  {(user.fullName || "U").charAt(0).toUpperCase()}
+                </span>
+                {showReservationBadge && reservationBadge > 0 ? (
+                  <span className="nav-badge" aria-hidden>
+                    {badgeLabel}
+                  </span>
+                ) : null}
+              </button>
+            )}
+
             <button
               type="button"
               className="icon-btn menu-toggle"
               onClick={() => setMenuOpen((v) => !v)}
               aria-expanded={menuOpen}
+              aria-controls="mobile-nav-menu"
               aria-label={t("nav.toggleMenu")}
             >
               {menuOpen ? "✕" : "☰"}
             </button>
           </div>
 
-          <div className={`nav-links ${menuOpen ? "open" : ""}`}>
+          <div
+            id="mobile-nav-menu"
+            className={`nav-links ${menuOpen ? "open" : ""}`}
+          >
+            {user ? (
+              <div className="nav-menu-user">
+                <span className="nav-avatar" aria-hidden>
+                  {(user.fullName || "U").charAt(0).toUpperCase()}
+                </span>
+                <div className="nav-menu-user-text">
+                  <strong>{user.fullName}</strong>
+                  {user.email ? <span>{user.email}</span> : null}
+                </div>
+              </div>
+            ) : null}
+
+            <p className="nav-menu-section">{t("footer.explore")}</p>
             <NavLink to="/cars" onClick={closeMenus}>
               {t("nav.cars")}
             </NavLink>
@@ -345,11 +393,21 @@ export default function Layout() {
 
             {user ? (
               <>
+                <p className="nav-menu-section">{t("nav.profile")}</p>
                 <NavLink to="/profile" onClick={closeMenus}>
                   {t("nav.profile")}
                 </NavLink>
-                <NavLink to="/reservations" onClick={closeMenus}>
+                <NavLink
+                  to="/reservations"
+                  onClick={closeMenus}
+                  className="nav-item-badge"
+                >
                   {t("nav.reservations")}
+                  {showReservationBadge && reservationBadge > 0 ? (
+                    <span className="nav-badge" aria-hidden>
+                      {badgeLabel}
+                    </span>
+                  ) : null}
                 </NavLink>
                 <NavLink to="/favorites" onClick={closeMenus}>
                   {t("nav.favorites")}
@@ -379,7 +437,7 @@ export default function Layout() {
                 ) : null}
                 <button
                   type="button"
-                  className="link-btn"
+                  className="link-btn nav-menu-logout"
                   onClick={() => {
                     closeMenus();
                     logout();
@@ -390,12 +448,13 @@ export default function Layout() {
               </>
             ) : (
               <>
+                <p className="nav-menu-section">{t("nav.login")}</p>
                 <NavLink to="/login" onClick={closeMenus}>
                   {t("nav.login")}
                 </NavLink>
                 <NavLink
                   to="/register"
-                  className="btn nav-signup"
+                  className="btn nav-signup nav-menu-cta"
                   onClick={closeMenus}
                 >
                   {t("nav.register")}
@@ -404,12 +463,22 @@ export default function Layout() {
             )}
 
             <div className="nav-menu-utils">
+              <span className="nav-menu-utils-label">{t("nav.language")}</span>
               {langSwitch}
               {themeBtn}
             </div>
           </div>
         </div>
       </nav>
+
+      {menuOpen ? (
+        <button
+          type="button"
+          className="nav-backdrop"
+          aria-label={t("nav.toggleMenu")}
+          onClick={closeMenus}
+        />
+      ) : null}
 
       {staffCrumb ? (
         <div className="breadcrumbs-bar">
