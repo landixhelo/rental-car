@@ -158,14 +158,15 @@ export default function Layout() {
       {!isOps ? (
         <>
       <nav className="navbar">
-        <div className="navbar-shell">
+          <div className="navbar-shell">
+          <div className="nav-bar-row">
           <Link to="/" className="brand" onClick={closeMenus}>
             <span className="brand-mark" aria-hidden>
               <svg viewBox="0 0 24 24" fill="currentColor">
                 <path d="M5 11l1.5-4.5A2 2 0 0 1 8.4 5h7.2a2 2 0 0 1 1.9 1.5L19 11h1a1 1 0 0 1 1 1v3a1 1 0 0 1-1 1h-1.1a2.5 2.5 0 0 1-4.8 0H9.9a2.5 2.5 0 0 1-4.8 0H4a1 1 0 0 1-1-1v-3a1 1 0 0 1 1-1h1zm2.5 5a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm9 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2zM7.2 11h9.6l-1.1-3.3a.5.5 0 0 0-.48-.35H8.78a.5.5 0 0 0-.48.35L7.2 11z" />
               </svg>
             </span>
-            AutoRent
+            <span className="brand-text">AutoRent</span>
           </Link>
 
           <div className="nav-center">
@@ -306,23 +307,7 @@ export default function Layout() {
               >
                 {t("nav.login")}
               </NavLink>
-            ) : (
-              <button
-                type="button"
-                className="nav-avatar-mobile nav-item-badge"
-                onClick={() => setMenuOpen(true)}
-                aria-label={user.fullName}
-              >
-                <span className="nav-avatar" aria-hidden>
-                  {(user.fullName || "U").charAt(0).toUpperCase()}
-                </span>
-                {showReservationBadge && reservationBadge > 0 ? (
-                  <span className="nav-badge" aria-hidden>
-                    {badgeLabel}
-                  </span>
-                ) : null}
-              </button>
-            )}
+            ) : null}
 
             <button
               type="button"
@@ -333,7 +318,13 @@ export default function Layout() {
               aria-label={t("nav.toggleMenu")}
             >
               {menuOpen ? "✕" : "☰"}
+              {user && showReservationBadge && reservationBadge > 0 ? (
+                <span className="nav-badge menu-toggle-badge" aria-hidden>
+                  {badgeLabel}
+                </span>
+              ) : null}
             </button>
+          </div>
           </div>
 
           <div
@@ -434,10 +425,7 @@ export default function Layout() {
               </>
             )}
 
-            <div className="nav-menu-utils">
-              <span className="nav-menu-utils-label">{t("nav.language")}</span>
-              {langSwitch}
-            </div>
+            )}
           </div>
         </div>
       </nav>

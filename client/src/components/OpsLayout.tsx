@@ -307,22 +307,15 @@ export default function OpsLayout() {
               <Link to="/faq" className="ops-icon-btn" aria-label={t("nav.faq")}>
                 <Icon path={ICONS.help} size={18} />
               </Link>
-              <Link
-                to="/cars"
-                className="ops-icon-btn"
-                aria-label={t("nav.cars")}
-              >
-                <Icon path={ICONS.apps} size={18} />
-              </Link>
-              <Link
-                to="/profile"
-                className="ops-avatar ops-avatar-sm"
-                aria-label={t("nav.profile")}
-              >
-                {(user?.fullName || "U").charAt(0).toUpperCase()}
-              </Link>
-            </div>
-          </header>
+            <Link
+              to="/cars"
+              className="ops-icon-btn"
+              aria-label={t("nav.cars")}
+            >
+              <Icon path={ICONS.apps} size={18} />
+            </Link>
+          </div>
+        </header>
 
           <div className="ops-content">
             <Outlet />

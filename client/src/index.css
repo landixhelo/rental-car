@@ -100,15 +100,19 @@ main { flex: 1; width: 100%; }
   width: min(1080px, 100%);
   margin: 0 auto;
   display: flex;
+  flex-direction: column;
   flex-wrap: nowrap;
-  align-items: center;
-  gap: 8px;
+  align-items: stretch;
+  gap: 0;
   padding: 8px 10px 8px 18px;
   border-radius: 999px;
   background: #fff;
   border: 1px solid rgba(16, 24, 40, 0.06);
   box-shadow: 0 14px 44px rgba(0, 0, 0, 0.22);
   color: #121212;
+}
+.app-shell.is-home .navbar-shell:has(.nav-links.open) {
+  border-radius: 22px;
 }
 .app-shell.is-home .brand,
 .app-shell.is-home .nav-center a,
@@ -160,10 +164,18 @@ main { flex: 1; width: 100%; }
 .navbar-shell {
   width: 100%;
   display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 0;
+}
+.nav-bar-row {
+  display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 12px;
-  flex-wrap: wrap;
+  width: 100%;
+  min-width: 0;
+  position: relative;
 }
 .nav-center {
   display: none;
@@ -175,6 +187,7 @@ main { flex: 1; width: 100%; }
   align-items: center;
   gap: 10px;
   margin-left: auto;
+  flex-shrink: 0;
 }
 .nav-lang {
   display: flex;
@@ -229,13 +242,17 @@ main { flex: 1; width: 100%; }
     left: 50%;
     transform: translateX(-50%);
   }
-  .app-shell.is-home .navbar-shell {
+  .app-shell.is-home .navbar-shell,
+  .app-shell.is-home .nav-bar-row {
     position: relative;
   }
   .nav-links {
     display: none !important;
   }
   .nav-backdrop {
+    display: none !important;
+  }
+  .menu-toggle {
     display: none !important;
   }
 }
@@ -267,6 +284,13 @@ main { flex: 1; width: 100%; }
   font-weight: 700;
   font-size: 1.15rem;
   letter-spacing: -0.02em;
+  min-width: 0;
+  flex-shrink: 1;
+}
+.brand-text {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 .brand-mark {
   width: 28px;
@@ -5484,14 +5508,16 @@ th { color: var(--text-muted); font-weight: 600; }
   }
 
   .navbar-shell {
-    flex-wrap: nowrap;
+    gap: 0;
+  }
+
+  .nav-bar-row {
     gap: 8px;
-    position: relative;
   }
 
   .brand {
-    min-width: 0;
-    font-size: 1.05rem;
+    font-size: 1rem;
+    max-width: min(42vw, 160px);
   }
 
   .app-shell.is-home .navbar {
@@ -5499,14 +5525,12 @@ th { color: var(--text-muted); font-weight: 600; }
     position: absolute;
   }
   .app-shell.is-home .navbar-shell {
-    flex-wrap: nowrap;
     border-radius: 18px;
     padding: 8px 10px 8px 14px;
     width: 100%;
   }
   .app-shell.is-home .navbar-shell:has(.nav-links.open) {
     border-radius: 18px;
-    flex-wrap: wrap;
   }
 
   .nav-center {
@@ -5522,12 +5546,12 @@ th { color: var(--text-muted); font-weight: 600; }
     display: flex;
   }
   .nav-lang .lang-switch {
-    --nav-chip-h: 28px;
+    --nav-chip-h: 32px;
   }
   .nav-lang .lang-switch button {
-    min-width: 1.75rem;
-    padding: 0 6px;
-    font-size: 0.65rem;
+    min-width: 1.85rem;
+    padding: 0 7px;
+    font-size: 0.68rem;
   }
 
   .nav-end {
@@ -5548,16 +5572,18 @@ th { color: var(--text-muted); font-weight: 600; }
     color: #121212;
   }
 
-  .nav-avatar-mobile {
-    display: inline-flex;
-    align-items: center;
-  }
-
   .menu-toggle {
     display: inline-flex;
+    position: relative;
     width: 40px;
     height: 40px;
     flex-shrink: 0;
+  }
+  .menu-toggle-badge {
+    position: absolute;
+    top: -4px;
+    right: -4px;
+    box-shadow: 0 0 0 2px #fff;
   }
 
   .nav-backdrop {
@@ -5681,20 +5707,6 @@ th { color: var(--text-muted); font-weight: 600; }
     font-weight: 600;
   }
 
-  .nav-menu-utils {
-    margin-top: 10px;
-    padding: 12px;
-    gap: 12px;
-    justify-content: space-between;
-  }
-  .nav-menu-utils-label {
-    display: inline;
-    font-size: 0.78rem;
-    font-weight: 600;
-    color: var(--text-muted);
-    margin-right: auto;
-  }
-
   .section { margin: 24px auto; width: min(1200px, 94%); }
   .hero { min-height: 72vh; padding: 110px 5% 40px; }
   .specs, .chips, .features-list, .two-col { grid-template-columns: 1fr 1fr; }
@@ -5710,6 +5722,19 @@ th { color: var(--text-muted); font-weight: 600; }
   }
   .home-search { grid-template-columns: 1fr 1fr; }
   .home-cta { padding: 40px 5%; margin-top: 28px; }
+}
+
+@media (max-width: 420px) {
+  .nav-lang .lang-switch button:not(.active) {
+    display: none;
+  }
+  .nav-login-mobile {
+    padding: 8px 8px;
+    font-size: 0.82rem;
+  }
+  .brand {
+    max-width: min(38vw, 120px);
+  }
 }
 
 @media (max-width: 560px) {
