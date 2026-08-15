@@ -2864,14 +2864,20 @@ textarea { min-height: 90px; resize: vertical; }
   font-size: 0.75rem;
   font-weight: 700;
   background: #fff;
-  z-index: 1;
+  position: relative;
+  z-index: 2;
 }
 .booking-step-label {
+  position: relative;
+  z-index: 2;
   font-size: 0.72rem;
   letter-spacing: 0.1em;
   text-transform: uppercase;
   font-weight: 700;
   color: #98a2b3;
+  background: var(--bg, #fff);
+  padding: 0 6px;
+  margin: 0 -6px;
 }
 .booking-step-line {
   position: absolute;
@@ -2881,6 +2887,7 @@ textarea { min-height: 90px; resize: vertical; }
   height: 2px;
   background: #e4e7ec;
   z-index: 0;
+  pointer-events: none;
 }
 .booking-step.active .booking-step-num {
   border-color: var(--accent);
