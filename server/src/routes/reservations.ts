@@ -14,6 +14,7 @@ import { buildReservationPdf } from "../lib/pdfContract.js";
 import { createCheckoutSession, stripeEnabled } from "../lib/stripePay.js";
 import { assertCustomerCanCancel } from "../lib/cancellation.js";
 import { cancellationPolicyText } from "../lib/cancellation.js";
+import { fleetNotifyEmail, userAllowsEmail } from "../lib/notifyPrefs.js";
 import { env } from "../config/env.js";
 import { z } from "zod";
 import { validate } from "../middleware/validate.js";
@@ -461,6 +462,11 @@ router.post(
         }
 
         try {
+          const allowCustomerMail = await userAllowsEmail(
+            req.user!.id,
+            "booking"
+          );
+          const ownerMail = await fleetNotifyEmail(created.car.ownerId);
           const mailResult = await sendReservationEmails({
             customerEmail: created.user.email,
             customerName: created.user.fullName,
@@ -472,11 +478,12 @@ router.post(
             paymentStatus,
             status: bookingStatus,
             adminEmail: env.ADMIN_EMAIL || env.BUSINESS_EMAIL,
-            ownerEmail: created.car.owner?.email,
+            ownerEmail: ownerMail,
             invoicePdf,
             invoiceFilename: `autorent-fature-${created.id.slice(0, 8)}.pdf`,
+            skipCustomerEmail: !allowCustomerMail,
           });
-          if (!mailResult.sent) {
+          if (!mailResult.sent && allowCustomerMail) {
             console.error(
               "[mail] reservation confirmation not delivered →",
               created.user.email,
@@ -510,7 +517,7 @@ async function cancelReservationHandler(
     const reservation = await prisma.reservation.findUnique({
       where: { id: req.params.id },
       include: {
-        user: { select: { email: true, fullName: true } },
+        user: { select: { id: true, email: true, fullName: true } },
         car: { select: { brand: true, model: true } },
       },
     });
@@ -562,11 +569,13 @@ async function cancelReservationHandler(
 
     void (async () => {
       try {
-        await sendMail({
-          to: reservation.user.email,
-          subject: "AutoRent — rezervimi u anulua",
-          text: `Përshëndetje ${reservation.user.fullName},\n\nRezervimi për ${reservation.car.brand} ${reservation.car.model} u anulua.\n\nArsyeja: ${reason}\n\n${decision.refundNote}\n\nPolitika: ${cancellationPolicyText()}\n\nAutoRent`,
-        });
+        if (await userAllowsEmail(reservation.user.id, "cancel")) {
+          await sendMail({
+            to: reservation.user.email,
+            subject: "AutoRent — rezervimi u anulua",
+            text: `Përshëndetje ${reservation.user.fullName},\n\nRezervimi për ${reservation.car.brand} ${reservation.car.model} u anulua.\n\nArsyeja: ${reason}\n\n${decision.refundNote}\n\nPolitika: ${cancellationPolicyText()}\n\nAutoRent`,
+          });
+        }
         if (env.ADMIN_EMAIL || env.BUSINESS_EMAIL) {
           await sendMail({
             to: env.ADMIN_EMAIL || env.BUSINESS_EMAIL!,
@@ -892,11 +901,13 @@ router.patch(
       });
 
       try {
-        await sendMail({
-          to: reservation.user.email,
-          subject: `AutoRent — dokumenti: ${req.body.documentStatus}`,
-          text: `Përshëndetje ${reservation.user.fullName},\n\nStatusi i dokumentit të rezervimit: ${req.body.documentStatus}.\n${req.body.documentNote ? `Shënim: ${req.body.documentNote}\n` : ""}\nAutoRent`,
-        });
+        if (await userAllowsEmail(reservation.userId, "document")) {
+          await sendMail({
+            to: reservation.user.email,
+            subject: `AutoRent — dokumenti: ${req.body.documentStatus}`,
+            text: `Përshëndetje ${reservation.user.fullName},\n\nStatusi i dokumentit të rezervimit: ${req.body.documentStatus}.\n${req.body.documentNote ? `Shënim: ${req.body.documentNote}\n` : ""}\nAutoRent`,
+          });
+        }
       } catch (e) {
         console.error("Document status email failed:", e);
       }

@@ -81,6 +81,14 @@ model User {
   role                 Role           @default(USER)
   isActive             Boolean        @default(true)
   notes                String?
+  notifyBookingEmail   Boolean        @default(true)
+  notifyCancelEmail    Boolean        @default(true)
+  notifyPaymentEmail   Boolean        @default(true)
+  notifyDocumentEmail  Boolean        @default(true)
+  businessPhone        String?
+  businessWhatsapp     String?
+  businessAddress      String?
+  bookingNotifyEmail   String?
   passwordResetToken   String?
   passwordResetExpires DateTime?
   createdAt            DateTime       @default(now())

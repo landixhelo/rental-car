@@ -10,6 +10,14 @@ export type User = {
   email: string;
   phone?: string | null;
   companyName?: string | null;
+  businessPhone?: string | null;
+  businessWhatsapp?: string | null;
+  businessAddress?: string | null;
+  bookingNotifyEmail?: string | null;
+  notifyBookingEmail?: boolean;
+  notifyCancelEmail?: boolean;
+  notifyPaymentEmail?: boolean;
+  notifyDocumentEmail?: boolean;
   role: "USER" | "CONTRACTOR" | "ADMIN" | "SUPER_ADMIN";
   isActive?: boolean;
   createdAt?: string;
@@ -181,6 +189,15 @@ export const api = {
     fullName: string;
     phone?: string;
     password?: string;
+    companyName?: string | null;
+    businessPhone?: string | null;
+    businessWhatsapp?: string | null;
+    businessAddress?: string | null;
+    bookingNotifyEmail?: string | null;
+    notifyBookingEmail?: boolean;
+    notifyCancelEmail?: boolean;
+    notifyPaymentEmail?: boolean;
+    notifyDocumentEmail?: boolean;
   }) =>
     request<{ user: User }>("/api/auth/profile", {
       method: "PATCH",

@@ -43,8 +43,19 @@ export const resetPasswordSchema = z.object({
 export const updateProfileSchema = z.object({
   body: z.object({
     fullName: z.string().trim().min(2).max(100),
-    phone: z.string().trim().max(30).optional(),
+    phone: z.string().trim().max(30).optional().nullable(),
     password: strongPassword.optional().or(z.literal("")),
+    companyName: z.string().trim().max(120).optional().nullable(),
+    businessPhone: z.string().trim().max(40).optional().nullable(),
+    businessWhatsapp: z.string().trim().max(40).optional().nullable(),
+    businessAddress: z.string().trim().max(200).optional().nullable(),
+    bookingNotifyEmail: z
+      .union([z.string().trim().email(), z.literal(""), z.null()])
+      .optional(),
+    notifyBookingEmail: z.boolean().optional(),
+    notifyCancelEmail: z.boolean().optional(),
+    notifyPaymentEmail: z.boolean().optional(),
+    notifyDocumentEmail: z.boolean().optional(),
   }),
 });
 

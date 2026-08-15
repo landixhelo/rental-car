@@ -84,6 +84,7 @@ export async function sendReservationEmails(input: {
   ownerEmail?: string | null;
   invoicePdf?: Buffer | null;
   invoiceFilename?: string;
+  skipCustomerEmail?: boolean;
 }) {
   const biz = getBusinessPublic();
   const summary = [
@@ -119,23 +120,36 @@ export async function sendReservationEmails(input: {
       ]
     : undefined;
 
-  let customerResult = await sendMail({
-    to: input.customerEmail,
-    subject,
-    text: `${baseText}${
-      customerAttachments ? "\nFatura e rezervimit është bashkangjitur si PDF.\n" : ""
-    }${tail}`,
-    attachments: customerAttachments,
-  });
+  let customerResult: { sent: true } | { sent: false; error?: string } = {
+    sent: true,
+  };
 
-  // Attachment or size issues: retry plain email so customer still gets confirmation.
-  if (!customerResult.sent && customerAttachments) {
-    console.warn("[mail] retrying customer email without PDF attachment");
+  if (!input.skipCustomerEmail) {
     customerResult = await sendMail({
       to: input.customerEmail,
       subject,
-      text: `${baseText}${tail}`,
+      text: `${baseText}${
+        customerAttachments
+          ? "\nFatura e rezervimit është bashkangjitur si PDF.\n"
+          : ""
+      }${tail}`,
+      attachments: customerAttachments,
     });
+
+    // Attachment or size issues: retry plain email so customer still gets confirmation.
+    if (!customerResult.sent && customerAttachments) {
+      console.warn("[mail] retrying customer email without PDF attachment");
+      customerResult = await sendMail({
+        to: input.customerEmail,
+        subject,
+        text: `${baseText}${tail}`,
+      });
+    }
+  } else {
+    console.info(
+      "[mail] skipped customer confirmation (prefs) →",
+      input.customerEmail
+    );
   }
 
   const staff = [input.adminEmail, input.ownerEmail].filter(

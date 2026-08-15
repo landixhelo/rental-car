@@ -46,6 +46,14 @@ function publicUser(user: {
   email: string;
   phone: string | null;
   companyName?: string | null;
+  businessPhone?: string | null;
+  businessWhatsapp?: string | null;
+  businessAddress?: string | null;
+  bookingNotifyEmail?: string | null;
+  notifyBookingEmail?: boolean;
+  notifyCancelEmail?: boolean;
+  notifyPaymentEmail?: boolean;
+  notifyDocumentEmail?: boolean;
   role: "USER" | "CONTRACTOR" | "ADMIN" | "SUPER_ADMIN";
   isActive?: boolean;
   createdAt: Date;
@@ -56,6 +64,14 @@ function publicUser(user: {
     email: user.email,
     phone: user.phone,
     companyName: user.companyName ?? null,
+    businessPhone: user.businessPhone ?? null,
+    businessWhatsapp: user.businessWhatsapp ?? null,
+    businessAddress: user.businessAddress ?? null,
+    bookingNotifyEmail: user.bookingNotifyEmail ?? null,
+    notifyBookingEmail: user.notifyBookingEmail ?? true,
+    notifyCancelEmail: user.notifyCancelEmail ?? true,
+    notifyPaymentEmail: user.notifyPaymentEmail ?? true,
+    notifyDocumentEmail: user.notifyDocumentEmail ?? true,
     role: user.role,
     isActive: user.isActive ?? true,
     createdAt: user.createdAt,
@@ -246,15 +262,62 @@ router.patch(
   validate(updateProfileSchema),
   async (req, res, next) => {
     try {
-      const { fullName, phone, password } = req.body;
-      const data: {
-        fullName: string;
-        phone?: string;
-        passwordHash?: string;
-      } = { fullName, phone };
+      const {
+        fullName,
+        phone,
+        password,
+        companyName,
+        businessPhone,
+        businessWhatsapp,
+        businessAddress,
+        bookingNotifyEmail,
+        notifyBookingEmail,
+        notifyCancelEmail,
+        notifyPaymentEmail,
+        notifyDocumentEmail,
+      } = req.body;
+
+      const data: Record<string, unknown> = {
+        fullName,
+        phone: phone || null,
+      };
 
       if (password) {
         data.passwordHash = await bcrypt.hash(password, env.BCRYPT_ROUNDS);
+      }
+
+      const isStaff =
+        req.user!.role === "CONTRACTOR" ||
+        req.user!.role === "ADMIN" ||
+        req.user!.role === "SUPER_ADMIN";
+
+      if (isStaff) {
+        if (companyName !== undefined) data.companyName = companyName || null;
+        if (businessPhone !== undefined)
+          data.businessPhone = businessPhone || null;
+        if (businessWhatsapp !== undefined)
+          data.businessWhatsapp = businessWhatsapp || null;
+        if (businessAddress !== undefined)
+          data.businessAddress = businessAddress || null;
+        if (bookingNotifyEmail !== undefined) {
+          data.bookingNotifyEmail =
+            bookingNotifyEmail && String(bookingNotifyEmail).trim()
+              ? String(bookingNotifyEmail).trim()
+              : null;
+        }
+      }
+
+      if (typeof notifyBookingEmail === "boolean") {
+        data.notifyBookingEmail = notifyBookingEmail;
+      }
+      if (typeof notifyCancelEmail === "boolean") {
+        data.notifyCancelEmail = notifyCancelEmail;
+      }
+      if (typeof notifyPaymentEmail === "boolean") {
+        data.notifyPaymentEmail = notifyPaymentEmail;
+      }
+      if (typeof notifyDocumentEmail === "boolean") {
+        data.notifyDocumentEmail = notifyDocumentEmail;
       }
 
       const user = await prisma.user.update({

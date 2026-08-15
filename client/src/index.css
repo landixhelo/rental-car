@@ -1047,6 +1047,106 @@ main { flex: 1; width: 100%; }
 .ops-page-narrow {
   max-width: 720px;
 }
+.settings-card {
+  background: #fff;
+  border: 1px solid rgba(16, 24, 40, 0.08);
+  border-radius: 16px;
+  padding: 18px;
+  margin-bottom: 14px;
+  box-shadow: 0 8px 24px rgba(16, 24, 40, 0.04);
+}
+.settings-card h2 {
+  margin: 0 0 8px;
+  font-size: 1.05rem;
+}
+.settings-subhead {
+  margin-top: 22px !important;
+  padding-top: 16px;
+  border-top: 1px solid rgba(16, 24, 40, 0.08);
+}
+.settings-field {
+  display: grid;
+  gap: 6px;
+  margin-bottom: 12px;
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: #667085;
+}
+.settings-field input {
+  width: 100%;
+  padding: 11px 12px;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  font: inherit;
+  font-weight: 500;
+  color: #121212;
+  background: #fff;
+}
+.settings-field input:disabled {
+  background: #f2f4f7;
+  color: #667085;
+}
+.settings-field small {
+  font-weight: 500;
+}
+.settings-lang {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 10px;
+}
+.settings-lang button {
+  appearance: none;
+  border: 1px solid var(--border);
+  background: #fff;
+  color: #344054;
+  border-radius: 999px;
+  padding: 9px 14px;
+  font: inherit;
+  font-weight: 600;
+  font-size: 0.88rem;
+  cursor: pointer;
+}
+.settings-lang button.active {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
+}
+.settings-toggles {
+  display: grid;
+  gap: 10px;
+  margin: 12px 0 16px;
+}
+.settings-toggle {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  padding: 12px;
+  border-radius: 12px;
+  border: 1px solid rgba(16, 24, 40, 0.08);
+  background: #f9fafb;
+  cursor: pointer;
+}
+.settings-toggle input {
+  margin-top: 3px;
+  width: 18px;
+  height: 18px;
+  accent-color: var(--accent);
+  flex-shrink: 0;
+}
+.settings-toggle strong {
+  display: block;
+  color: #121212;
+  font-size: 0.92rem;
+}
+.settings-toggle small {
+  display: block;
+  margin-top: 2px;
+  color: #667085;
+  font-weight: 500;
+  font-size: 0.8rem;
+  line-height: 1.35;
+}
 .ops-page .panel,
 .ops-page .dash-kpi-card {
   background: #fff;

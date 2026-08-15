@@ -3,6 +3,7 @@ import { prisma } from "../lib/prisma.js";
 import { env } from "../config/env.js";
 import { getStripe, stripeEnabled } from "../lib/stripePay.js";
 import { sendMail } from "../lib/mail.js";
+import { userAllowsEmail } from "../lib/notifyPrefs.js";
 
 const router = Router();
 
@@ -52,17 +53,19 @@ export async function stripeWebhookHandler(
           stripeSessionId: session.id,
         },
         include: {
-          user: { select: { email: true, fullName: true } },
+          user: { select: { id: true, email: true, fullName: true } },
           car: { select: { brand: true, model: true } },
         },
       });
 
       try {
-        await sendMail({
-          to: updated.user.email,
-          subject: "AutoRent — pagesa u konfirmua",
-          text: `Përshëndetje ${updated.user.fullName},\n\nPagesa për ${updated.car.brand} ${updated.car.model} u konfirmua.\nRezervimi është CONFIRMED.\n\nFaleminderit,\nAutoRent`,
-        });
+        if (await userAllowsEmail(updated.user.id, "payment")) {
+          await sendMail({
+            to: updated.user.email,
+            subject: "AutoRent — pagesa u konfirmua",
+            text: `Përshëndetje ${updated.user.fullName},\n\nPagesa për ${updated.car.brand} ${updated.car.model} u konfirmua.\nRezervimi është CONFIRMED.\n\nFaleminderit,\nAutoRent`,
+          });
+        }
       } catch (e) {
         console.error("Paid email failed:", e);
       }
