@@ -1,17 +1,16 @@
 import { type FormEvent, useEffect, useMemo, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import { api, type Car } from "../lib/api";
 import { useAuth } from "../context/AuthContext";
 import { useLocale, useT } from "../context/LocaleContext";
 import { useToast } from "../hooks/useToast";
-import ImageCarousel from "../components/ImageCarousel";
 import Seo from "../seo/Seo";
 import { breadcrumbJsonLd, carProductJsonLd } from "../seo/jsonLd";
 import BookingCalendar from "../components/BookingCalendar";
 import { mediaUrl } from "../lib/mediaUrl";
 import { carPath } from "../lib/carPath";
 import { setFlash } from "../lib/flash";
-import { rangeOverlapsBusy, tiraneToday } from "../lib/dates";
+import { addDays, clampDate, rangeOverlapsBusy, tiraneToday } from "../lib/dates";
 import { fuelLabel, transmissionLabel } from "../lib/labels";
 
 export default function CarDetailsPage() {
@@ -28,6 +27,7 @@ export default function CarDetailsPage() {
     cardEnabled?: boolean;
   } | null>(null);
 
+  const today = tiraneToday();
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
   const [pickup, setPickup] = useState("tirane");
@@ -38,6 +38,8 @@ export default function CarDetailsPage() {
   const [documentFile, setDocumentFile] = useState<File | null>(null);
   const [rating, setRating] = useState("5");
   const [comment, setComment] = useState("");
+  const [activeImage, setActiveImage] = useState(0);
+  const [showMore, setShowMore] = useState(false);
 
   useEffect(() => {
     if (!id) return;
@@ -49,20 +51,51 @@ export default function CarDetailsPage() {
         if (pretty && id !== pretty) {
           navigate(carPath(carRes.car), { replace: true });
         }
+        if (metaRes.locations[0]) {
+          setPickup(metaRes.locations[0].id);
+          setRet(metaRes.locations[0].id);
+        }
       })
       .catch((e) => show(e.message));
   }, [id]);
 
+  const images = useMemo(() => {
+    if (!car) return [];
+    const list =
+      car.images?.length
+        ? car.images
+        : car.imageUrl
+          ? [car.imageUrl]
+          : [];
+    return list.map(mediaUrl).filter(Boolean);
+  }, [car]);
+
+  useEffect(() => {
+    setActiveImage(0);
+  }, [car?.id]);
+
   const summary = useMemo(() => {
     if (!car || !meta || !startDate || !endDate) {
-      return { days: 0, carSubtotal: 0, extrasTotal: 0, locationFees: 0, total: 0 };
+      return {
+        days: 0,
+        carSubtotal: 0,
+        extrasTotal: 0,
+        locationFees: 0,
+        total: 0,
+      };
     }
     const days = Math.ceil(
       (new Date(endDate).getTime() - new Date(startDate).getTime()) /
         (1000 * 60 * 60 * 24)
     );
     if (days <= 0) {
-      return { days: 0, carSubtotal: 0, extrasTotal: 0, locationFees: 0, total: 0 };
+      return {
+        days: 0,
+        carSubtotal: 0,
+        extrasTotal: 0,
+        locationFees: 0,
+        total: 0,
+      };
     }
     const carSubtotal = days * car.pricePerDay;
     const extrasTotal = meta.extras
@@ -88,7 +121,6 @@ export default function CarDetailsPage() {
     if (car.status === "MAINTENANCE") {
       return t("status.MAINTENANCE");
     }
-    // Half-open [start, end): pickup on a return day is allowed.
     const hit = (car.busyRanges || []).find((range) => {
       return startDate < range.endDate && endDate > range.startDate;
     });
@@ -108,7 +140,6 @@ export default function CarDetailsPage() {
       return;
     }
     if (!car) return;
-    const today = tiraneToday();
     if (!startDate || !endDate || startDate < today || endDate <= startDate) {
       show(t("details.pickStart"));
       return;
@@ -181,6 +212,22 @@ export default function CarDetailsPage() {
     setCar(refreshed.car);
   }
 
+  async function shareCar() {
+    if (!car) return;
+    const url = window.location.href;
+    const title = `${car.brand} ${car.model}`;
+    try {
+      if (navigator.share) {
+        await navigator.share({ title, url });
+      } else {
+        await navigator.clipboard.writeText(url);
+        show(t("details.linkCopied"));
+      }
+    } catch {
+      // user cancelled share
+    }
+  }
+
   function statusLabel(status: string) {
     if (status === "RESERVED") {
       return car?.reservedUntil
@@ -192,12 +239,17 @@ export default function CarDetailsPage() {
     return status || t("status.AVAILABLE");
   }
 
-  if (!car || !meta) return <div className="section">{t("common.loading")}</div>;
+  if (!car || !meta) {
+    return <div className="section">{t("common.loading")}</div>;
+  }
+
+  const carName = `${car.brand} ${car.model}`;
+  const statusClass = (car.status || "AVAILABLE").toLowerCase();
 
   return (
-    <div className="section details-grid">
+    <div className="detail-page">
       <Seo
-        title={`${car.brand} ${car.model} — €${car.pricePerDay}${t("common.perDay")}`}
+        title={`${carName} — €${car.pricePerDay}${t("common.perDay")}`}
         description={car.description}
         path={carPath(car)}
         locale={locale}
@@ -207,244 +259,428 @@ export default function CarDetailsPage() {
           breadcrumbJsonLd([
             { name: "AutoRent", path: "/" },
             { name: t("nav.cars"), path: "/cars" },
-            {
-              name: `${car.brand} ${car.model}`,
-              path: carPath(car),
-            },
+            { name: carName, path: carPath(car) },
           ]),
           carProductJsonLd(car),
         ]}
       />
       {Toast}
-      <div className="details-media">
-        <ImageCarousel
-          className="detail-carousel"
-          images={
-            car.images?.length
-              ? car.images
-              : car.imageUrl
-                ? [car.imageUrl]
-                : []
-          }
-          alt={`${car.brand} ${car.model}`}
-        />
-      </div>
 
-      <div className="details-booking">
-        <div className="row-between">
-          <div>
-            <h1>
-              {car.brand} {car.model}
-            </h1>
-            <div className="company-badge">
-              <span className="company-badge-label">{t("profile.company")}</span>
-              <strong>{car.companyName || "AutoRent"}</strong>
+      <nav className="detail-crumbs" aria-label="Breadcrumb">
+        <Link to="/">{t("details.crumbHome")}</Link>
+        <span aria-hidden>›</span>
+        <Link to="/cars">{t("details.crumbFleet")}</Link>
+        <span aria-hidden>›</span>
+        <span>{carName}</span>
+      </nav>
+
+      <div className="detail-layout">
+        <div className="detail-main">
+          <div className="detail-gallery">
+            <div className="detail-gallery-main">
+              {images.length ? (
+                <img
+                  src={images[Math.min(activeImage, images.length - 1)]}
+                  alt={carName}
+                />
+              ) : (
+                <div className="detail-gallery-empty">{t("details.noPhoto")}</div>
+              )}
             </div>
-            <p className="muted">
-              {car.year} · ⭐ {car.ratingAvg || "-"} ({car.ratingCount || 0})
-            </p>
-            <span
-              className={`status-chip status-inline status-${(car.status || "AVAILABLE").toLowerCase()}`}
-            >
-              {statusLabel(car.status || "AVAILABLE")}
-            </span>
-          </div>
-          <div className="price-box">
-            <button className={`fav-btn detail ${car.isFavorite ? "active" : ""}`} onClick={toggleFavorite}>
-              ♥
-            </button>
-            <h2>€{car.pricePerDay}</h2>
-            <span>{t("common.perDay")}</span>
-          </div>
-        </div>
-        <p className="detail-desc">{car.description}</p>
-
-        <form className="panel booking" onSubmit={onReserve}>
-          <h3>{t("details.book")}</h3>
-          {(car.busyRanges || []).length > 0 ? (
-            <div className="busy-ranges">
-              <p className="busy-ranges-title">{t("status.RESERVED")}</p>
-              <ul>
-                {(car.busyRanges || []).map((range) => (
-                  <li key={`${range.startDate}-${range.endDate}`}>
-                    {range.startDate} → {range.endDate}
-                  </li>
-                ))}
-              </ul>
-            </div>
-          ) : null}
-          <BookingCalendar
-            startDate={startDate}
-            endDate={endDate}
-            busyRanges={car.busyRanges || []}
-            onChange={(start, end) => {
-              setStartDate(start);
-              setEndDate(end);
-            }}
-          />
-          {/* Keep values for form validity / screen readers */}
-          <input type="hidden" name="startDate" value={startDate} required />
-          <input type="hidden" name="endDate" value={endDate} required />
-          {dateConflict ? (
-            <p className="booking-conflict">{dateConflict}</p>
-          ) : null}
-          <div className="two-col">
-            <label>
-              {t("details.pickup")}
-              <select value={pickup} onChange={(e) => setPickup(e.target.value)}>
-                {meta.locations.map((l) => (
-                  <option key={l.id} value={l.id}>
-                    {l.name} {l.fee ? `(+€${l.fee})` : ""}
-                  </option>
-                ))}
-              </select>
-            </label>
-            <label>
-              {t("details.dropoff")}
-              <select value={ret} onChange={(e) => setRet(e.target.value)}>
-                {meta.locations.map((l) => (
-                  <option key={l.id} value={l.id}>
-                    {l.name} {l.fee ? `(+€${l.fee})` : ""}
-                  </option>
-                ))}
-              </select>
-            </label>
-          </div>
-
-          <div className="extras">
-            <h4 className="extras-title">{t("details.extras")}</h4>
-            <div className="extras-grid">
-              {meta.extras.map((ex) => {
-                const checked = selectedExtras.includes(ex.id);
-                return (
-                  <label
-                    key={ex.id}
-                    className={`extra-item${checked ? " selected" : ""}`}
+            {images.length > 1 ? (
+              <div className="detail-thumbs">
+                {images.map((src, i) => (
+                  <button
+                    key={`${src}-${i}`}
+                    type="button"
+                    className={i === activeImage ? "active" : undefined}
+                    onClick={() => setActiveImage(i)}
                   >
-                    <input
-                      type="checkbox"
-                      checked={checked}
-                      onChange={(e) => {
-                        setSelectedExtras((prev) =>
-                          e.target.checked
-                            ? [...prev, ex.id]
-                            : prev.filter((x) => x !== ex.id)
-                        );
-                      }}
-                    />
-                    <span className="extra-check" aria-hidden="true" />
-                    <span className="extra-copy">
-                      <span className="extra-name">{ex.name}</span>
-                      <span className="extra-price">+€{ex.price}{t("common.perDay")}</span>
-                    </span>
-                  </label>
-                );
-              })}
+                    <img src={src} alt="" />
+                  </button>
+                ))}
+              </div>
+            ) : null}
+          </div>
+
+          <div className="detail-header">
+            <div className="detail-badges">
+              <span className={`detail-status status-${statusClass}`}>
+                {statusLabel(car.status || "AVAILABLE")}
+              </span>
+              <span className="detail-rating">
+                ★ {car.ratingAvg || "—"}{" "}
+                <small>
+                  ({car.ratingCount || 0} {t("details.reviews").toLowerCase()})
+                </small>
+              </span>
             </div>
+            <div className="detail-title-row">
+              <h1>{carName}</h1>
+              <div className="detail-actions">
+                <button
+                  type="button"
+                  className={`detail-icon-btn${car.isFavorite ? " active" : ""}`}
+                  onClick={toggleFavorite}
+                  aria-label={t("nav.favorites")}
+                >
+                  ♥
+                </button>
+                <button
+                  type="button"
+                  className="detail-icon-btn"
+                  onClick={shareCar}
+                  aria-label={t("details.share")}
+                >
+                  ↗
+                </button>
+              </div>
+            </div>
+            <p className="detail-loc">
+              <span aria-hidden>⌖</span>
+              {t("details.pickupAvailable", { location: car.location })}
+            </p>
+            <p className="detail-desc">{car.description}</p>
           </div>
 
-          <label>
-            {t("details.payment")}
-            <select value={paymentMethod} onChange={(e) => setPaymentMethod(e.target.value)}>
-              <option value="CASH">{t("labels.payment.CASH")}</option>
-              <option value="BANK_TRANSFER">{t("labels.payment.BANK_TRANSFER")}</option>
-              {meta?.cardEnabled ? (
-                <option value="CARD">{t("labels.payment.CARD")}</option>
-              ) : null}
-            </select>
-          </label>
-
-          <label>
-            {t("details.document")}
-            <input
-              type="file"
-              accept="image/*,.pdf"
-              onChange={(e) => setDocumentFile(e.target.files?.[0] || null)}
-            />
-          </label>
-
-          <label>
-            {t("details.notes")}
-            <textarea value={notes} onChange={(e) => setNotes(e.target.value)} />
-          </label>
-
-          <div className="summary">
-            <p>{t("reservations.dates")}: {summary.days}</p>
-            <p>{t("reservations.car")}: €{summary.carSubtotal}</p>
-            <p>{t("details.extras")}: €{summary.extrasTotal}</p>
-            <p>{t("details.location")}: €{summary.locationFees}</p>
-            <p className="total">{t("details.total")}: €{summary.total}</p>
-          </div>
-
-          <button className="btn" type="submit" disabled={!canReserve}>
-            {!user
-              ? t("details.loginToBook")
-              : dateConflict
-                ? t("details.conflict")
-                : t("details.book")}
-          </button>
-        </form>
-      </div>
-
-      <div className="details-info">
-        <div className="specs">
-          <div><strong>{car.seats}</strong><span>{t("details.seats")}</span></div>
-          <div><strong>{fuelLabel(t, car.fuel)}</strong><span>{t("details.fuel")}</span></div>
-          <div><strong>{transmissionLabel(t, car.transmission)}</strong><span>{t("details.transmission")}</span></div>
-          <div><strong>{car.doors}</strong><span>{t("details.doors")}</span></div>
-          <div><strong>{car.luggage}</strong><span>{t("details.luggage")}</span></div>
-          <div><strong>{car.horsepower || "-"}</strong><span>{t("details.hp")}</span></div>
-        </div>
-        <div className="chips">
-          <span>{t("details.color")}: {car.color || "-"}</span>
-          <span>{t("details.km")}: {car.mileage || "-"}</span>
-          <span>{t("details.location")}: {car.location}</span>
-        </div>
-        <div className="panel">
-          <h3>{t("details.features")}</h3>
-          <ul className="features-list">
-            {(car.features || []).map((f) => (
-              <li key={f}>✓ {f}</li>
-            ))}
-          </ul>
-        </div>
-
-        <form className="panel reviews-panel" onSubmit={onReview}>
-          <h3>{t("details.reviews")}</h3>
-          <div className="reviews">
-            {(car.reviews || []).length ? (
-              (car.reviews || []).map((r) => (
-                <div key={r.id} className="review-item">
-                  <strong>
-                    {r.userName} · ⭐ {r.rating}
-                  </strong>
-                  <p>{r.comment || t("details.comment")}</p>
+          <section className="detail-block">
+            <h2>{t("details.specifications")}</h2>
+            <div className="detail-specs">
+              <div>
+                <span className="detail-spec-ico" aria-hidden>
+                  ⚙
+                </span>
+                <div>
+                  <strong>{transmissionLabel(t, car.transmission)}</strong>
+                  <small>{t("details.transmission")}</small>
                 </div>
-              ))
-            ) : (
-              <p className="muted">—</p>
-            )}
-          </div>
-          <h4 className="review-form-title">{t("details.writeReview")}</h4>
-          <label>
-            {t("details.yourRating")}
-            <select value={rating} onChange={(e) => setRating(e.target.value)}>
-              {[5, 4, 3, 2, 1].map((n) => (
-                <option key={n} value={n}>
-                  {n} ⭐
-                </option>
-              ))}
-            </select>
-          </label>
-          <textarea
-            placeholder={t("details.comment")}
-            value={comment}
-            onChange={(e) => setComment(e.target.value)}
-          />
-          <button className="btn" type="submit">
-            {t("details.submitReview")}
-          </button>
-        </form>
+              </div>
+              <div>
+                <span className="detail-spec-ico" aria-hidden>
+                  ⛽
+                </span>
+                <div>
+                  <strong>{fuelLabel(t, car.fuel)}</strong>
+                  <small>{t("details.fuel")}</small>
+                </div>
+              </div>
+              <div>
+                <span className="detail-spec-ico" aria-hidden>
+                  👥
+                </span>
+                <div>
+                  <strong>
+                    {car.seats} {t("details.seats")}
+                  </strong>
+                  <small>{t("details.seats")}</small>
+                </div>
+              </div>
+              <div>
+                <span className="detail-spec-ico" aria-hidden>
+                  🚪
+                </span>
+                <div>
+                  <strong>
+                    {car.doors} {t("details.doors")}
+                  </strong>
+                  <small>{t("details.doors")}</small>
+                </div>
+              </div>
+              <div>
+                <span className="detail-spec-ico" aria-hidden>
+                  📅
+                </span>
+                <div>
+                  <strong>{car.year}</strong>
+                  <small>{t("details.year")}</small>
+                </div>
+              </div>
+              <div>
+                <span className="detail-spec-ico" aria-hidden>
+                  ◆
+                </span>
+                <div>
+                  <strong>
+                    {car.type === "SUV" ||
+                    car.type === "Sedan" ||
+                    car.type === "Sports" ||
+                    car.type === "Luxury"
+                      ? t(`labels.type.${car.type}`)
+                      : car.type}
+                  </strong>
+                  <small>{t("details.category")}</small>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <section className="detail-block">
+            <h2>{t("details.features")}</h2>
+            <ul className="detail-features">
+              {(car.features || []).length ? (
+                (car.features || []).map((f) => (
+                  <li key={f}>
+                    <span aria-hidden>✓</span>
+                    {f}
+                  </li>
+                ))
+              ) : (
+                <li className="muted">—</li>
+              )}
+            </ul>
+          </section>
+
+          <section className="detail-block">
+            <h2>{t("details.reviews")}</h2>
+            <div className="detail-reviews">
+              {(car.reviews || []).length ? (
+                (car.reviews || []).map((r) => (
+                  <div key={r.id} className="detail-review">
+                    <strong>
+                      {r.userName} · ★ {r.rating}
+                    </strong>
+                    <p>{r.comment || t("details.comment")}</p>
+                  </div>
+                ))
+              ) : (
+                <p className="muted">—</p>
+              )}
+            </div>
+            <form className="detail-review-form" onSubmit={onReview}>
+              <h3>{t("details.writeReview")}</h3>
+              <label>
+                {t("details.yourRating")}
+                <select
+                  value={rating}
+                  onChange={(e) => setRating(e.target.value)}
+                >
+                  {[5, 4, 3, 2, 1].map((n) => (
+                    <option key={n} value={n}>
+                      {n} ★
+                    </option>
+                  ))}
+                </select>
+              </label>
+              <textarea
+                placeholder={t("details.comment")}
+                value={comment}
+                onChange={(e) => setComment(e.target.value)}
+              />
+              <button className="btn" type="submit">
+                {t("details.submitReview")}
+              </button>
+            </form>
+          </section>
+        </div>
+
+        <aside className="detail-side">
+          <form className="detail-book" onSubmit={onReserve}>
+            <div className="detail-book-price">
+              <span>{t("details.priceLabel")}</span>
+              <div>
+                <strong>€{car.pricePerDay}</strong>
+                <small>{t("common.perDay")}</small>
+                <em>{t("details.unlimitedKm")}</em>
+              </div>
+            </div>
+
+            <label className="detail-book-field">
+              {t("details.pickup")}
+              <select
+                value={pickup}
+                onChange={(e) => setPickup(e.target.value)}
+              >
+                {meta.locations.map((l) => (
+                  <option key={l.id} value={l.id}>
+                    {l.name}
+                    {l.fee ? ` (+€${l.fee})` : ""}
+                  </option>
+                ))}
+              </select>
+            </label>
+
+            <div className="detail-book-dates">
+              <label>
+                {t("home.searchPickup")}
+                <input
+                  type="date"
+                  min={today}
+                  value={startDate}
+                  onChange={(e) => {
+                    const start = clampDate(e.target.value, today);
+                    setStartDate(start);
+                    if (!endDate || endDate <= start) {
+                      setEndDate(addDays(start, 1));
+                    }
+                  }}
+                  required
+                />
+              </label>
+              <label>
+                {t("home.searchReturn")}
+                <input
+                  type="date"
+                  min={startDate ? addDays(startDate, 1) : addDays(today, 1)}
+                  value={endDate}
+                  onChange={(e) => {
+                    const minEnd = startDate
+                      ? addDays(startDate, 1)
+                      : addDays(today, 1);
+                    setEndDate(clampDate(e.target.value, minEnd));
+                  }}
+                  required
+                />
+              </label>
+            </div>
+
+            <BookingCalendar
+              startDate={startDate}
+              endDate={endDate}
+              busyRanges={car.busyRanges || []}
+              onChange={(start, end) => {
+                setStartDate(start);
+                setEndDate(end);
+              }}
+            />
+
+            {dateConflict ? (
+              <p className="booking-conflict">{dateConflict}</p>
+            ) : null}
+
+            <div className="detail-breakdown">
+              <div>
+                <span>
+                  €{car.pricePerDay} × {summary.days || 0}{" "}
+                  {t("details.days")}
+                </span>
+                <strong>€{summary.carSubtotal}</strong>
+              </div>
+              {summary.extrasTotal > 0 ? (
+                <div>
+                  <span>{t("details.extras")}</span>
+                  <strong>€{summary.extrasTotal}</strong>
+                </div>
+              ) : null}
+              {summary.locationFees > 0 ? (
+                <div>
+                  <span>{t("details.location")}</span>
+                  <strong>€{summary.locationFees}</strong>
+                </div>
+              ) : null}
+              <div>
+                <span>{t("details.serviceFee")}</span>
+                <strong className="free">{t("details.serviceFeeFree")}</strong>
+              </div>
+              <div className="detail-total">
+                <span>{t("details.totalPrice")}</span>
+                <strong>€{summary.total}</strong>
+              </div>
+            </div>
+
+            <button className="btn detail-reserve" type="submit" disabled={!canReserve}>
+              {!user
+                ? t("details.loginToBook")
+                : dateConflict
+                  ? t("details.conflict")
+                  : t("details.reserveNow")}
+            </button>
+            <p className="detail-policy">{t("details.policyNote")}</p>
+
+            <button
+              type="button"
+              className="detail-more-toggle"
+              onClick={() => setShowMore((v) => !v)}
+            >
+              {showMore ? t("details.hideOptions") : t("details.moreOptions")}
+            </button>
+
+            {showMore ? (
+              <div className="detail-more">
+                <label>
+                  {t("details.dropoff")}
+                  <select value={ret} onChange={(e) => setRet(e.target.value)}>
+                    {meta.locations.map((l) => (
+                      <option key={l.id} value={l.id}>
+                        {l.name}
+                        {l.fee ? ` (+€${l.fee})` : ""}
+                      </option>
+                    ))}
+                  </select>
+                </label>
+
+                <div className="extras">
+                  <h4 className="extras-title">{t("details.extras")}</h4>
+                  <div className="extras-grid">
+                    {meta.extras.map((ex) => {
+                      const checked = selectedExtras.includes(ex.id);
+                      return (
+                        <label
+                          key={ex.id}
+                          className={`extra-item${checked ? " selected" : ""}`}
+                        >
+                          <input
+                            type="checkbox"
+                            checked={checked}
+                            onChange={(e) => {
+                              setSelectedExtras((prev) =>
+                                e.target.checked
+                                  ? [...prev, ex.id]
+                                  : prev.filter((x) => x !== ex.id)
+                              );
+                            }}
+                          />
+                          <span className="extra-check" aria-hidden="true" />
+                          <span className="extra-copy">
+                            <span className="extra-name">{ex.name}</span>
+                            <span className="extra-price">
+                              +€{ex.price}
+                              {t("common.perDay")}
+                            </span>
+                          </span>
+                        </label>
+                      );
+                    })}
+                  </div>
+                </div>
+
+                <label>
+                  {t("details.payment")}
+                  <select
+                    value={paymentMethod}
+                    onChange={(e) => setPaymentMethod(e.target.value)}
+                  >
+                    <option value="CASH">{t("labels.payment.CASH")}</option>
+                    <option value="BANK_TRANSFER">
+                      {t("labels.payment.BANK_TRANSFER")}
+                    </option>
+                    {meta.cardEnabled ? (
+                      <option value="CARD">{t("labels.payment.CARD")}</option>
+                    ) : null}
+                  </select>
+                </label>
+
+                <label>
+                  {t("details.document")}
+                  <input
+                    type="file"
+                    accept="image/*,.pdf"
+                    onChange={(e) =>
+                      setDocumentFile(e.target.files?.[0] || null)
+                    }
+                  />
+                </label>
+
+                <label>
+                  {t("details.notes")}
+                  <textarea
+                    value={notes}
+                    onChange={(e) => setNotes(e.target.value)}
+                  />
+                </label>
+              </div>
+            ) : null}
+          </form>
+        </aside>
       </div>
     </div>
   );
