@@ -179,15 +179,6 @@ export default function Layout() {
             <NavLink to="/cars" onClick={closeMenus}>
               {t("nav.cars")}
             </NavLink>
-            <Link to="/#cities" onClick={closeMenus}>
-              {t("nav.locations")}
-            </Link>
-            <Link to="/#how" onClick={closeMenus}>
-              {t("nav.how")}
-            </Link>
-            <Link to="/#why" onClick={closeMenus}>
-              {t("nav.about")}
-            </Link>
           </div>
 
           <div className="nav-end">
@@ -375,15 +366,6 @@ export default function Layout() {
             <NavLink to="/cars" onClick={closeMenus}>
               {t("nav.cars")}
             </NavLink>
-            <Link to="/#cities" onClick={closeMenus}>
-              {t("nav.locations")}
-            </Link>
-            <Link to="/#how" onClick={closeMenus}>
-              {t("nav.how")}
-            </Link>
-            <Link to="/#why" onClick={closeMenus}>
-              {t("nav.about")}
-            </Link>
             <NavLink to="/faq" onClick={closeMenus}>
               {t("nav.faq")}
             </NavLink>
