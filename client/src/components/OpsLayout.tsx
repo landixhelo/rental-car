@@ -196,7 +196,7 @@ export default function OpsLayout() {
         <aside className="ops-sidebar">
           <div className="ops-brand">
             <Link
-              to={isStaff ? "/dashboard" : "/reservations"}
+              to="/"
               className="ops-brand-link"
               onClick={() => setSidebarOpen(false)}
             >
