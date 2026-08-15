@@ -343,22 +343,6 @@ export default function HomePage() {
           </div>
         </div>
       </section>
-
-      <section className="section home-reveal home-market-bridge">
-        <div className="home-market-bridge-inner">
-          <p className="product-eyebrow">{t("home.marketEyebrow")}</p>
-          <h2>{t("home.marketTitle")}</h2>
-          <p>{t("home.marketText")}</p>
-          <div className="hero-actions">
-            <Link to="/marketplace" className="btn">
-              {t("home.marketCtaPartners")}
-            </Link>
-            <Link to="/marketplace?tab=buy" className="btn ghost">
-              {t("home.marketCtaBuy")}
-            </Link>
-          </div>
-        </div>
-      </section>
     </div>
   );
 }
