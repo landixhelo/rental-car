@@ -1,4 +1,4 @@
-import { Navigate } from "react-router-dom";
+import { Navigate, useLocation } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { useT } from "../context/LocaleContext";
 
@@ -14,9 +14,18 @@ export function Protected({
   contractor?: boolean;
 }) {
   const { user, loading } = useAuth();
+  const location = useLocation();
   const t = useT();
   if (loading) return <div className="page">{t("common.loading")}</div>;
-  if (!user) return <Navigate to="/login" replace />;
+  if (!user) {
+    const next = `${location.pathname}${location.search}`;
+    return (
+      <Navigate
+        to={`/login?next=${encodeURIComponent(next)}`}
+        replace
+      />
+    );
+  }
   if (superAdmin && user.role !== "SUPER_ADMIN") {
     return <Navigate to="/" replace />;
   }

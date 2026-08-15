@@ -4,6 +4,8 @@ import { ThemeProvider } from "./context/ThemeContext";
 import { LocaleProvider } from "./context/LocaleContext";
 import { ToastProvider } from "./context/ToastContext";
 import Layout from "./components/Layout";
+import CheckoutDetailsPage from "./pages/CheckoutDetailsPage";
+import CheckoutConfirmedPage from "./pages/CheckoutConfirmedPage";
 import { Protected } from "./components/Protected";
 import HomePage from "./pages/HomePage";
 import CarsPage from "./pages/CarsPage";
@@ -40,6 +42,22 @@ export default function App() {
                 <Route index element={<HomePage />} />
                 <Route path="cars" element={<CarsPage />} />
                 <Route path="cars/:id" element={<CarDetailsPage />} />
+                <Route
+                  path="checkout"
+                  element={
+                    <Protected>
+                      <CheckoutDetailsPage />
+                    </Protected>
+                  }
+                />
+                <Route
+                  path="checkout/confirmed"
+                  element={
+                    <Protected>
+                      <CheckoutConfirmedPage />
+                    </Protected>
+                  }
+                />
                 {/* Market/sale temporarily disabled — redirect to rental */}
                 <Route path="marketplace" element={<Navigate to="/cars" replace />} />
                 <Route path="marketplace/*" element={<Navigate to="/cars" replace />} />

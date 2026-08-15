@@ -1,5 +1,5 @@
 import { type FormEvent, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { useLocale, useT } from "../context/LocaleContext";
 import { useToast } from "../hooks/useToast";
@@ -9,6 +9,7 @@ import Seo from "../seo/Seo";
 export default function LoginPage() {
   const { login, setUser } = useAuth();
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const { show, Toast } = useToast();
   const t = useT();
   const { locale } = useLocale();
@@ -17,13 +18,14 @@ export default function LoginPage() {
   const [rememberMe, setRememberMe] = useState(true);
   const [passkeyBusy, setPasskeyBusy] = useState(false);
   const canUsePasskey = supportsPasskeys();
+  const nextPath = searchParams.get("next") || "/";
 
   async function onSubmit(e: FormEvent) {
     e.preventDefault();
     try {
       await login(email, password, rememberMe);
       show(t("auth.welcome"));
-      navigate("/");
+      navigate(nextPath.startsWith("/") ? nextPath : "/");
     } catch (err) {
       show(err instanceof Error ? err.message : t("common.error"));
     }
@@ -36,7 +38,7 @@ export default function LoginPage() {
       const user = await loginWithPasskey(email);
       setUser(user);
       show(t("auth.welcome"));
-      navigate("/");
+      navigate(nextPath.startsWith("/") ? nextPath : "/");
     } catch (err) {
       const name =
         err && typeof err === "object" && "name" in err

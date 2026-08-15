@@ -9,9 +9,9 @@ import { breadcrumbJsonLd, carProductJsonLd } from "../seo/jsonLd";
 import BookingCalendar from "../components/BookingCalendar";
 import { mediaUrl } from "../lib/mediaUrl";
 import { carPath } from "../lib/carPath";
-import { setFlash } from "../lib/flash";
-import { addDays, clampDate, rangeOverlapsBusy, tiraneToday } from "../lib/dates";
 import { fuelLabel, transmissionLabel } from "../lib/labels";
+import { saveBookingDraft } from "../lib/bookingDraft";
+import { addDays, clampDate, rangeOverlapsBusy, tiraneToday } from "../lib/dates";
 
 export default function CarDetailsPage() {
   const { id } = useParams();
@@ -132,14 +132,9 @@ export default function CarDetailsPage() {
 
   const canReserve = Boolean(startDate && endDate && !dateConflict);
 
-  async function onReserve(e: FormEvent) {
+  function onReserve(e: FormEvent) {
     e.preventDefault();
-    if (!user) {
-      show(t("common.requiredLogin"));
-      navigate("/login");
-      return;
-    }
-    if (!car) return;
+    if (!car || !meta) return;
     if (!startDate || !endDate || startDate < today || endDate <= startDate) {
       show(t("details.pickStart"));
       return;
@@ -153,33 +148,42 @@ export default function CarDetailsPage() {
       return;
     }
 
-    try {
-      const fd = new FormData();
-      fd.append("carId", car.id);
-      fd.append("startDate", startDate);
-      fd.append("endDate", endDate);
-      fd.append("pickupLocationId", pickup);
-      fd.append("returnLocationId", ret);
-      fd.append("paymentMethod", paymentMethod);
-      if (notes) fd.append("notes", notes);
-      selectedExtras.forEach((x) => fd.append("extras", x));
-      if (documentFile) fd.append("document", documentFile);
+    const pickupLoc = meta.locations.find((l) => l.id === pickup);
+    const returnLoc = meta.locations.find((l) => l.id === ret);
+    saveBookingDraft({
+      carId: car.id,
+      carSlug: car.slug,
+      brand: car.brand,
+      model: car.model,
+      imageUrl: car.imageUrl,
+      type: car.type,
+      transmission: car.transmission,
+      pricePerDay: car.pricePerDay,
+      ratingAvg: car.ratingAvg,
+      ratingCount: car.ratingCount,
+      startDate,
+      endDate,
+      pickupLocationId: pickup,
+      returnLocationId: ret,
+      pickupName: pickupLoc?.name || car.location,
+      returnName: returnLoc?.name || car.location,
+      extras: selectedExtras,
+      paymentMethod,
+      carSubtotal: summary.carSubtotal,
+      extrasTotal: summary.extrasTotal,
+      locationFees: summary.locationFees,
+      total: summary.total,
+      days: summary.days,
+      returnPath: carPath(car),
+      notes: notes.trim() || undefined,
+    });
 
-      const data = await api.createReservation(fd);
-      if (data.checkoutUrl) {
-        show(t("reservations.payRedirect"), 5000);
-        window.location.href = data.checkoutUrl;
-        return;
-      }
-      const message = data.emailTo
-        ? t("details.successEmailQueued", { email: data.emailTo })
-        : t("details.success");
-      setFlash({ title: t("details.confirmedTitle"), message });
-      show(message, 7000);
-      navigate("/reservations");
-    } catch (err) {
-      show(err instanceof Error ? err.message : t("common.error"), 7000);
+    if (!user) {
+      show(t("common.requiredLogin"));
+      navigate("/login?next=/checkout");
+      return;
     }
+    navigate("/checkout");
   }
 
   async function onReview(e: FormEvent) {
