@@ -195,13 +195,13 @@ export default function OpsLayout() {
 
         <aside className="ops-sidebar">
           <div className="ops-brand">
-            <Link
-              to="/"
+            <a
+              href="/"
               className="ops-brand-link"
               onClick={() => setSidebarOpen(false)}
             >
               AutoRent
-            </Link>
+            </a>
             <span>
               {isStaff
                 ? t("dashboard.fleetManagement")
