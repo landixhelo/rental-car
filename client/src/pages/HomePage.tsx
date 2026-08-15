@@ -4,7 +4,8 @@ import { api, type Car } from "../lib/api";
 import { useAuth } from "../context/AuthContext";
 import { useLocale, useT } from "../context/LocaleContext";
 import { useToast } from "../hooks/useToast";
-import CarCard from "../components/CarCard";
+import { mediaUrl } from "../lib/mediaUrl";
+import { carPath } from "../lib/carPath";
 import Seo from "../seo/Seo";
 import { SITE } from "../seo/site";
 import {
@@ -15,21 +16,72 @@ import {
 import { addDays, clampDate, tiraneToday } from "../lib/dates";
 
 const CATEGORIES = [
-  { type: "SUV", titleKey: "home.catSuv", textKey: "home.catSuvText" },
-  { type: "Sedan", titleKey: "home.catSedan", textKey: "home.catSedanText" },
-  { type: "Sports", titleKey: "home.catSports", textKey: "home.catSportsText" },
+  {
+    type: "SUV",
+    titleKey: "home.catSuv" as const,
+    image: "/categories/suv.png",
+  },
+  {
+    type: "Sedan",
+    titleKey: "home.catSedan" as const,
+    image: "/categories/sedan.png",
+  },
+  {
+    type: "Sports",
+    titleKey: "home.catSports" as const,
+    image: "/categories/sports.png",
+  },
   {
     type: "Luxury",
-    titleKey: "home.catLuxury",
-    textKey: "home.catLuxuryText",
+    titleKey: "home.catLuxury" as const,
+    image: "/categories/luxury.png",
   },
-] as const;
+];
 
-const CITIES = [
-  { location: "Tiranë", titleKey: "home.cityTirana" },
-  { location: "Durrës", titleKey: "home.cityDurres" },
-  { location: "Vlorë", titleKey: "home.cityVlora" },
-] as const;
+const FEATURES = [
+  {
+    titleKey: "home.feature1Title" as const,
+    textKey: "home.feature1Text" as const,
+    icon: "fleet",
+  },
+  {
+    titleKey: "home.feature2Title" as const,
+    textKey: "home.feature2Text" as const,
+    icon: "booking",
+  },
+  {
+    titleKey: "home.feature3Title" as const,
+    textKey: "home.feature3Text" as const,
+    icon: "security",
+  },
+];
+
+function FeatureIcon({ name }: { name: string }) {
+  if (name === "fleet") {
+    return (
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
+        <path d="M5 16l1.2-3.6A2 2 0 0 1 8.1 11h7.8a2 2 0 0 1 1.9 1.4L19 16" />
+        <path d="M5 16h14v2a1 1 0 0 1-1 1h-1a2 2 0 0 1-4 0H11a2 2 0 0 1-4 0H6a1 1 0 0 1-1-1v-2z" />
+        <path d="M7 11V8a1 1 0 0 1 1-1h8a1 1 0 0 1 1 1v3" />
+      </svg>
+    );
+  }
+  if (name === "booking") {
+    return (
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
+        <rect x="4" y="5" width="16" height="15" rx="2" />
+        <path d="M8 3v4M16 3v4M4 10h16" />
+        <path d="M9 14l2 2 4-4" />
+      </svg>
+    );
+  }
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
+      <path d="M12 3l7 3v5c0 4.5-3 7.5-7 9-4-1.5-7-4.5-7-9V6l7-3z" />
+      <path d="M9.5 12l1.8 1.8L15 10" />
+    </svg>
+  );
+}
 
 export default function HomePage() {
   const t = useT();
@@ -50,7 +102,7 @@ export default function HomePage() {
   async function load() {
     const res = await api.cars();
     setFleetCount(res.cars.length);
-    setCars(res.cars.slice(0, 6));
+    setCars(res.cars.slice(0, 3));
   }
 
   useEffect(() => {
@@ -112,7 +164,7 @@ export default function HomePage() {
   }
 
   return (
-    <div className="home-page">
+    <div className="home-page pilot-home">
       <Seo
         title={
           locale === "en"
@@ -131,6 +183,7 @@ export default function HomePage() {
         ]}
       />
       {Toast}
+
       <section className="hero">
         <div className="hero-inner">
           <span className="eyebrow">{t("home.eyebrow")}</span>
@@ -208,122 +261,148 @@ export default function HomePage() {
         </div>
       </section>
 
-      <section id="why" className="section home-reveal">
-        <h2>{t("home.why")}</h2>
-        <div className="feature-grid home-cards">
-          <div className="home-card home-card--rose">
-            <h3>{t("home.feature1Title")}</h3>
-            <p>{t("home.feature1Text")}</p>
-          </div>
-          <div className="home-card home-card--amber">
-            <h3>{t("home.feature2Title")}</h3>
-            <p>{t("home.feature2Text")}</p>
-          </div>
-          <div className="home-card home-card--teal">
-            <h3>{t("home.feature3Title")}</h3>
-            <p>{t("home.feature3Text")}</p>
-          </div>
+      <section id="why" className="pilot-section pilot-section--grey">
+        <div className="pilot-wrap pilot-features">
+          {FEATURES.map((f) => (
+            <article key={f.titleKey} className="pilot-feature">
+              <span className="pilot-feature-icon" aria-hidden>
+                <FeatureIcon name={f.icon} />
+              </span>
+              <h3>{t(f.titleKey)}</h3>
+              <p>{t(f.textKey)}</p>
+            </article>
+          ))}
         </div>
       </section>
 
-      <section id="how" className="section home-reveal">
-        <div className="section-head">
-          <h2>{t("home.howTitle")}</h2>
-          <p className="section-sub">{t("home.howSub")}</p>
-        </div>
-        <ol className="home-steps home-cards">
-          <li className="home-card home-card--coral">
-            <span className="home-step-num">01</span>
-            <div>
+      <section id="how" className="pilot-section">
+        <div className="pilot-wrap">
+          <div className="pilot-head">
+            <span className="pilot-eyebrow">{t("home.howEyebrow")}</span>
+            <h2>{t("home.howTitle")}</h2>
+          </div>
+          <ol className="pilot-steps">
+            <li>
+              <span>01</span>
               <h3>{t("home.how1Title")}</h3>
               <p>{t("home.how1Text")}</p>
-            </div>
-          </li>
-          <li className="home-card home-card--gold">
-            <span className="home-step-num">02</span>
-            <div>
+            </li>
+            <li>
+              <span>02</span>
               <h3>{t("home.how2Title")}</h3>
               <p>{t("home.how2Text")}</p>
-            </div>
-          </li>
-          <li className="home-card home-card--mint">
-            <span className="home-step-num">03</span>
-            <div>
+            </li>
+            <li>
+              <span>03</span>
               <h3>{t("home.how3Title")}</h3>
               <p>{t("home.how3Text")}</p>
-            </div>
-          </li>
-        </ol>
-      </section>
-
-      <section className="section home-reveal">
-        <div className="section-head">
-          <h2>{t("home.categoriesTitle")}</h2>
-          <p className="section-sub">{t("home.categoriesSub")}</p>
-        </div>
-        <div className="home-categories home-cards">
-          {CATEGORIES.map((cat, i) => (
-            <Link
-              key={cat.type}
-              to={`/cars?type=${encodeURIComponent(cat.type)}`}
-              className={`home-card home-category home-card--cat-${i + 1}`}
-            >
-              <strong>{t(cat.titleKey)}</strong>
-              <span>{t(cat.textKey)}</span>
-            </Link>
-          ))}
+            </li>
+          </ol>
         </div>
       </section>
 
-      <section className="section home-reveal">
-        <div className="section-head row-between">
-          <div>
-            <h2>{t("home.ourCars")}</h2>
+      <section className="pilot-section pilot-section--grey">
+        <div className="pilot-wrap">
+          <div className="pilot-head pilot-head--left">
+            <span className="pilot-eyebrow">{t("home.categoriesEyebrow")}</span>
+            <h2>{t("home.categoriesTitle")}</h2>
+            <p>{t("home.categoriesSub")}</p>
           </div>
-          <Link to="/cars" className="btn ghost">
-            {t("home.explore")}
-          </Link>
-        </div>
-        <div className="cars-grid">
-          {cars.map((car) => (
-            <CarCard
-              key={car.id}
-              car={car}
-              onToggleFavorite={toggleFavorite}
-            />
-          ))}
-        </div>
-      </section>
-
-      <section id="cities" className="home-band home-reveal">
-        <div className="section">
-          <div className="section-head">
-            <h2>{t("home.citiesTitle")}</h2>
-            <p className="section-sub">{t("home.citiesSub")}</p>
-          </div>
-          <div className="home-cities">
-            {CITIES.map((city) => (
+          <div className="pilot-cats">
+            {CATEGORIES.map((cat) => (
               <Link
-                key={city.location}
-                to={`/cars?location=${encodeURIComponent(city.location)}`}
-                className="home-city"
+                key={cat.type}
+                to={`/cars?type=${encodeURIComponent(cat.type)}`}
+                className="pilot-cat"
               >
-                <strong>{t(city.titleKey)}</strong>
-                <span>{t("home.cityHint")}</span>
+                <img src={cat.image} alt={t(cat.titleKey)} />
+                <strong>{t(cat.titleKey)}</strong>
               </Link>
             ))}
           </div>
         </div>
       </section>
 
-      <section className="section home-reveal">
-        <div className="section-head">
-          <h2>{t("home.trustTitle")}</h2>
-          <p className="section-sub">{t("home.trustSub")}</p>
+      <section className="pilot-section">
+        <div className="pilot-wrap">
+          <div className="pilot-head row-between pilot-head--row">
+            <div>
+              <span className="pilot-eyebrow">{t("home.fleetEyebrow")}</span>
+              <h2>{t("home.ourCars")}</h2>
+            </div>
+            <Link to="/cars" className="pilot-link">
+              {t("home.viewAllCars")}
+            </Link>
+          </div>
+          <div className="pilot-fleet">
+            {cars.length === 0 ? (
+              <p className="pilot-empty">{t("home.fleetEmpty")}</p>
+            ) : (
+              cars.map((car) => (
+                <article key={car.id} className="pilot-car">
+                  <div className="pilot-car-media">
+                    <img
+                      src={mediaUrl(car.imageUrl)}
+                      alt={`${car.brand} ${car.model}`}
+                    />
+                    <span className="pilot-car-badge">
+                      {t("cars.available")}
+                    </span>
+                    <button
+                      type="button"
+                      className={`pilot-fav${car.isFavorite ? " active" : ""}`}
+                      onClick={() => toggleFavorite(car)}
+                      aria-label={t("nav.favorites")}
+                    >
+                      ♥
+                    </button>
+                  </div>
+                  <div className="pilot-car-body">
+                    <div className="row-between">
+                      <h3>
+                        {car.brand} {car.model}
+                      </h3>
+                      <strong>
+                        €{car.pricePerDay}
+                        <small>{t("common.perDay")}</small>
+                      </strong>
+                    </div>
+                    <p className="pilot-car-loc">{car.location}</p>
+                    <div className="pilot-car-specs">
+                      <span>
+                        {t("cars.transmission")}
+                        <b>{car.transmission || "—"}</b>
+                      </span>
+                      <span>
+                        {t("cars.seats")}
+                        <b>{car.seats || "—"}</b>
+                      </span>
+                      <span>
+                        {t("cars.fuel")}
+                        <b>{car.fuel || "—"}</b>
+                      </span>
+                    </div>
+                    <div className="row-between pilot-car-foot">
+                      <span className="pilot-rating">
+                        ★ {car.ratingAvg || "—"}
+                        <small>({car.ratingCount || 0})</small>
+                      </span>
+                      <Link to={carPath(car)} className="btn">
+                        {t("home.viewDetails")}
+                      </Link>
+                    </div>
+                  </div>
+                </article>
+              ))
+            )}
+          </div>
         </div>
-        <div className="home-trust">
+      </section>
+
+      <section id="cities" className="pilot-stats">
+        <div className="pilot-wrap pilot-stats-grid">
           <div>
-            <strong>{fleetCount || "—"}</strong>
+            <strong>{fleetCount > 0 ? `${fleetCount}+` : "7+"}</strong>
             <span>{t("home.trustCars")}</span>
           </div>
           <div>
@@ -334,11 +413,15 @@ export default function HomePage() {
             <strong>{t("home.trustHours")}</strong>
             <span>{t("home.trustSupport")}</span>
           </div>
+          <div>
+            <strong>4.9/5</strong>
+            <span>{t("home.trustRating")}</span>
+          </div>
         </div>
       </section>
 
-      <section className="home-cta home-reveal">
-        <div className="home-cta-inner">
+      <section className="pilot-cta">
+        <div className="pilot-cta-inner">
           <h2>{t("home.ctaTitle")}</h2>
           <p>{t("home.ctaText")}</p>
           <div className="hero-actions">

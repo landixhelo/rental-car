@@ -444,22 +444,44 @@ export default function Layout() {
         <Outlet />
       </main>
 
-      <footer className="footer">
-        <strong>AutoRent</strong>
-        <div className="footer-links">
-          <Link to="/cars">{t("nav.cars")}</Link>
-          <Link to="/contact">{t("nav.contact")}</Link>
-          <Link to="/faq">{t("nav.faq")}</Link>
-          <Link to="/terms">{t("footer.terms")}</Link>
-          <a
-            href={`https://wa.me/${whatsapp}`}
-            target="_blank"
-            rel="noreferrer"
-          >
-            WhatsApp
-          </a>
+      <footer className="footer site-footer">
+        <div className="site-footer-grid">
+          <div className="site-footer-brand">
+            <strong>AutoRent</strong>
+            <p>{t("footer.blurb")}</p>
+          </div>
+          <div>
+            <h4>{t("footer.explore")}</h4>
+            <div className="footer-links">
+              <Link to="/cars">{t("nav.cars")}</Link>
+              <a href={isHome ? "#cities" : "/#cities"}>{t("nav.locations")}</a>
+              <a href={isHome ? "#how" : "/#how"}>{t("nav.how")}</a>
+              <a href={isHome ? "#why" : "/#why"}>{t("footer.about")}</a>
+            </div>
+          </div>
+          <div>
+            <h4>{t("footer.support")}</h4>
+            <div className="footer-links">
+              <Link to="/contact">{t("nav.contact")}</Link>
+              <Link to="/faq">{t("nav.faq")}</Link>
+              <Link to="/terms">{t("footer.terms")}</Link>
+            </div>
+          </div>
+          <div>
+            <h4>{t("footer.contact")}</h4>
+            <div className="footer-links">
+              <a
+                href={`https://wa.me/${whatsapp}`}
+                target="_blank"
+                rel="noreferrer"
+              >
+                WhatsApp
+              </a>
+              <a href="mailto:info@autorent.al">info@autorent.al</a>
+            </div>
+          </div>
         </div>
-        <p>{t("footer.rights")}</p>
+        <p className="site-footer-copy">{t("footer.rights")}</p>
       </footer>
 
       <ChatWidget />
