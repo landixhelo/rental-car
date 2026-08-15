@@ -16,6 +16,7 @@ import RegisterPage from "./pages/RegisterPage";
 import ForgotPasswordPage from "./pages/ForgotPasswordPage";
 import ResetPasswordPage from "./pages/ResetPasswordPage";
 import ReservationsPage from "./pages/ReservationsPage";
+import ReservationDetailPage from "./pages/ReservationDetailPage";
 import FavoritesPage from "./pages/FavoritesPage";
 import ProfilePage from "./pages/ProfilePage";
 import ContactPage from "./pages/ContactPage";
@@ -92,6 +93,14 @@ export default function App() {
                       element={
                         <Protected>
                           <ReservationsPage />
+                        </Protected>
+                      }
+                    />
+                    <Route
+                      path="reservations/:id"
+                      element={
+                        <Protected>
+                          <ReservationDetailPage />
                         </Protected>
                       }
                     />

@@ -307,6 +307,8 @@ export const api = {
     request<{ reservations: any[] }>("/api/reservations/mine"),
   fleetReservations: () =>
     request<{ reservations: any[] }>("/api/reservations/fleet"),
+  getReservation: (id: string) =>
+    request<{ reservation: any }>(`/api/reservations/${id}`),
   allReservations: () =>
     request<{ reservations: any[] }>("/api/reservations"),
   cancelReservation: (id: string, reason: string) =>

@@ -598,6 +598,89 @@ router.patch(
 );
 
 router.get(
+  "/:id",
+  requireAuth,
+  validate(idParamSchema),
+  async (req, res, next) => {
+    try {
+      const reservation = await prisma.reservation.findUnique({
+        where: { id: req.params.id },
+        include: {
+          user: {
+            select: {
+              id: true,
+              fullName: true,
+              email: true,
+              phone: true,
+            },
+          },
+          car: {
+            select: {
+              id: true,
+              slug: true,
+              brand: true,
+              model: true,
+              year: true,
+              pricePerDay: true,
+              seats: true,
+              doors: true,
+              luggage: true,
+              horsepower: true,
+              color: true,
+              mileage: true,
+              location: true,
+              fuel: true,
+              transmission: true,
+              type: true,
+              description: true,
+              features: true,
+              imageUrl: true,
+              images: true,
+              ownerId: true,
+              owner: {
+                select: { companyName: true, fullName: true },
+              },
+            },
+          },
+        },
+      });
+      if (!reservation) throw new AppError("Reservation not found", 404);
+
+      const role = req.user!.role;
+      const isCustomer = reservation.userId === req.user!.id;
+      const isCarOwner = reservation.car.ownerId === req.user!.id;
+      const isStaff =
+        role === "ADMIN" || role === "SUPER_ADMIN" || role === "CONTRACTOR";
+      if (!isCustomer && !(isStaff && (isCarOwner || role !== "CONTRACTOR"))) {
+        throw new AppError("Forbidden", 403);
+      }
+
+      res.json({
+        reservation: {
+          ...reservation,
+          carSubtotal: Number(reservation.carSubtotal),
+          extrasTotal: Number(reservation.extrasTotal),
+          locationFees: Number(reservation.locationFees),
+          totalPrice: Number(reservation.totalPrice),
+          depositAmount: Number(reservation.depositAmount),
+          platformFee: Number(reservation.platformFee),
+          ownerPayout: Number(reservation.ownerPayout),
+          car: {
+            ...reservation.car,
+            pricePerDay: Number(reservation.car.pricePerDay),
+            companyName:
+              reservation.car.owner?.companyName?.trim() || "AutoRent",
+            owner: undefined,
+          },
+        },
+      });
+    } catch (err) {
+      next(err);
+    }
+  }
+);
+
+router.get(
   "/:id/contract.pdf",
   requireAuth,
   validate(idParamSchema),

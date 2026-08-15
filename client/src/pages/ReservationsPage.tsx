@@ -426,7 +426,7 @@ export default function ReservationsPage() {
                         {phase === "upcoming" ? (
                           <>
                             <Link
-                              to={carPath(r.car)}
+                              to={`/reservations/${r.id}`}
                               className="btn"
                             >
                               {t("reservations.viewDetails")}
@@ -442,7 +442,10 @@ export default function ReservationsPage() {
                         ) : null}
                         {phase === "active" ? (
                           <>
-                            <Link to={carPath(r.car)} className="btn res-btn-dark">
+                            <Link
+                              to={`/reservations/${r.id}`}
+                              className="btn res-btn-dark"
+                            >
                               {t("reservations.manageRental")}
                             </Link>
                             <Link to="/terms" className="btn ghost">
@@ -452,13 +455,12 @@ export default function ReservationsPage() {
                         ) : null}
                         {phase === "completed" ? (
                           <>
-                            <button
-                              type="button"
+                            <Link
+                              to={`/reservations/${r.id}`}
                               className="btn res-btn-muted"
-                              onClick={() => openContract(r.id)}
                             >
-                              {t("reservations.downloadPdf")}
-                            </button>
+                              {t("reservations.viewDetails")}
+                            </Link>
                             <Link to={carPath(r.car)} className="btn ghost">
                               {t("reservations.rentAgain")}
                             </Link>
@@ -466,16 +468,15 @@ export default function ReservationsPage() {
                         ) : null}
                         {phase === "cancelled" ? (
                           <>
+                            <Link
+                              to={`/reservations/${r.id}`}
+                              className="btn ghost"
+                            >
+                              {t("reservations.viewDetails")}
+                            </Link>
                             <Link to={carPath(r.car)} className="btn ghost">
                               {t("reservations.rentAgain")}
                             </Link>
-                            <button
-                              type="button"
-                              className="btn ghost"
-                              onClick={() => openContract(r.id)}
-                            >
-                              {t("reservations.downloadPdf")}
-                            </button>
                           </>
                         ) : null}
                       </div>
@@ -651,6 +652,9 @@ export default function ReservationsPage() {
                   </select>
                 </label>
                 <div className="reservation-actions">
+                  <Link to={`/reservations/${r.id}`} className="btn">
+                    {t("reservations.manageRental")}
+                  </Link>
                   <button
                     type="button"
                     className="btn ghost"
