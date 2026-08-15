@@ -270,8 +270,58 @@ export const api = {
         customerEmail: string;
         createdAt: string;
       }>;
-      topCars: Array<{ carId: string; label: string; count: number }>;
+      topCars: Array<{
+        carId: string;
+        label: string;
+        count: number;
+        revenue?: number;
+        imageUrl?: string | null;
+      }>;
     }>("/api/dashboard"),
+  dashboardCustomers: () =>
+    request<{
+      customers: Array<{
+        id: string;
+        fullName: string;
+        email: string;
+        phone: string | null;
+        memberSince: string;
+        bookings: number;
+        revenue: number;
+        lastBookingId: string;
+        lastCar: string;
+        lastStart: string;
+        lastEnd: string;
+        lastStatus: string;
+      }>;
+    }>("/api/dashboard/customers"),
+  dashboardReviews: () =>
+    request<{
+      reviews: Array<{
+        id: string;
+        rating: number;
+        comment: string | null;
+        createdAt: string;
+        userName: string;
+        userEmail: string;
+        carId: string;
+        carLabel: string;
+        carYear: number;
+        carImage: string;
+      }>;
+      average: number;
+    }>("/api/dashboard/reviews"),
+  dashboardLocations: () =>
+    request<{
+      locations: Array<{
+        id: string;
+        name: string;
+        fee: number;
+        pickups: number;
+        returns: number;
+        revenue: number;
+      }>;
+    }>("/api/dashboard/locations"),
   myCars: () => request<{ cars: Car[] }>("/api/cars/mine"),
   car: (id: string) => request<{ car: Car }>(`/api/cars/${id}`),
   uploadCarImage: (body: FormData) =>

@@ -27,6 +27,11 @@ import SuperAdminPage from "./pages/SuperAdminPage";
 import ContractorPage from "./pages/ContractorPage";
 import DashboardPage from "./pages/DashboardPage";
 import ChatsPage from "./pages/ChatsPage";
+import CustomersPage from "./pages/CustomersPage";
+import LocationsPage from "./pages/LocationsPage";
+import ReviewsPage from "./pages/ReviewsPage";
+import PromoCodesPage from "./pages/PromoCodesPage";
+import ReportsPage from "./pages/ReportsPage";
 import Analytics from "./components/Analytics";
 import CookieConsent from "./components/CookieConsent";
 
@@ -141,6 +146,46 @@ export default function App() {
                       element={
                         <Protected contractor>
                           <ContractorPage />
+                        </Protected>
+                      }
+                    />
+                    <Route
+                      path="customers"
+                      element={
+                        <Protected contractor>
+                          <CustomersPage />
+                        </Protected>
+                      }
+                    />
+                    <Route
+                      path="locations"
+                      element={
+                        <Protected contractor>
+                          <LocationsPage />
+                        </Protected>
+                      }
+                    />
+                    <Route
+                      path="reviews"
+                      element={
+                        <Protected contractor>
+                          <ReviewsPage />
+                        </Protected>
+                      }
+                    />
+                    <Route
+                      path="promo-codes"
+                      element={
+                        <Protected contractor>
+                          <PromoCodesPage />
+                        </Protected>
+                      }
+                    />
+                    <Route
+                      path="reports"
+                      element={
+                        <Protected contractor>
+                          <ReportsPage />
                         </Protected>
                       }
                     />

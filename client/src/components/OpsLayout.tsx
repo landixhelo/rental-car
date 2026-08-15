@@ -71,6 +71,7 @@ type NavItem = {
   icon: string;
   end?: boolean;
   hash?: string;
+  soon?: boolean;
 };
 
 export const OPS_PATHS = [
@@ -82,6 +83,11 @@ export const OPS_PATHS = [
   "/reservations",
   "/favorites",
   "/profile",
+  "/customers",
+  "/locations",
+  "/reviews",
+  "/promo-codes",
+  "/reports",
 ] as const;
 
 export function isOpsPath(pathname: string) {
@@ -157,18 +163,38 @@ export default function OpsLayout() {
       label: t("dashboard.navSettings"),
       icon: ICONS.settings,
     });
+    if (isStaff) {
+      items.push(
+        {
+          to: "/customers",
+          label: t("dashboard.navCustomers"),
+          icon: ICONS.customers,
+        },
+        {
+          to: "/locations",
+          label: t("dashboard.navLocations"),
+          icon: ICONS.location,
+        },
+        {
+          to: "/reviews",
+          label: t("dashboard.navReviews"),
+          icon: ICONS.reviews,
+        },
+        {
+          to: "/promo-codes",
+          label: t("dashboard.navPromo"),
+          icon: ICONS.promo,
+          soon: true,
+        },
+        {
+          to: "/reports",
+          label: t("dashboard.navReports"),
+          icon: ICONS.reports,
+        }
+      );
+    }
     return items;
   }, [isStaff, isAdmin, isSuper, t]);
-
-  const soonItems = isStaff
-    ? [
-        { label: t("dashboard.navCustomers"), icon: ICONS.customers },
-        { label: t("dashboard.navLocations"), icon: ICONS.location },
-        { label: t("dashboard.navReviews"), icon: ICONS.reviews },
-        { label: t("dashboard.navPromo"), icon: ICONS.promo },
-        { label: t("dashboard.navReports"), icon: ICONS.reports },
-      ]
-    : [];
 
   const roleLabel =
     role === "SUPER_ADMIN"
@@ -240,17 +266,10 @@ export default function OpsLayout() {
               >
                 <Icon path={item.icon} />
                 <span>{item.label}</span>
+                {item.soon ? (
+                  <em className="ops-nav-soon">{t("dashboard.soon")}</em>
+                ) : null}
               </NavLink>
-            ))}
-            {soonItems.map((item) => (
-              <span
-                key={item.label}
-                className="ops-nav-link is-soon"
-                title={t("dashboard.soon")}
-              >
-                <Icon path={item.icon} />
-                <span>{item.label}</span>
-              </span>
             ))}
           </nav>
 
