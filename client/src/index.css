@@ -298,11 +298,9 @@ main { flex: 1; width: 100%; }
   font-size: 1.15rem;
   letter-spacing: -0.02em;
   min-width: 0;
-  flex-shrink: 1;
+  flex-shrink: 0;
 }
 .brand-text {
-  overflow: hidden;
-  text-overflow: ellipsis;
   white-space: nowrap;
 }
 .brand-mark {
@@ -5527,12 +5525,18 @@ th { color: var(--text-muted); font-weight: 600; }
   }
 
   .nav-bar-row {
-    gap: 8px;
+    gap: 10px;
   }
 
   .brand {
-    font-size: 1rem;
-    max-width: min(42vw, 160px);
+    font-size: 1.05rem;
+    max-width: none;
+    flex: 0 0 auto;
+  }
+
+  .brand-text {
+    overflow: visible;
+    text-overflow: clip;
   }
 
   .app-shell.is-home .navbar {
@@ -5562,17 +5566,18 @@ th { color: var(--text-muted); font-weight: 600; }
     display: flex;
   }
   .nav-lang .lang-switch {
-    --nav-chip-h: 32px;
+    --nav-chip-h: 30px;
   }
   .nav-lang .lang-switch button {
-    min-width: 1.85rem;
-    padding: 0 7px;
-    font-size: 0.68rem;
+    min-width: 1.7rem;
+    padding: 0 6px;
+    font-size: 0.66rem;
   }
 
   .nav-end {
-    gap: 6px;
-    flex-shrink: 0;
+    gap: 8px;
+    flex: 0 0 auto;
+    margin-left: 0;
   }
 
   .nav-login-mobile {
@@ -5745,9 +5750,6 @@ th { color: var(--text-muted); font-weight: 600; }
   .nav-login-mobile {
     padding: 8px 8px;
     font-size: 0.82rem;
-  }
-  .brand {
-    max-width: min(38vw, 120px);
   }
 }
 

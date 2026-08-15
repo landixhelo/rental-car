@@ -17,6 +17,11 @@ export default function Layout() {
   const [profileOpen, setProfileOpen] = useState(false);
   const [reservationBadge, setReservationBadge] = useState(0);
   const [whatsapp, setWhatsapp] = useState("355689001257");
+  const [isMobileNav, setIsMobileNav] = useState(
+    () =>
+      typeof window !== "undefined" &&
+      window.matchMedia("(max-width: 980px)").matches
+  );
   const profileRef = useRef<HTMLDivElement>(null);
 
   const showReservationBadge =
@@ -58,9 +63,14 @@ export default function Layout() {
   }, []);
 
   useEffect(() => {
-    const close = () => setMenuOpen(false);
-    window.addEventListener("resize", close);
-    return () => window.removeEventListener("resize", close);
+    const mq = window.matchMedia("(max-width: 980px)");
+    const sync = () => {
+      setIsMobileNav(mq.matches);
+      if (!mq.matches) setMenuOpen(false);
+    };
+    sync();
+    mq.addEventListener("change", sync);
+    return () => mq.removeEventListener("change", sync);
   }, []);
 
   useEffect(() => {
@@ -178,6 +188,7 @@ export default function Layout() {
           <div className="nav-end">
             <div className="nav-lang">{langSwitch}</div>
 
+            {!isMobileNav ? (
             <div className="nav-desktop-only">
               {user ? (
                 <div
@@ -308,7 +319,7 @@ export default function Layout() {
                 </div>
               )}
             </div>
-
+            ) : (
             <div className="nav-mobile-only">
               {!user ? (
                 <NavLink
@@ -335,9 +346,11 @@ export default function Layout() {
                 ) : null}
               </button>
             </div>
+            )}
           </div>
           </div>
 
+          {isMobileNav ? (
           <div
             id="mobile-nav-menu"
             className={`nav-links ${menuOpen ? "open" : ""}`}
@@ -432,9 +445,8 @@ export default function Layout() {
                 </NavLink>
               </>
             )}
-
-            )}
           </div>
+          ) : null}
         </div>
       </nav>
 
