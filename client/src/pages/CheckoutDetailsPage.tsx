@@ -128,7 +128,6 @@ export default function CheckoutDetailsPage() {
       });
       show(successMsg, 7000);
 
-      const whatsappUrl = data.whatsappUrl || null;
       saveConfirmedBooking({
         reservationId: reservation.id,
         code: formatReservationCode(reservation.id, reservation.createdAt),
@@ -150,12 +149,8 @@ export default function CheckoutDetailsPage() {
         customerName: fullName.trim(),
         customerEmail: email.trim(),
         customerPhone: phoneFull,
-        whatsappUrl,
       });
       clearBookingDraft();
-      if (whatsappUrl) {
-        window.open(whatsappUrl, "_blank", "noopener,noreferrer");
-      }
       navigate("/checkout/confirmed", { replace: true });
     } catch (err) {
       show(err instanceof Error ? err.message : t("common.error"), 7000);

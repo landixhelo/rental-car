@@ -102,9 +102,6 @@ export const it: Dict = {
     emailSent: "Un'email di conferma è stata inviata a {email}",
     printVoucher: "Stampa voucher",
     viewReservations: "Vedi le mie prenotazioni",
-    whatsappHint:
-      "Per ora, invia i dettagli della prenotazione su WhatsApp così il team può confermare subito.",
-    sendWhatsapp: "Invia su WhatsApp",
   },
   home: {
     eyebrow: "NOLEGGIO AUTO PREMIUM",

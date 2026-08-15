@@ -405,7 +405,6 @@ export const api = {
       emailQueued?: boolean;
       emailSent?: boolean;
       emailTo?: string | null;
-      whatsappUrl?: string | null;
     }>("/api/reservations", {
       method: "POST",
       body: formData,

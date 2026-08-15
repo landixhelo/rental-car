@@ -100,9 +100,6 @@ export const sq = {
     emailSent: "Një email konfirmimi u dërgua te {email}",
     printVoucher: "Printo voucher",
     viewReservations: "Shiko rezervimet e mia",
-    whatsappHint:
-      "Për momentin, dërgo detajet e rezervimit në WhatsApp që ekipi ynë ta konfirmojë menjëherë.",
-    sendWhatsapp: "Dërgo në WhatsApp",
   },
   home: {
     eyebrow: "QIRA MAKINASH PREMIUM",

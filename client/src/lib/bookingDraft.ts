@@ -50,8 +50,6 @@ export type ConfirmedBooking = {
   customerName: string;
   customerEmail: string;
   customerPhone: string;
-  /** Pre-filled wa.me link so the booking reaches business WhatsApp. */
-  whatsappUrl?: string | null;
 };
 
 export function saveBookingDraft(draft: BookingDraft) {

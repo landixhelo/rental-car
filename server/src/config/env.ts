@@ -36,6 +36,8 @@ const envSchema = z.object({
     emptyToUndef,
     z.string().optional().default("355689001257")
   ),
+  /** CallMeBot API key — enables server-side WhatsApp notify to WHATSAPP_PHONE. */
+  CALLMEBOT_APIKEY: z.preprocess(emptyToUndef, z.string().optional()),
   BUSINESS_PHONE: z.preprocess(
     emptyToUndef,
     z.string().optional().default("+355689001257")
