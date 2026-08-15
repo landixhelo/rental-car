@@ -35,7 +35,6 @@ export default function CarDetailsPage() {
   const [selectedExtras, setSelectedExtras] = useState<string[]>([]);
   const [paymentMethod, setPaymentMethod] = useState("CASH");
   const [notes, setNotes] = useState("");
-  const [documentFile, setDocumentFile] = useState<File | null>(null);
   const [rating, setRating] = useState("5");
   const [comment, setComment] = useState("");
   const [activeImage, setActiveImage] = useState(0);
@@ -661,17 +660,6 @@ export default function CarDetailsPage() {
                       <option value="CARD">{t("labels.payment.CARD")}</option>
                     ) : null}
                   </select>
-                </label>
-
-                <label>
-                  {t("details.document")}
-                  <input
-                    type="file"
-                    accept="image/*,.pdf"
-                    onChange={(e) =>
-                      setDocumentFile(e.target.files?.[0] || null)
-                    }
-                  />
                 </label>
 
                 <label>
