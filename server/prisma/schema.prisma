@@ -89,6 +89,17 @@ model User {
   businessWhatsapp     String?
   businessAddress      String?
   bookingNotifyEmail   String?
+  avatarUrl            String?
+  minRentalDays        Int?
+  maxRentalDays        Int?
+  minDriverAge         Int?
+  maxDriverAge         Int?
+  weeklyDiscountPct    Int?
+  monthlyDiscountPct   Int?
+  requireDeposit       Boolean?
+  defaultDepositEur    Decimal?       @db.Decimal(10, 2)
+  businessHours        Json?
+  cancellationPolicyText String?
   passwordResetToken   String?
   passwordResetExpires DateTime?
   createdAt            DateTime       @default(now())

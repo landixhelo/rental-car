@@ -947,6 +947,12 @@ main { flex: 1; width: 100%; }
   font-size: 0.85rem;
   flex-shrink: 0;
   text-decoration: none;
+  overflow: hidden;
+}
+.ops-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 .ops-avatar-sm {
   width: 34px;
@@ -1047,22 +1053,138 @@ main { flex: 1; width: 100%; }
 .ops-page-narrow {
   max-width: 720px;
 }
+.settings-layout {
+  display: grid;
+  gap: 20px;
+  max-width: 1100px;
+}
+.settings-layout-head h1 {
+  margin: 0 0 4px;
+  font-size: 1.55rem;
+  letter-spacing: -0.02em;
+}
+.settings-layout-head p {
+  margin: 0;
+}
+.settings-layout-body {
+  display: grid;
+  grid-template-columns: 220px minmax(0, 1fr);
+  gap: 20px;
+  align-items: start;
+}
+.settings-side {
+  position: sticky;
+  top: 12px;
+  display: grid;
+  gap: 18px;
+  padding: 14px;
+  background: #fff;
+  border: 1px solid rgba(16, 24, 40, 0.08);
+  border-radius: 16px;
+  box-shadow: 0 8px 24px rgba(16, 24, 40, 0.04);
+}
+.settings-side-group {
+  display: grid;
+  gap: 4px;
+}
+.settings-side-group h3,
+.settings-side-group > p {
+  margin: 0 0 6px;
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  color: #98a2b3;
+}
+.settings-side-group button {
+  appearance: none;
+  border: 0;
+  background: transparent;
+  text-align: left;
+  padding: 9px 10px;
+  border-radius: 10px;
+  font: inherit;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #344054;
+  cursor: pointer;
+}
+.settings-side-group button:hover {
+  background: #f2f4f7;
+}
+.settings-side-group button.active {
+  background: var(--accent-soft);
+  color: var(--accent);
+}
+.settings-main {
+  min-width: 0;
+}
+.settings-panel {
+  display: grid;
+  gap: 14px;
+}
 .settings-card {
   background: #fff;
   border: 1px solid rgba(16, 24, 40, 0.08);
   border-radius: 16px;
   padding: 18px;
-  margin-bottom: 14px;
+  margin-bottom: 0;
   box-shadow: 0 8px 24px rgba(16, 24, 40, 0.04);
 }
 .settings-card h2 {
   margin: 0 0 8px;
   font-size: 1.05rem;
 }
+.settings-card > .muted {
+  margin: 0 0 14px;
+}
 .settings-subhead {
   margin-top: 22px !important;
   padding-top: 16px;
   border-top: 1px solid rgba(16, 24, 40, 0.08);
+}
+.settings-avatar-card {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  gap: 16px;
+  align-items: center;
+  background: #fff;
+  border: 1px solid rgba(16, 24, 40, 0.08);
+  border-radius: 16px;
+  padding: 18px;
+  box-shadow: 0 8px 24px rgba(16, 24, 40, 0.04);
+}
+.settings-avatar {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  overflow: hidden;
+  background: linear-gradient(145deg, #e8eef5, #d0d7e2);
+  display: grid;
+  place-items: center;
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: #344054;
+  flex-shrink: 0;
+}
+.settings-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.settings-avatar-meta strong {
+  display: block;
+  font-size: 1.05rem;
+}
+.settings-avatar-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: flex-end;
+}
+.settings-grid-2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
 }
 .settings-field {
   display: grid;
@@ -1072,7 +1194,9 @@ main { flex: 1; width: 100%; }
   font-weight: 700;
   color: #667085;
 }
-.settings-field input {
+.settings-field input,
+.settings-field select,
+.settings-textarea {
   width: 100%;
   padding: 11px 12px;
   border-radius: 10px;
@@ -1082,12 +1206,116 @@ main { flex: 1; width: 100%; }
   color: #121212;
   background: #fff;
 }
-.settings-field input:disabled {
+.settings-textarea {
+  min-height: 110px;
+  resize: vertical;
+  margin-top: 8px;
+}
+.settings-field input:disabled,
+.settings-field select:disabled {
   background: #f2f4f7;
   color: #667085;
 }
 .settings-field small {
   font-weight: 500;
+}
+.settings-form-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: flex-end;
+  margin-top: 8px;
+  padding-top: 12px;
+  border-top: 1px solid rgba(16, 24, 40, 0.06);
+}
+.settings-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: 4px;
+}
+.settings-toolbar.tight {
+  margin-bottom: 12px;
+}
+.settings-toolbar h2 {
+  margin: 0 0 4px;
+  font-size: 1.05rem;
+}
+.settings-toolbar p {
+  margin: 0;
+}
+.settings-pw {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+.settings-pw input {
+  flex: 1;
+}
+.settings-strength {
+  display: block;
+  height: 6px;
+  margin: -4px 0 8px;
+  border-radius: 999px;
+  background: #e4e7ec;
+  overflow: hidden;
+}
+.settings-strength i {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: currentColor;
+  transition: width 0.2s ease;
+}
+.settings-strength.strength-weak {
+  color: #f04438;
+}
+.settings-strength.strength-medium {
+  color: #f79009;
+}
+.settings-strength.strength-strong {
+  color: #12b76a;
+}
+.settings-soon-card h2 {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.settings-hours {
+  display: grid;
+  gap: 8px;
+}
+.settings-hour-row {
+  display: grid;
+  grid-template-columns: minmax(140px, 1fr) minmax(0, 1.4fr);
+  gap: 10px;
+  align-items: center;
+  padding: 8px 10px;
+  border-radius: 12px;
+  border: 1px solid rgba(16, 24, 40, 0.06);
+  background: #f9fafb;
+}
+.settings-hour-times {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+}
+.settings-hour-times input[type="time"] {
+  padding: 8px 10px;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  font: inherit;
+  background: #fff;
+}
+.settings-toggle.compact {
+  padding: 6px 8px;
+  border: 0;
+  background: transparent;
+  align-items: center;
 }
 .settings-lang {
   display: flex;
@@ -1146,6 +1374,35 @@ main { flex: 1; width: 100%; }
   font-weight: 500;
   font-size: 0.8rem;
   line-height: 1.35;
+}
+@media (max-width: 860px) {
+  .settings-layout-body {
+    grid-template-columns: 1fr;
+  }
+  .settings-side {
+    position: static;
+  }
+  .settings-side-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+  .settings-side-group h3 {
+    width: 100%;
+  }
+  .settings-avatar-card {
+    grid-template-columns: auto 1fr;
+  }
+  .settings-avatar-actions {
+    grid-column: 1 / -1;
+    justify-content: flex-start;
+  }
+  .settings-grid-2 {
+    grid-template-columns: 1fr;
+  }
+  .settings-hour-row {
+    grid-template-columns: 1fr;
+  }
 }
 .ops-page .panel,
 .ops-page .dash-kpi-card {

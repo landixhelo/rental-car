@@ -275,7 +275,11 @@ export default function OpsLayout() {
 
           <div className="ops-sidebar-user">
             <span className="ops-avatar" aria-hidden>
-              {(user?.fullName || "U").charAt(0).toUpperCase()}
+              {user?.avatarUrl ? (
+                <img src={user.avatarUrl} alt="" />
+              ) : (
+                (user?.fullName || "U").charAt(0).toUpperCase()
+              )}
             </span>
             <div className="ops-sidebar-user-text">
               <strong>{user?.fullName || t("dashboard.adminUser")}</strong>

@@ -85,6 +85,7 @@ export async function sendReservationEmails(input: {
   invoicePdf?: Buffer | null;
   invoiceFilename?: string;
   skipCustomerEmail?: boolean;
+  cancellationPolicyOverride?: string | null;
 }) {
   const biz = getBusinessPublic();
   const summary = [
@@ -95,7 +96,7 @@ export async function sendReservationEmails(input: {
     `Statusi: ${input.status}`,
   ].join("\n");
 
-  const policy = cancellationPolicyText();
+  const policy = cancellationPolicyText(input.cancellationPolicyOverride);
   const contactLine = [
     biz.phone && `Tel: ${biz.phone}`,
     biz.whatsapp && `WhatsApp: +${biz.whatsapp}`,

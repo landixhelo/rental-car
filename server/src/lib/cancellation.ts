@@ -67,7 +67,9 @@ export function assertCustomerCanCancel(
   return decision;
 }
 
-export function cancellationPolicyText() {
+export function cancellationPolicyText(override?: string | null) {
+  const custom = override?.trim();
+  if (custom) return custom;
   const h = cancelFreeHours();
   return [
     `Anulim falas deri ${h} orë para datës së marrjes.`,

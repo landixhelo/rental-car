@@ -45,6 +45,8 @@ export const updateProfileSchema = z.object({
     fullName: z.string().trim().min(2).max(100),
     phone: z.string().trim().max(30).optional().nullable(),
     password: strongPassword.optional().or(z.literal("")),
+    currentPassword: z.string().min(1).max(200).optional().or(z.literal("")),
+    avatarUrl: z.string().trim().max(500).optional().nullable().or(z.literal("")),
     companyName: z.string().trim().max(120).optional().nullable(),
     businessPhone: z.string().trim().max(40).optional().nullable(),
     businessWhatsapp: z.string().trim().max(40).optional().nullable(),
@@ -56,6 +58,44 @@ export const updateProfileSchema = z.object({
     notifyCancelEmail: z.boolean().optional(),
     notifyPaymentEmail: z.boolean().optional(),
     notifyDocumentEmail: z.boolean().optional(),
+    minRentalDays: z.coerce.number().int().min(1).max(90).optional().nullable(),
+    maxRentalDays: z.coerce.number().int().min(1).max(365).optional().nullable(),
+    minDriverAge: z.coerce.number().int().min(16).max(90).optional().nullable(),
+    maxDriverAge: z.coerce.number().int().min(18).max(99).optional().nullable(),
+    weeklyDiscountPct: z.coerce.number().int().min(0).max(80).optional().nullable(),
+    monthlyDiscountPct: z.coerce
+      .number()
+      .int()
+      .min(0)
+      .max(80)
+      .optional()
+      .nullable(),
+    requireDeposit: z.boolean().optional().nullable(),
+    defaultDepositEur: z.coerce
+      .number()
+      .min(0)
+      .max(10000)
+      .optional()
+      .nullable(),
+    businessHours: z
+      .array(
+        z.object({
+          day: z.enum(["mon", "tue", "wed", "thu", "fri", "sat", "sun"]),
+          open: z.boolean(),
+          from: z.string().trim().max(8).optional(),
+          to: z.string().trim().max(8).optional(),
+        })
+      )
+      .max(7)
+      .optional()
+      .nullable(),
+    cancellationPolicyText: z
+      .string()
+      .trim()
+      .max(2000)
+      .optional()
+      .nullable()
+      .or(z.literal("")),
   }),
 });
 

@@ -4,6 +4,13 @@ const API_URL = import.meta.env.DEV
   ? import.meta.env.VITE_API_URL || "http://localhost:5000"
   : "";
 
+export type BusinessHourRow = {
+  day: "mon" | "tue" | "wed" | "thu" | "fri" | "sat" | "sun";
+  open: boolean;
+  from?: string;
+  to?: string;
+};
+
 export type User = {
   id: string;
   fullName: string;
@@ -14,10 +21,22 @@ export type User = {
   businessWhatsapp?: string | null;
   businessAddress?: string | null;
   bookingNotifyEmail?: string | null;
+  avatarUrl?: string | null;
   notifyBookingEmail?: boolean;
   notifyCancelEmail?: boolean;
   notifyPaymentEmail?: boolean;
   notifyDocumentEmail?: boolean;
+  minRentalDays?: number | null;
+  maxRentalDays?: number | null;
+  minDriverAge?: number | null;
+  maxDriverAge?: number | null;
+  weeklyDiscountPct?: number | null;
+  monthlyDiscountPct?: number | null;
+  requireDeposit?: boolean | null;
+  defaultDepositEur?: number | null;
+  businessHours?: BusinessHourRow[];
+  businessHoursSummary?: string | null;
+  cancellationPolicyText?: string | null;
   role: "USER" | "CONTRACTOR" | "ADMIN" | "SUPER_ADMIN";
   isActive?: boolean;
   createdAt?: string;
@@ -189,6 +208,8 @@ export const api = {
     fullName: string;
     phone?: string;
     password?: string;
+    currentPassword?: string;
+    avatarUrl?: string | null;
     companyName?: string | null;
     businessPhone?: string | null;
     businessWhatsapp?: string | null;
@@ -198,11 +219,29 @@ export const api = {
     notifyCancelEmail?: boolean;
     notifyPaymentEmail?: boolean;
     notifyDocumentEmail?: boolean;
+    minRentalDays?: number | null;
+    maxRentalDays?: number | null;
+    minDriverAge?: number | null;
+    maxDriverAge?: number | null;
+    weeklyDiscountPct?: number | null;
+    monthlyDiscountPct?: number | null;
+    requireDeposit?: boolean | null;
+    defaultDepositEur?: number | null;
+    businessHours?: BusinessHourRow[] | null;
+    cancellationPolicyText?: string | null;
   }) =>
     request<{ user: User }>("/api/auth/profile", {
       method: "PATCH",
       body: JSON.stringify(body),
     }),
+  uploadAvatar: (file: File) => {
+    const fd = new FormData();
+    fd.append("image", file);
+    return request<{ url: string; user: User }>("/api/auth/avatar", {
+      method: "POST",
+      body: fd,
+    });
+  },
   passkeys: () =>
     request<{
       passkeys: Array<{ id: string; createdAt: string; transports: string[] }>;

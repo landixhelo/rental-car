@@ -28,6 +28,12 @@ import {
   verifyAndSaveRegistration,
   verifyAuthentication,
 } from "../lib/webauthn.js";
+import { uploadCarImages } from "../middleware/upload.js";
+import {
+  formatHoursSummary,
+  normalizeBusinessHours,
+} from "../lib/rentalSettings.js";
+import fs from "fs";
 
 const router = Router();
 
@@ -50,14 +56,32 @@ function publicUser(user: {
   businessWhatsapp?: string | null;
   businessAddress?: string | null;
   bookingNotifyEmail?: string | null;
+  avatarUrl?: string | null;
   notifyBookingEmail?: boolean;
   notifyCancelEmail?: boolean;
   notifyPaymentEmail?: boolean;
   notifyDocumentEmail?: boolean;
+  minRentalDays?: number | null;
+  maxRentalDays?: number | null;
+  minDriverAge?: number | null;
+  maxDriverAge?: number | null;
+  weeklyDiscountPct?: number | null;
+  monthlyDiscountPct?: number | null;
+  requireDeposit?: boolean | null;
+  defaultDepositEur?: { toNumber?: () => number } | number | null;
+  businessHours?: unknown;
+  cancellationPolicyText?: string | null;
   role: "USER" | "CONTRACTOR" | "ADMIN" | "SUPER_ADMIN";
   isActive?: boolean;
   createdAt: Date;
 }) {
+  const deposit =
+    user.defaultDepositEur == null
+      ? null
+      : typeof user.defaultDepositEur === "number"
+        ? user.defaultDepositEur
+        : Number(user.defaultDepositEur);
+
   return {
     id: user.id,
     fullName: user.fullName,
@@ -68,10 +92,24 @@ function publicUser(user: {
     businessWhatsapp: user.businessWhatsapp ?? null,
     businessAddress: user.businessAddress ?? null,
     bookingNotifyEmail: user.bookingNotifyEmail ?? null,
+    avatarUrl: user.avatarUrl ?? null,
     notifyBookingEmail: user.notifyBookingEmail ?? true,
     notifyCancelEmail: user.notifyCancelEmail ?? true,
     notifyPaymentEmail: user.notifyPaymentEmail ?? true,
     notifyDocumentEmail: user.notifyDocumentEmail ?? true,
+    minRentalDays: user.minRentalDays ?? null,
+    maxRentalDays: user.maxRentalDays ?? null,
+    minDriverAge: user.minDriverAge ?? null,
+    maxDriverAge: user.maxDriverAge ?? null,
+    weeklyDiscountPct: user.weeklyDiscountPct ?? null,
+    monthlyDiscountPct: user.monthlyDiscountPct ?? null,
+    requireDeposit: user.requireDeposit ?? null,
+    defaultDepositEur: deposit,
+    businessHours: normalizeBusinessHours(user.businessHours),
+    businessHoursSummary: formatHoursSummary(
+      normalizeBusinessHours(user.businessHours)
+    ),
+    cancellationPolicyText: user.cancellationPolicyText ?? null,
     role: user.role,
     isActive: user.isActive ?? true,
     createdAt: user.createdAt,
@@ -262,20 +300,16 @@ router.patch(
   validate(updateProfileSchema),
   async (req, res, next) => {
     try {
-      const {
-        fullName,
-        phone,
-        password,
-        companyName,
-        businessPhone,
-        businessWhatsapp,
-        businessAddress,
-        bookingNotifyEmail,
-        notifyBookingEmail,
-        notifyCancelEmail,
-        notifyPaymentEmail,
-        notifyDocumentEmail,
-      } = req.body;
+      const body = req.body as Record<string, unknown>;
+      const fullName = String(body.fullName || "");
+      const phone = body.phone as string | null | undefined;
+      const password = body.password as string | undefined;
+      const currentPassword = body.currentPassword as string | undefined;
+
+      const existing = await prisma.user.findUnique({
+        where: { id: req.user!.id },
+      });
+      if (!existing) throw new AppError("User not found", 404);
 
       const data: Record<string, unknown> = {
         fullName,
@@ -283,7 +317,19 @@ router.patch(
       };
 
       if (password) {
+        if (!currentPassword) {
+          throw new AppError("Current password is required", 400);
+        }
+        const ok = await bcrypt.compare(currentPassword, existing.passwordHash);
+        if (!ok) throw new AppError("Current password is incorrect", 400);
         data.passwordHash = await bcrypt.hash(password, env.BCRYPT_ROUNDS);
+      }
+
+      if (body.avatarUrl !== undefined) {
+        data.avatarUrl =
+          body.avatarUrl && String(body.avatarUrl).trim()
+            ? String(body.avatarUrl).trim()
+            : null;
       }
 
       const isStaff =
@@ -292,32 +338,76 @@ router.patch(
         req.user!.role === "SUPER_ADMIN";
 
       if (isStaff) {
-        if (companyName !== undefined) data.companyName = companyName || null;
-        if (businessPhone !== undefined)
-          data.businessPhone = businessPhone || null;
-        if (businessWhatsapp !== undefined)
-          data.businessWhatsapp = businessWhatsapp || null;
-        if (businessAddress !== undefined)
-          data.businessAddress = businessAddress || null;
-        if (bookingNotifyEmail !== undefined) {
+        const staffKeys = [
+          "companyName",
+          "businessPhone",
+          "businessWhatsapp",
+          "businessAddress",
+        ] as const;
+        for (const key of staffKeys) {
+          if (body[key] !== undefined) {
+            data[key] = body[key] ? String(body[key]).trim() : null;
+          }
+        }
+        if (body.bookingNotifyEmail !== undefined) {
           data.bookingNotifyEmail =
-            bookingNotifyEmail && String(bookingNotifyEmail).trim()
-              ? String(bookingNotifyEmail).trim()
+            body.bookingNotifyEmail && String(body.bookingNotifyEmail).trim()
+              ? String(body.bookingNotifyEmail).trim()
+              : null;
+        }
+
+        const intKeys = [
+          "minRentalDays",
+          "maxRentalDays",
+          "minDriverAge",
+          "maxDriverAge",
+          "weeklyDiscountPct",
+          "monthlyDiscountPct",
+        ] as const;
+        for (const key of intKeys) {
+          if (body[key] !== undefined) {
+            data[key] =
+              body[key] === null || body[key] === ""
+                ? null
+                : Number(body[key]);
+          }
+        }
+        if (body.requireDeposit !== undefined) {
+          data.requireDeposit =
+            body.requireDeposit === null ? null : Boolean(body.requireDeposit);
+        }
+        if (body.defaultDepositEur !== undefined) {
+          data.defaultDepositEur =
+            body.defaultDepositEur === null || body.defaultDepositEur === ""
+              ? null
+              : Number(body.defaultDepositEur);
+        }
+        if (body.businessHours !== undefined) {
+          data.businessHours =
+            body.businessHours === null
+              ? null
+              : normalizeBusinessHours(body.businessHours);
+        }
+        if (body.cancellationPolicyText !== undefined) {
+          data.cancellationPolicyText =
+            body.cancellationPolicyText &&
+            String(body.cancellationPolicyText).trim()
+              ? String(body.cancellationPolicyText).trim()
               : null;
         }
       }
 
-      if (typeof notifyBookingEmail === "boolean") {
-        data.notifyBookingEmail = notifyBookingEmail;
+      if (typeof body.notifyBookingEmail === "boolean") {
+        data.notifyBookingEmail = body.notifyBookingEmail;
       }
-      if (typeof notifyCancelEmail === "boolean") {
-        data.notifyCancelEmail = notifyCancelEmail;
+      if (typeof body.notifyCancelEmail === "boolean") {
+        data.notifyCancelEmail = body.notifyCancelEmail;
       }
-      if (typeof notifyPaymentEmail === "boolean") {
-        data.notifyPaymentEmail = notifyPaymentEmail;
+      if (typeof body.notifyPaymentEmail === "boolean") {
+        data.notifyPaymentEmail = body.notifyPaymentEmail;
       }
-      if (typeof notifyDocumentEmail === "boolean") {
-        data.notifyDocumentEmail = notifyDocumentEmail;
+      if (typeof body.notifyDocumentEmail === "boolean") {
+        data.notifyDocumentEmail = body.notifyDocumentEmail;
       }
 
       const user = await prisma.user.update({
@@ -325,6 +415,38 @@ router.patch(
         data,
       });
       res.json({ user: publicUser(user) });
+    } catch (err) {
+      next(err);
+    }
+  }
+);
+
+router.post(
+  "/avatar",
+  requireAuth,
+  (req, res, next) => {
+    uploadCarImages.single("image")(req, res, (err) => {
+      if (err) return next(err);
+      next();
+    });
+  },
+  async (req, res, next) => {
+    try {
+      if (!req.file) throw new AppError("Upload a photo", 400);
+      const data = fs.readFileSync(req.file.path);
+      fs.unlink(req.file.path, () => {});
+      const saved = await prisma.mediaFile.create({
+        data: {
+          mimeType: req.file.mimetype || "image/jpeg",
+          data,
+        },
+      });
+      const url = `/api/media/${saved.id}`;
+      const user = await prisma.user.update({
+        where: { id: req.user!.id },
+        data: { avatarUrl: url },
+      });
+      res.status(201).json({ url, user: publicUser(user) });
     } catch (err) {
       next(err);
     }

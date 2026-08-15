@@ -7,3 +7,6 @@ uploads
 client/dist
 server/dist
 legacy/server-old/node_modules
+
+.vercel
+.env*

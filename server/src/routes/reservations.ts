@@ -219,7 +219,16 @@ router.post(
       const car = await prisma.car.findUnique({
         where: { id: carId },
         include: {
-          owner: { select: { commissionPercent: true } },
+          owner: {
+            select: {
+              commissionPercent: true,
+              minRentalDays: true,
+              maxRentalDays: true,
+              requireDeposit: true,
+              defaultDepositEur: true,
+              cancellationPolicyText: true,
+            },
+          },
         },
       });
       if (!car) throw new AppError("Car not found", 404);
@@ -228,6 +237,15 @@ router.post(
       }
       if (car.status === "MAINTENANCE") {
         throw new AppError("Makina është në mirëmbajtje");
+      }
+
+      const minDays = car.owner?.minRentalDays ?? 1;
+      const maxDays = car.owner?.maxRentalDays ?? 365;
+      if (totalDays < minDays) {
+        throw new AppError(`Minimumi i qirasë është ${minDays} ditë`, 400);
+      }
+      if (totalDays > maxDays) {
+        throw new AppError(`Maksimumi i qirasë është ${maxDays} ditë`, 400);
       }
 
       // Half-open [start, end): return day can be the next customer's pickup day.
@@ -287,10 +305,24 @@ router.post(
       }
 
       const hasDocument = Boolean(req.file);
-      const depositAmount =
-        env.DEFAULT_DEPOSIT_EUR > 0
-          ? env.DEFAULT_DEPOSIT_EUR
-          : Number(car.pricePerDay);
+      let depositAmount = 0;
+      if (car.owner?.requireDeposit === false) {
+        depositAmount = 0;
+      } else if (
+        car.owner?.defaultDepositEur != null &&
+        Number(car.owner.defaultDepositEur) >= 0
+      ) {
+        depositAmount = Number(car.owner.defaultDepositEur);
+      } else if (env.DEFAULT_DEPOSIT_EUR > 0) {
+        depositAmount = env.DEFAULT_DEPOSIT_EUR;
+      } else if (car.owner?.requireDeposit === true) {
+        depositAmount = Number(car.pricePerDay);
+      } else {
+        depositAmount =
+          env.DEFAULT_DEPOSIT_EUR > 0
+            ? env.DEFAULT_DEPOSIT_EUR
+            : Number(car.pricePerDay);
+      }
 
       const created = await prisma.reservation.create({
         data: {
@@ -482,6 +514,7 @@ router.post(
             invoicePdf,
             invoiceFilename: `autorent-fature-${created.id.slice(0, 8)}.pdf`,
             skipCustomerEmail: !allowCustomerMail,
+            cancellationPolicyOverride: car.owner?.cancellationPolicyText,
           });
           if (!mailResult.sent && allowCustomerMail) {
             console.error(
@@ -518,7 +551,13 @@ async function cancelReservationHandler(
       where: { id: req.params.id },
       include: {
         user: { select: { id: true, email: true, fullName: true } },
-        car: { select: { brand: true, model: true } },
+        car: {
+          select: {
+            brand: true,
+            model: true,
+            owner: { select: { cancellationPolicyText: true } },
+          },
+        },
       },
     });
     if (!reservation) throw new AppError("Reservation not found", 404);
@@ -573,7 +612,7 @@ async function cancelReservationHandler(
           await sendMail({
             to: reservation.user.email,
             subject: "AutoRent — rezervimi u anulua",
-            text: `Përshëndetje ${reservation.user.fullName},\n\nRezervimi për ${reservation.car.brand} ${reservation.car.model} u anulua.\n\nArsyeja: ${reason}\n\n${decision.refundNote}\n\nPolitika: ${cancellationPolicyText()}\n\nAutoRent`,
+            text: `Përshëndetje ${reservation.user.fullName},\n\nRezervimi për ${reservation.car.brand} ${reservation.car.model} u anulua.\n\nArsyeja: ${reason}\n\n${decision.refundNote}\n\nPolitika: ${cancellationPolicyText(reservation.car.owner?.cancellationPolicyText)}\n\nAutoRent`,
           });
         }
         if (env.ADMIN_EMAIL || env.BUSINESS_EMAIL) {
