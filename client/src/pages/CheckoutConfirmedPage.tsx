@@ -65,6 +65,20 @@ export default function CheckoutConfirmedPage() {
         <p>{t("checkout.confirmedSub")}</p>
       </div>
 
+      {data.whatsappUrl ? (
+        <div className="confirm-whatsapp">
+          <p>{t("checkout.whatsappHint")}</p>
+          <a
+            className="btn confirm-whatsapp-btn"
+            href={data.whatsappUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            {t("checkout.sendWhatsapp")}
+          </a>
+        </div>
+      ) : null}
+
       <article className="confirm-card" id="voucher-print">
         <header className="confirm-card-head">
           <div>
@@ -127,10 +141,18 @@ export default function CheckoutConfirmedPage() {
       </article>
 
       <div className="confirm-actions">
-        <Link to="/reservations" className="btn" onClick={() => clearConfirmedBooking()}>
+        <Link
+          to="/reservations"
+          className="btn"
+          onClick={() => clearConfirmedBooking()}
+        >
           {t("checkout.viewReservations")}
         </Link>
-        <Link to="/cars" className="btn ghost" onClick={() => clearConfirmedBooking()}>
+        <Link
+          to="/cars"
+          className="btn ghost"
+          onClick={() => clearConfirmedBooking()}
+        >
           {t("checkout.backToFleet")}
         </Link>
       </div>

@@ -19,6 +19,7 @@ import { env } from "../config/env.js";
 import { z } from "zod";
 import { validate } from "../middleware/validate.js";
 import { Router, type NextFunction, type Request, type Response } from "express";
+import { buildReservationWhatsAppUrl } from "../lib/whatsapp.js";
 
 const router = Router();
 
@@ -227,6 +228,7 @@ router.post(
               requireDeposit: true,
               defaultDepositEur: true,
               cancellationPolicyText: true,
+              businessWhatsapp: true,
             },
           },
         },
@@ -397,6 +399,23 @@ router.post(
 
       // Respond immediately so the browser gets success even if SMTP/PDF is slow.
       const emailTo = created.user.email;
+      const reservationCode = `AR-${created.createdAt.getFullYear()}-${created.id
+        .replace(/-/g, "")
+        .slice(-5)
+        .toUpperCase()}`;
+      const whatsappUrl = buildReservationWhatsAppUrl({
+        ownerWhatsapp: car.owner?.businessWhatsapp,
+        code: reservationCode,
+        customerName: created.user.fullName,
+        customerPhone: created.user.phone,
+        customerEmail: created.user.email,
+        carLabel: `${created.car.brand} ${created.car.model}`,
+        startDate,
+        endDate,
+        totalPrice: Number(created.totalPrice),
+        paymentMethod,
+        pickupLocation: created.pickupLocation,
+      });
       res.status(201).json({
         reservation: {
           ...created,
@@ -408,6 +427,7 @@ router.post(
         checkoutUrl,
         emailQueued: true,
         emailTo,
+        whatsappUrl,
       });
 
       // Notifications / email are best-effort after the response is sent.

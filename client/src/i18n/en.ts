@@ -102,6 +102,9 @@ export const en: Dict = {
     emailSent: "A confirmation email has been sent to {email}",
     printVoucher: "Print voucher",
     viewReservations: "View my reservations",
+    whatsappHint:
+      "For now, send the booking details on WhatsApp so our team can confirm right away.",
+    sendWhatsapp: "Send on WhatsApp",
   },
   home: {
     eyebrow: "PREMIUM CAR RENTAL",
