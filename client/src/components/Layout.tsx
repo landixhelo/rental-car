@@ -29,6 +29,7 @@ export default function Layout() {
     user?.role === "ADMIN" ||
     user?.role === "SUPER_ADMIN";
   const isHome = location.pathname === "/";
+  const isOps = location.pathname.startsWith("/dashboard");
 
   async function refreshBadge() {
     if (!showReservationBadge) {
@@ -163,7 +164,13 @@ export default function Layout() {
   );
 
   return (
-    <div className={`app-shell${isHome ? " is-home" : ""}`}>
+    <div
+      className={`app-shell${isHome ? " is-home" : ""}${
+        isOps ? " is-ops" : ""
+      }`}
+    >
+      {!isOps ? (
+        <>
       <nav className="navbar">
         <div className="navbar-shell">
           <Link to="/" className="brand" onClick={closeMenus}>
@@ -467,11 +474,14 @@ export default function Layout() {
           <Breadcrumbs items={[staffCrumb]} />
         </div>
       ) : null}
+        </>
+      ) : null}
 
       <main>
         <Outlet />
       </main>
 
+      {!isOps ? (
       <footer className="footer site-footer">
         <div className="site-footer-grid">
           <div className="site-footer-brand">
@@ -511,8 +521,9 @@ export default function Layout() {
         </div>
         <p className="site-footer-copy">{t("footer.rights")}</p>
       </footer>
+      ) : null}
 
-      <ChatWidget />
+      {!isOps ? <ChatWidget /> : null}
     </div>
   );
 }

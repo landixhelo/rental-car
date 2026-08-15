@@ -51,7 +51,14 @@ router.get("/", async (req, res, next) => {
           createdAt: true,
           documentStatus: true,
           depositStatus: true,
-          car: { select: { id: true, brand: true, model: true } },
+          car: {
+            select: {
+              id: true,
+              brand: true,
+              model: true,
+              imageUrl: true,
+            },
+          },
           user: { select: { fullName: true, email: true } },
         },
         orderBy: { createdAt: "desc" },
@@ -114,7 +121,13 @@ router.get("/", async (req, res, next) => {
 
     const carCounts: Record<
       string,
-      { carId: string; label: string; count: number }
+      {
+        carId: string;
+        label: string;
+        count: number;
+        revenue: number;
+        imageUrl: string | null;
+      }
     > = {};
     for (const r of reservations) {
       if (r.status === "CANCELLED" || r.status === "REJECTED") continue;
@@ -124,11 +137,20 @@ router.get("/", async (req, res, next) => {
           carId: id,
           label: `${r.car.brand} ${r.car.model}`,
           count: 0,
+          revenue: 0,
+          imageUrl: r.car.imageUrl || null,
         };
       }
       carCounts[id].count += 1;
+      if (r.status === "CONFIRMED" || r.status === "COMPLETED") {
+        carCounts[id].revenue += Number(r.totalPrice);
+      }
     }
     const topCars = Object.values(carCounts)
+      .map((c) => ({
+        ...c,
+        revenue: Math.round(c.revenue * 100) / 100,
+      }))
       .sort((a, b) => b.count - a.count)
       .slice(0, 5);
 
