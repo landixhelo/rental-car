@@ -126,9 +126,6 @@ main { flex: 1; width: 100%; }
   color: var(--accent) !important;
   opacity: 1;
 }
-.app-shell.is-home .nav-utils-desktop {
-  display: none;
-}
 .app-shell.is-home .nav-auth {
   display: inline-flex;
   align-items: center;
@@ -178,6 +175,11 @@ main { flex: 1; width: 100%; }
   align-items: center;
   gap: 10px;
   margin-left: auto;
+}
+.nav-lang {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
 }
 .nav-utils-desktop {
   display: flex;
@@ -5514,6 +5516,18 @@ th { color: var(--text-muted); font-weight: 600; }
   .nav-auth-desktop,
   .nav-dropdown-desktop {
     display: none !important;
+  }
+
+  .nav-lang {
+    display: flex;
+  }
+  .nav-lang .lang-switch {
+    --nav-chip-h: 28px;
+  }
+  .nav-lang .lang-switch button {
+    min-width: 1.75rem;
+    padding: 0 6px;
+    font-size: 0.65rem;
   }
 
   .nav-end {

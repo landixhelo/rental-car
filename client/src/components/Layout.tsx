@@ -175,9 +175,7 @@ export default function Layout() {
           </div>
 
           <div className="nav-end">
-            <div className="nav-utils-desktop">
-              {langSwitch}
-            </div>
+            <div className="nav-lang">{langSwitch}</div>
 
             {user ? (
               <div
