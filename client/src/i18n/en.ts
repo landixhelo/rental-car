@@ -39,8 +39,8 @@ export const en: Dict = {
     admin: "Admin",
     superAdmin: "Super Admin",
     logout: "Log out",
-    login: "Log in",
-    register: "Sign up",
+    login: "Login",
+    register: "Sign Up",
     notifications: "notifications",
     lightMode: "Light mode",
     darkMode: "Dark mode",
@@ -125,6 +125,7 @@ export const en: Dict = {
     searchReturn: "Return date",
     searchCity: "Location",
     searchAnyCity: "All cities",
+    scroll: "Scroll",
     searchHint:
       "Search opens the filtered fleet. You can still change dates on the cars page.",
     searchNeedDates: "Choose pickup and return dates.",

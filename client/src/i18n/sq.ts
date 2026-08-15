@@ -123,6 +123,7 @@ export const sq = {
     searchReturn: "Data e kthimit",
     searchCity: "Qyteti",
     searchAnyCity: "Të gjitha qytetet",
+    scroll: "Poshtë",
     searchHint:
       "Pas kërkimit hapet flota e filtruar. Mund t’i ndryshosh datat edhe te faqja e makinave.",
     searchNeedDates: "Zgjidh datën e marrjes dhe kthimit.",

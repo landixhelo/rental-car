@@ -126,6 +126,7 @@ export const it: Dict = {
     searchReturn: "Data riconsegna",
     searchCity: "Città",
     searchAnyCity: "Tutte le città",
+    scroll: "Scorri",
     searchHint:
       "La ricerca apre la flotta filtrata. Puoi ancora cambiare le date nella pagina auto.",
     searchNeedDates: "Scegli data di ritiro e riconsegna.",

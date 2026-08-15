@@ -152,6 +152,11 @@ export default function HomePage() {
           </div>
         </div>
 
+        <a className="hero-scroll" href="#why" aria-label={t("home.scroll")}>
+          {t("home.scroll")}
+          <span aria-hidden>↓</span>
+        </a>
+
         <div className="hero-search-wrap">
           <form className="home-search" onSubmit={onSearch}>
             <div className="home-search-head">
