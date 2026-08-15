@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useLocale, useT } from "../context/LocaleContext";
 import {
   formatDay,
@@ -16,6 +16,12 @@ type Props = {
   onChange: (startDate: string, endDate: string) => void;
 };
 
+type Field = "start" | "end";
+
+function dayKey(value: string) {
+  return value.slice(0, 10);
+}
+
 export default function BookingCalendar({
   startDate,
   endDate,
@@ -25,12 +31,22 @@ export default function BookingCalendar({
   const t = useT();
   const { locale } = useLocale();
   const today = tiraneToday();
-  const seed = startDate || today;
+  const start = startDate ? dayKey(startDate) : "";
+  const end = endDate ? dayKey(endDate) : "";
+  const seed = start || today;
   const seedDate = new Date(`${seed}T12:00:00`);
   const [cursor, setCursor] = useState({
     y: seedDate.getFullYear(),
     m: seedDate.getMonth(),
   });
+  const [activeField, setActiveField] = useState<Field>(() =>
+    start && !end ? "end" : "start"
+  );
+
+  useEffect(() => {
+    if (!start) setActiveField("start");
+    else setActiveField("end");
+  }, [start, end]);
 
   const cells = useMemo(
     () => monthMatrix(cursor.y, cursor.m),
@@ -57,15 +73,26 @@ export default function BookingCalendar({
     if (day < today) return;
     if (isBusyDay(day, busyRanges)) return;
 
-    // First click or restart: set start, clear end.
-    if (!startDate || (startDate && endDate) || day <= startDate) {
-      onChange(day, "");
+    if (activeField === "start") {
+      const nextEnd = end && end > day ? end : "";
+      if (nextEnd && rangeOverlapsBusy(day, nextEnd, busyRanges)) {
+        onChange(day, "");
+      } else {
+        onChange(day, nextEnd);
+      }
+      setActiveField("end");
       return;
     }
 
-    // Second click: set end if the whole range is free.
-    if (rangeOverlapsBusy(startDate, day, busyRanges)) return;
-    onChange(startDate, day);
+    // Selecting return date
+    if (!start || day <= start) {
+      onChange(day, "");
+      setActiveField("end");
+      return;
+    }
+
+    if (rangeOverlapsBusy(start, day, busyRanges)) return;
+    onChange(start, day);
   }
 
   function shiftMonth(delta: number) {
@@ -90,17 +117,35 @@ export default function BookingCalendar({
     <div className="booking-calendar">
       <div className="booking-calendar-toolbar">
         <div className="booking-calendar-fields">
-          <div>
+          <button
+            type="button"
+            className={`booking-calendar-field${
+              activeField === "start" ? " is-active" : ""
+            }`}
+            onClick={() => setActiveField("start")}
+          >
             <span className="muted">{t("details.startDate")}</span>
-            <strong>{startDate || "—"}</strong>
-          </div>
-          <div>
+            <strong>{start || "—"}</strong>
+          </button>
+          <button
+            type="button"
+            className={`booking-calendar-field${
+              activeField === "end" ? " is-active" : ""
+            }`}
+            onClick={() => {
+              if (!start) {
+                setActiveField("start");
+                return;
+              }
+              setActiveField("end");
+            }}
+          >
             <span className="muted">{t("details.endDate")}</span>
-            <strong>{endDate || "—"}</strong>
-          </div>
+            <strong>{end || "—"}</strong>
+          </button>
         </div>
         <p className="booking-calendar-hint">
-          {!startDate || endDate
+          {activeField === "start"
             ? t("details.pickStart")
             : t("details.pickEnd")}
         </p>
@@ -128,8 +173,8 @@ export default function BookingCalendar({
       </div>
 
       <div className="calendar-grid calendar-head booking-calendar-head">
-        {weekdayLabels.map((d) => (
-          <div key={d}>{d}</div>
+        {weekdayLabels.map((d, i) => (
+          <div key={`${d}-${i}`}>{d}</div>
         ))}
       </div>
 
@@ -141,22 +186,21 @@ export default function BookingCalendar({
           const key = formatDay(cell.date);
           const past = key < today;
           const busy = isBusyDay(key, busyRanges);
-          const isStart = key === startDate;
-          const isEnd = key === endDate;
+          const isStart = key === start;
+          const isEnd = key === end;
           const inRange =
-            Boolean(startDate && endDate) &&
-            key > startDate &&
-            key < endDate;
-          const disabled = past || busy;
+            Boolean(start && end) && key > start && key < end;
           const blockedEnd =
-            Boolean(startDate && !endDate && key > startDate) &&
-            rangeOverlapsBusy(startDate, key, busyRanges);
+            activeField === "end" &&
+            Boolean(start && key > start) &&
+            rangeOverlapsBusy(start, key, busyRanges);
+          const disabled = past || busy || blockedEnd;
 
           return (
             <button
               key={key}
               type="button"
-              disabled={disabled || blockedEnd}
+              disabled={disabled}
               className={[
                 "booking-day",
                 past ? "is-past" : "",
@@ -187,7 +231,7 @@ export default function BookingCalendar({
         </span>
       </div>
 
-      {startDate && !endDate ? (
+      {activeField === "end" && start ? (
         <p className="muted booking-calendar-note">{t("details.pickEndHint")}</p>
       ) : null}
     </div>

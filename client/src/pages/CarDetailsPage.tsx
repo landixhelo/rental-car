@@ -513,7 +513,7 @@ export default function CarDetailsPage() {
                     const start = clampDate(e.target.value, today);
                     setStartDate(start);
                     if (!endDate || endDate <= start) {
-                      setEndDate(addDays(start, 1));
+                      setEndDate("");
                     }
                   }}
                   required
