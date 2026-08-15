@@ -39,11 +39,8 @@
     <script>
       (function () {
         try {
-          var saved = localStorage.getItem("autorent-theme");
-          var theme = saved === "light" || saved === "dark"
-            ? saved
-            : (window.matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark");
-          document.documentElement.setAttribute("data-theme", theme);
+          document.documentElement.setAttribute("data-theme", "light");
+          localStorage.setItem("autorent-theme", "light");
         } catch (e) {}
       })();
     </script>

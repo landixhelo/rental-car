@@ -4,7 +4,6 @@ import { api } from "../lib/api";
 import Breadcrumbs from "./Breadcrumbs";
 import ChatWidget from "./ChatWidget";
 import { useAuth } from "../context/AuthContext";
-import { useTheme } from "../context/ThemeContext";
 import { useLocale } from "../context/LocaleContext";
 import { applyBusinessMeta } from "../seo/site";
 import type { Locale } from "../i18n";
@@ -12,7 +11,6 @@ import { isOpsPath } from "./OpsLayout";
 
 export default function Layout() {
   const { user, logout } = useAuth();
-  const { theme, toggleTheme } = useTheme();
   const { t, locale, setLocale } = useLocale();
   const location = useLocation();
   const [menuOpen, setMenuOpen] = useState(false);
@@ -151,19 +149,6 @@ export default function Layout() {
     </div>
   );
 
-  const themeBtn = (
-    <button
-      type="button"
-      className="icon-btn theme-toggle"
-      onClick={toggleTheme}
-      aria-label={
-        theme === "dark" ? t("nav.switchLight") : t("nav.switchDark")
-      }
-    >
-      {theme === "dark" ? "☀" : "☾"}
-    </button>
-  );
-
   return (
     <div
       className={`app-shell${isHome ? " is-home" : ""}${
@@ -192,7 +177,6 @@ export default function Layout() {
           <div className="nav-end">
             <div className="nav-utils-desktop">
               {langSwitch}
-              {themeBtn}
             </div>
 
             {user ? (
@@ -455,7 +439,6 @@ export default function Layout() {
             <div className="nav-menu-utils">
               <span className="nav-menu-utils-label">{t("nav.language")}</span>
               {langSwitch}
-              {themeBtn}
             </div>
           </div>
         </div>
