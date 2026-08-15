@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import BookingStepper from "../components/BookingStepper";
 import { useLocale, useT } from "../context/LocaleContext";
+import { useToast } from "../hooks/useToast";
 import {
   clearConfirmedBooking,
   formatShortDate,
@@ -15,6 +16,7 @@ export default function CheckoutConfirmedPage() {
   const t = useT();
   const { locale } = useLocale();
   const navigate = useNavigate();
+  const { show } = useToast();
   const [data, setData] = useState<ConfirmedBooking | null>(null);
 
   useEffect(() => {
@@ -24,6 +26,8 @@ export default function CheckoutConfirmedPage() {
       return;
     }
     setData(confirmed);
+    show(t("details.success"), 7000);
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- show once on mount
   }, [navigate]);
 
   function onPrint() {

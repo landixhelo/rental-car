@@ -13,6 +13,7 @@ import {
   saveConfirmedBooking,
   type BookingDraft,
 } from "../lib/bookingDraft";
+import { setFlash } from "../lib/flash";
 import { mediaUrl } from "../lib/mediaUrl";
 import { transmissionLabel } from "../lib/labels";
 
@@ -117,6 +118,15 @@ export default function CheckoutDetailsPage() {
         window.location.href = data.checkoutUrl;
         return;
       }
+
+      const successMsg = t("details.success");
+      setFlash({
+        title: t("checkout.confirmedTitle"),
+        message: t("checkout.emailSent", {
+          email: data.emailTo || email,
+        }),
+      });
+      show(successMsg, 7000);
 
       saveConfirmedBooking({
         reservationId: reservation.id,

@@ -17,17 +17,20 @@ const ToastContext = createContext<ToastContextValue | null>(null);
 export function ToastProvider({ children }: { children: ReactNode }) {
   const [message, setMessage] = useState<string | null>(null);
   const [durationMs, setDurationMs] = useState(4500);
+  const [tick, setTick] = useState(0);
 
   const show = useCallback((msg: string, ms = 4500) => {
     setDurationMs(ms);
     setMessage(msg);
+    // Force timer restart even if the same message is shown again.
+    setTick((n) => n + 1);
   }, []);
 
   useEffect(() => {
     if (!message) return;
     const t = window.setTimeout(() => setMessage(null), durationMs);
     return () => window.clearTimeout(t);
-  }, [message, durationMs]);
+  }, [message, durationMs, tick]);
 
   const value = useMemo(() => ({ show }), [show]);
 

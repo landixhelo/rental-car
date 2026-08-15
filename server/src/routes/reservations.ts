@@ -418,43 +418,50 @@ router.post(
               },
             });
           }
+        } catch (notifyErr) {
+          console.error(
+            "[notify] in-app notification failed after reservation:",
+            notifyErr instanceof Error ? notifyErr.message : notifyErr
+          );
+        }
 
-          let invoicePdf: Buffer | null = null;
-          try {
-            const extras = Array.isArray(created.extras)
-              ? (created.extras as Array<{ name?: string; price?: number }>)
-              : [];
-            invoicePdf = await buildReservationPdf({
-              id: created.id,
-              customerName: created.user.fullName,
-              customerEmail: created.user.email,
-              customerPhone: created.user.phone,
-              carLabel: `${created.car.brand} ${created.car.model} (${created.car.year})`,
-              startDate,
-              endDate,
-              totalDays: created.totalDays,
-              pickupLocation: created.pickupLocation,
-              returnLocation: created.returnLocation,
-              paymentMethod: created.paymentMethod,
-              paymentStatus: created.paymentStatus,
-              status: created.status,
-              carSubtotal: Number(created.carSubtotal),
-              extrasTotal: Number(created.extrasTotal),
-              locationFees: Number(created.locationFees),
-              totalPrice: Number(created.totalPrice),
-              depositAmount: Number(created.depositAmount || 0),
-              depositStatus: created.depositStatus,
-              extras,
-              createdAt: created.createdAt.toISOString().slice(0, 10),
-            });
-          } catch (pdfErr) {
-            console.error(
-              "[mail] invoice PDF failed — sending reservation email without attachment:",
-              pdfErr instanceof Error ? pdfErr.message : pdfErr
-            );
-          }
+        let invoicePdf: Buffer | null = null;
+        try {
+          const extras = Array.isArray(created.extras)
+            ? (created.extras as Array<{ name?: string; price?: number }>)
+            : [];
+          invoicePdf = await buildReservationPdf({
+            id: created.id,
+            customerName: created.user.fullName,
+            customerEmail: created.user.email,
+            customerPhone: created.user.phone,
+            carLabel: `${created.car.brand} ${created.car.model} (${created.car.year})`,
+            startDate,
+            endDate,
+            totalDays: created.totalDays,
+            pickupLocation: created.pickupLocation,
+            returnLocation: created.returnLocation,
+            paymentMethod: created.paymentMethod,
+            paymentStatus: created.paymentStatus,
+            status: created.status,
+            carSubtotal: Number(created.carSubtotal),
+            extrasTotal: Number(created.extrasTotal),
+            locationFees: Number(created.locationFees),
+            totalPrice: Number(created.totalPrice),
+            depositAmount: Number(created.depositAmount || 0),
+            depositStatus: created.depositStatus,
+            extras,
+            createdAt: created.createdAt.toISOString().slice(0, 10),
+          });
+        } catch (pdfErr) {
+          console.error(
+            "[mail] invoice PDF failed — sending reservation email without attachment:",
+            pdfErr instanceof Error ? pdfErr.message : pdfErr
+          );
+        }
 
-          await sendReservationEmails({
+        try {
+          const mailResult = await sendReservationEmails({
             customerEmail: created.user.email,
             customerName: created.user.fullName,
             carLabel: `${created.car.brand} ${created.car.model}`,
@@ -469,10 +476,17 @@ router.post(
             invoicePdf,
             invoiceFilename: `autorent-fature-${created.id.slice(0, 8)}.pdf`,
           });
-        } catch (notifyErr) {
+          if (!mailResult.sent) {
+            console.error(
+              "[mail] reservation confirmation not delivered →",
+              created.user.email,
+              "error" in mailResult ? mailResult.error : "unknown"
+            );
+          }
+        } catch (mailErr) {
           console.error(
-            "Notification/email failed after reservation:",
-            notifyErr
+            "[mail] reservation email failed after booking:",
+            mailErr instanceof Error ? mailErr.message : mailErr
           );
         }
       })();
