@@ -96,7 +96,7 @@ export default function ShopPage() {
 }
 
 function SITE_FALLBACK(locale: string) {
-  if (locale === "en") return "Partner rental fleet on AutoRent marketplace.";
-  if (locale === "it") return "Flotta partner sul marketplace AutoRent.";
-  return "Flota partner në marketplace AutoRent.";
+  if (locale === "en") return "Partner rental fleet on Auto Rental marketplace.";
+  if (locale === "it") return "Flotta partner sul marketplace Auto Rental.";
+  return "Flota partner në marketplace Auto Rental.";
 }

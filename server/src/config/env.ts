@@ -60,7 +60,7 @@ const envSchema = z.object({
   WEBAUTHN_RP_ID: z.preprocess(emptyToUndef, z.string().optional()),
   WEBAUTHN_RP_NAME: z.preprocess(
     emptyToUndef,
-    z.string().optional().default("AutoRent")
+    z.string().optional().default("Auto Rental")
   ),
 });
 

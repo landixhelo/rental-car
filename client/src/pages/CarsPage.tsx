@@ -137,7 +137,7 @@ export default function CarsPage() {
         keywords={SITE.keywords[locale]}
         jsonLd={[
           breadcrumbJsonLd([
-            { name: "AutoRent", path: "/" },
+            { name: SITE.name, path: "/" },
             { name: t("cars.title"), path: "/cars" },
           ]),
           itemListCarsJsonLd(cars),

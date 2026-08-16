@@ -29,13 +29,13 @@ router.post(
         try {
           await sendMail({
             to,
-            subject: `Kontakt AutoRent: ${message.subject}`,
+            subject: `Kontakt Auto Rental: ${message.subject}`,
             text: `Nga: ${message.name} <${message.email}>\nTel: ${message.phone || "-"}\n\n${message.message}`,
           });
           await sendMail({
             to: message.email,
-            subject: "AutoRent — mesazhi u pranua",
-            text: `Përshëndetje ${message.name},\n\nFaleminderit për mesazhin. Do t’ju përgjigjemi sa më shpejt.\n\nAutoRent`,
+            subject: "Auto Rental — mesazhi u pranua",
+            text: `Përshëndetje ${message.name},\n\nFaleminderit për mesazhin. Do t’ju përgjigjemi sa më shpejt.\n\nAuto Rental`,
           });
         } catch (mailErr) {
           console.error("Contact email failed:", mailErr);

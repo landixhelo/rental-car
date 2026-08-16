@@ -51,9 +51,9 @@ export const en: Dict = {
   },
   footer: {
     terms: "Terms & Policies",
-    rights: "© 2026 AutoRent. All rights reserved.",
+    rights: "© 2026 Auto Rental — Via Egnatia. All rights reserved.",
     blurb:
-      "Premium car rental in Albania. Discover our collection of premium cars and enjoy a simple, flexible rental experience.",
+      "Auto Rental — Via Egnatia. Car rental in Albania, along the ancient road that began in Durrës.",
     explore: "Explore",
     support: "Support",
     contact: "Contact",
@@ -95,7 +95,7 @@ export const en: Dict = {
     statusConfirmed: "Confirmed",
     vehicle: "Vehicle",
     pickupLocation: "Pickup location",
-    pickupHint: "Arrival terminal, look for the AutoRent desk.",
+    pickupHint: "Arrival terminal, look for the Auto Rental desk.",
     reservationDates: "Reservation dates",
     totalPaid: "Total paid",
     paymentMethod: "Payment method",
@@ -104,7 +104,7 @@ export const en: Dict = {
     viewReservations: "View my reservations",
   },
   home: {
-    eyebrow: "PREMIUM CAR RENTAL",
+    eyebrow: "AUTO RENTAL · VIA EGNATIA",
     titleBefore: "The",
     titleAccent: "Premium",
     titleAfter: "Driving Experience",
@@ -113,7 +113,7 @@ export const en: Dict = {
     explore: "Explore Cars",
     howCta: "How It Works",
     createAccount: "Create Account",
-    why: "Why AutoRent?",
+    why: "Why Auto Rental?",
     feature1Title: "Premium Fleet",
     feature1Text:
       "Latest luxury and reliable vehicles, maintained to the highest standards for your comfort.",
@@ -156,7 +156,7 @@ export const en: Dict = {
     cityVlora: "Vlorë",
     cityHint: "Flexible locations with clear fees.",
     trustTitle: "Trusted rentals",
-    trustSub: "AutoRent for fast and transparent bookings.",
+    trustSub: "Auto Rental for fast and transparent bookings.",
     trustCars: "CARS IN FLEET",
     trustCities: "PICKUP LOCATIONS",
     trustSupport: "CUSTOMER SUPPORT",
@@ -170,7 +170,7 @@ export const en: Dict = {
     marketEyebrow: "MARKET",
     marketTitle: "Partner rentals & cars for sale",
     marketText:
-      "Market is a separate section: partner shops and sale listings. AutoRent stays focused on your rental.",
+      "Market is a separate section: partner shops and sale listings. Auto Rental stays focused on your rental.",
     marketCtaPartners: "Browse partners",
     marketCtaBuy: "Cars for sale",
     searchTitle: "Find an available car",
@@ -279,7 +279,7 @@ export const en: Dict = {
   chat: {
     fab: "Chat",
     open: "Open chat",
-    title: "AutoRent Chat",
+    title: "Auto Rental Chat",
     subtitle: "We reply as soon as we can — or continue on WhatsApp.",
     greeting: "Hi! How can we help with your rental or booking?",
     messagePlaceholder: "Type your message…",
@@ -287,7 +287,7 @@ export const en: Dict = {
     sent: "Thanks! Your message was sent. We’ll get back to you soon.",
     whatsapp: "Continue on WhatsApp",
     subject: "Chat from website",
-    waPrefill: "Hi AutoRent, I have a question about renting a car.",
+    waPrefill: "Hi Auto Rental, I have a question about renting a car.",
   },
   chats: {
     title: "Chats",
@@ -308,19 +308,19 @@ export const en: Dict = {
     replyPrefill: "Hi {name}, thanks for your message.",
   },
   marketplace: {
-    eyebrow: "MARKET · NOT AUTORENT RENTAL",
+    eyebrow: "MARKET · NOT AUTO RENTAL",
     title: "Market",
     subtitle:
-      "Partner rental shops and cars for sale — clearly separate from AutoRent.",
-    splitNote: "For quick AutoRent booking, go to",
+      "Partner rental shops and cars for sale — clearly separate from Auto Rental.",
+    splitNote: "For quick Auto Rental booking, go to",
     splitLink: "Cars",
     tabRent: "Partners (rent)",
     tabBuy: "For sale",
     searchSales: "Search cars for sale…",
-    noShops: "No public partner shops yet. Browse the AutoRent fleet.",
+    noShops: "No public partner shops yet. Browse the Auto Rental fleet.",
     noSales: "No sale listings right now.",
-    browseFleet: "Browse AutoRent cars",
-    orBrowse: "Or browse the AutoRent fleet:",
+    browseFleet: "Browse Auto Rental cars",
+    orBrowse: "Or browse the Auto Rental fleet:",
     albania: "Albania",
     cars: "cars",
     back: "Market",
@@ -333,7 +333,7 @@ export const en: Dict = {
     sellerHub: "My shop (Market)",
     sellerHubSub: "Manage your partner shop and sale listings.",
     sellerSplitNote:
-      "AutoRent rental fleet is managed under My fleet; this page is Market only.",
+      "Auto Rental rental fleet is managed under My fleet; this page is Market only.",
     viewMarketplace: "Open Market",
     myShop: "Public partner shop",
     myShopHelp: "When public, it appears in Market → Partners (/shops/slug).",
@@ -372,26 +372,26 @@ export const en: Dict = {
   terms: {
     title: "Terms & Policies",
     intro:
-      "These terms govern the use of the AutoRent platform and car rental in the Republic of Albania. By creating an account or booking, you accept these terms.",
+      "These terms govern the use of the Auto Rental platform and car rental in the Republic of Albania. By creating an account or booking, you accept these terms.",
     updated: "Updated: August 2026 · Governing law: Republic of Albania.",
     s1: "1. Platform & operator",
     s1Text:
-      "AutoRent is an online platform for booking rental cars in Albania (Tirana, Durrës, Vlorë and other listed areas). The service is provided by the platform operator and/or listed contractor partners. Contact details and NIPT (when available) appear on the site or on the invoice/contract.",
+      "Auto Rental is an online platform for booking rental cars in Albania (Tirana, Durrës, Vlorë and other listed areas). The service is provided by the platform operator and/or listed contractor partners. Contact details and NIPT (when available) appear on the site or on the invoice/contract.",
     s2: "2. Booking",
     s2Text:
-      "A reservation is registered once confirmed on the platform. Availability depends on selected dates and car status. AutoRent may refuse or cancel a booking for invalid documents, failed payment, or suspected misuse — with notice to the customer.",
+      "A reservation is registered once confirmed on the platform. Availability depends on selected dates and car status. Auto Rental may refuse or cancel a booking for invalid documents, failed payment, or suspected misuse — with notice to the customer.",
     s3: "3. Driver requirements",
     s3Text:
       "The driver must hold a valid licence (Albanian or recognised/international as applicable) and ID (ID card or passport). Minimum age and experience may vary by car category and will be communicated before handover. Only authorised persons named in the contract may drive.",
     s4: "4. Documents",
     s4Text:
-      "A valid licence and ID are required at pickup. You may upload them during online booking. Without valid documents, handover may be refused without AutoRent liability for delays caused by the customer.",
+      "A valid licence and ID are required at pickup. You may upload them during online booking. Without valid documents, handover may be refused without Auto Rental liability for delays caused by the customer.",
     s5: "5. Payment & deposit",
     s5Text:
       "Prices are shown in euros (€) per day, plus extras and location fees when applicable. Payment may be cash on pickup, bank transfer, or card (when enabled). Any deposit is held as security and returned after inspection, minus justified damage or fines under the contract.",
     s6: "6. Cancellation & refunds",
     s6Text:
-      "Free cancel until 24 hours before pickup — paid amounts are refunded via the original method. Within 24 hours: cancel from your account is allowed, but without automatic refund. After the start date, customers cannot cancel in-app. Special cases are handled by AutoRent.",
+      "Free cancel until 24 hours before pickup — paid amounts are refunded via the original method. Within 24 hours: cancel from your account is allowed, but without automatic refund. After the start date, customers cannot cancel in-app. Special cases are handled by Auto Rental.",
     s7: "7. Vehicle use",
     s7Text:
       "The car may only be used on permitted roads under Albania’s Road Code. Prohibited: driving under alcohol/drugs, racing, use outside the rental purpose, or sub-renting without permission. Fuel, traffic fines, parking and misuse damage are the customer’s responsibility. Return the car to the agreed place/time with fuel as per contract.",
@@ -403,10 +403,10 @@ export const en: Dict = {
       "We process personal data (name, email, phone, documents) for account, booking, billing and communication. Data is not sold for third-party marketing. Necessary cookies are used for login/session; analytics cookies (e.g. Google/Meta) load only with your consent via the cookie banner. Data requests: contact the business email on the site.",
     s10: "10. Contractors & platform",
     s10Text:
-      "Some cars are offered by partner contractors. AutoRent facilitates booking and communication; handover, vehicle condition and insurance obligations may sit with the relevant operator as noted on the booking/contract. Complaints may be sent to AutoRent, which forwards them to the partner when needed.",
+      "Some cars are offered by partner contractors. Auto Rental facilitates booking and communication; handover, vehicle condition and insurance obligations may sit with the relevant operator as noted on the booking/contract. Complaints may be sent to Auto Rental, which forwards them to the partner when needed.",
     s11: "11. Law & disputes",
     s11Text:
-      "These terms are governed by the laws of the Republic of Albania. Parties first seek an amicable solution; failing that, Tirana courts have jurisdiction unless mandatory law provides otherwise. AutoRent may update these terms; the version published on the site is the one in force.",
+      "These terms are governed by the laws of the Republic of Albania. Parties first seek an amicable solution; failing that, Tirana courts have jurisdiction unless mandatory law provides otherwise. Auto Rental may update these terms; the version published on the site is the one in force.",
   },
   favorites: {
     title: "Favorites",

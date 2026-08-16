@@ -24,7 +24,7 @@ export function formatReservationWhatsAppText(input: {
   pickupLocation?: string | null;
 }) {
   return [
-    "🚗 *Rezervim i ri — AutoRent*",
+    "🚗 *Rezervim i ri — Auto Rental*",
     "",
     input.code ? `Kodi: ${input.code}` : null,
     `Klienti: ${input.customerName}`,

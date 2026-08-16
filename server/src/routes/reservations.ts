@@ -69,7 +69,7 @@ router.get("/mine", requireAuth, async (req, res, next) => {
         depositAmount: Number(r.depositAmount),
         car: {
           ...r.car,
-          companyName: r.car.owner?.companyName?.trim() || "AutoRent",
+          companyName: r.car.owner?.companyName?.trim() || "Auto Rental",
           owner: undefined,
         },
       })),
@@ -638,8 +638,8 @@ async function cancelReservationHandler(
         if (await userAllowsEmail(reservation.user.id, "cancel")) {
           await sendMail({
             to: reservation.user.email,
-            subject: "AutoRent — rezervimi u anulua",
-            text: `Përshëndetje ${reservation.user.fullName},\n\nRezervimi për ${reservation.car.brand} ${reservation.car.model} u anulua.\n\nArsyeja: ${reason}\n\n${decision.refundNote}\n\nPolitika: ${cancellationPolicyText(reservation.car.owner?.cancellationPolicyText)}\n\nAutoRent`,
+            subject: "Auto Rental — rezervimi u anulua",
+            text: `Përshëndetje ${reservation.user.fullName},\n\nRezervimi për ${reservation.car.brand} ${reservation.car.model} u anulua.\n\nArsyeja: ${reason}\n\n${decision.refundNote}\n\nPolitika: ${cancellationPolicyText(reservation.car.owner?.cancellationPolicyText)}\n\nAuto Rental`,
           });
         }
         if (env.ADMIN_EMAIL || env.BUSINESS_EMAIL) {
@@ -744,7 +744,7 @@ router.get(
             ...reservation.car,
             pricePerDay: Number(reservation.car.pricePerDay),
             companyName:
-              reservation.car.owner?.companyName?.trim() || "AutoRent",
+              reservation.car.owner?.companyName?.trim() || "Auto Rental",
             owner: undefined,
           },
         },
@@ -970,8 +970,8 @@ router.patch(
         if (await userAllowsEmail(reservation.userId, "document")) {
           await sendMail({
             to: reservation.user.email,
-            subject: `AutoRent — dokumenti: ${req.body.documentStatus}`,
-            text: `Përshëndetje ${reservation.user.fullName},\n\nStatusi i dokumentit të rezervimit: ${req.body.documentStatus}.\n${req.body.documentNote ? `Shënim: ${req.body.documentNote}\n` : ""}\nAutoRent`,
+            subject: `Auto Rental — dokumenti: ${req.body.documentStatus}`,
+            text: `Përshëndetje ${reservation.user.fullName},\n\nStatusi i dokumentit të rezervimit: ${req.body.documentStatus}.\n${req.body.documentNote ? `Shënim: ${req.body.documentNote}\n` : ""}\nAuto Rental`,
           });
         }
       } catch (e) {

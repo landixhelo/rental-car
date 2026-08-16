@@ -38,7 +38,7 @@ export async function createCheckoutSession(input: {
           currency: "eur",
           unit_amount: cents,
           product_data: {
-            name: `AutoRent — ${input.carLabel}`,
+            name: `Auto Rental — ${input.carLabel}`,
             description: `Rezervim #${input.reservationId}`,
           },
         },

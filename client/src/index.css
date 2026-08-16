@@ -300,8 +300,25 @@ main { flex: 1; width: 100%; }
   min-width: 0;
   flex-shrink: 0;
 }
+.brand-lockup {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.05;
+  min-width: 0;
+}
 .brand-text {
   white-space: nowrap;
+}
+.brand-sub {
+  font-size: 0.62rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--accent);
+  white-space: nowrap;
+}
+.app-shell.is-home .brand-sub {
+  color: #e91e4d;
 }
 .brand-mark {
   width: 28px;
@@ -485,6 +502,15 @@ main { flex: 1; width: 100%; }
   font-weight: 700;
   letter-spacing: -0.02em;
   line-height: 1;
+}
+.ops-brand-sub {
+  display: block;
+  margin-top: 6px;
+  color: var(--ops-accent);
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
 }
 .ops-brand span {
   display: block;

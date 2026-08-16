@@ -2,6 +2,7 @@ import { Link } from "react-router-dom";
 import type { Car } from "../lib/api";
 import { mediaUrl } from "../lib/mediaUrl";
 import { carPath } from "../lib/carPath";
+import { SITE } from "../seo/site";
 import { useT } from "../context/LocaleContext";
 
 type Props = {
@@ -37,7 +38,7 @@ export default function CarCard({ car, onToggleFavorite }: Props) {
             <strong className="car-price">€{car.pricePerDay}</strong>
           </div>
           <span className="company-chip">
-            {car.companyName || "AutoRent"}
+            {car.companyName || SITE.name}
           </span>
           <span
             className={`status-chip status-${(car.status || "AVAILABLE").toLowerCase()}`}

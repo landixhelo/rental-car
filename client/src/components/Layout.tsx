@@ -3,9 +3,10 @@ import { Link, NavLink, Outlet, useLocation } from "react-router-dom";
 import { api } from "../lib/api";
 import Breadcrumbs from "./Breadcrumbs";
 import ChatWidget from "./ChatWidget";
+import BrandLockup from "./BrandLockup";
 import { useAuth } from "../context/AuthContext";
 import { useLocale } from "../context/LocaleContext";
-import { applyBusinessMeta } from "../seo/site";
+import { applyBusinessMeta, SITE } from "../seo/site";
 import type { Locale } from "../i18n";
 import { isOpsPath } from "./OpsLayout";
 
@@ -171,12 +172,7 @@ export default function Layout() {
           <div className="navbar-shell">
           <div className="nav-bar-row">
           <Link to="/" className="brand" onClick={closeMenus}>
-            <span className="brand-mark" aria-hidden>
-              <svg viewBox="0 0 24 24" fill="currentColor">
-                <path d="M5 11l1.5-4.5A2 2 0 0 1 8.4 5h7.2a2 2 0 0 1 1.9 1.5L19 11h1a1 1 0 0 1 1 1v3a1 1 0 0 1-1 1h-1.1a2.5 2.5 0 0 1-4.8 0H9.9a2.5 2.5 0 0 1-4.8 0H4a1 1 0 0 1-1-1v-3a1 1 0 0 1 1-1h1zm2.5 5a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm9 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2zM7.2 11h9.6l-1.1-3.3a.5.5 0 0 0-.48-.35H8.78a.5.5 0 0 0-.48.35L7.2 11z" />
-              </svg>
-            </span>
-            <span className="brand-text">AutoRent</span>
+            <BrandLockup />
           </Link>
 
           <div className="nav-center">
@@ -482,7 +478,7 @@ export default function Layout() {
       <footer className="footer site-footer">
         <div className="site-footer-grid">
           <div className="site-footer-brand">
-            <strong>AutoRent</strong>
+            <strong>{SITE.fullName}</strong>
             <p>{t("footer.blurb")}</p>
           </div>
           <div>

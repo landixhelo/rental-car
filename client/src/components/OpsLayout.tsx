@@ -2,6 +2,7 @@ import { createContext, useContext, useEffect, useMemo, useState } from "react";
 import { Link, NavLink, Outlet, useLocation } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { useT } from "../context/LocaleContext";
+import { SITE } from "../seo/site";
 
 type OpsSearchCtx = {
   query: string;
@@ -226,8 +227,9 @@ export default function OpsLayout() {
               className="ops-brand-link"
               onClick={() => setSidebarOpen(false)}
             >
-              AutoRent
+              {SITE.name}
             </a>
+            <span className="ops-brand-sub">{SITE.heritage}</span>
             <span>
               {isStaff
                 ? t("dashboard.fleetManagement")

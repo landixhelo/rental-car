@@ -51,9 +51,9 @@ export const it: Dict = {
   },
   footer: {
     terms: "Termini e politiche",
-    rights: "© 2026 AutoRent. Tutti i diritti riservati.",
+    rights: "© 2026 Auto Rental — Via Egnatia. Tutti i diritti riservati.",
     blurb:
-      "Noleggio auto premium in Albania. Scopri la nostra collezione e vivi un’esperienza semplice e flessibile.",
+      "Auto Rental — Via Egnatia. Noleggio auto in Albania, lungo l’antica strada che partiva da Durazzo.",
     explore: "Esplora",
     support: "Supporto",
     contact: "Contatti",
@@ -95,7 +95,7 @@ export const it: Dict = {
     statusConfirmed: "Confermata",
     vehicle: "Veicolo",
     pickupLocation: "Luogo di ritiro",
-    pickupHint: "Terminal arrivi, cerca il desk AutoRent.",
+    pickupHint: "Terminal arrivi, cerca il desk Auto Rental.",
     reservationDates: "Date della prenotazione",
     totalPaid: "Totale pagato",
     paymentMethod: "Metodo di pagamento",
@@ -104,7 +104,7 @@ export const it: Dict = {
     viewReservations: "Vedi le mie prenotazioni",
   },
   home: {
-    eyebrow: "NOLEGGIO AUTO PREMIUM",
+    eyebrow: "AUTO RENTAL · VIA EGNATIA",
     titleBefore: "L'esperienza di guida",
     titleAccent: "Premium",
     titleAfter: "",
@@ -113,7 +113,7 @@ export const it: Dict = {
     explore: "Esplora le auto",
     howCta: "Come funziona",
     createAccount: "Crea account",
-    why: "Perché AutoRent?",
+    why: "Perché Auto Rental?",
     feature1Title: "Flotta Premium",
     feature1Text:
       "Auto di lusso affidabili, mantenute agli standard più alti per il tuo comfort.",
@@ -156,7 +156,7 @@ export const it: Dict = {
     cityVlora: "Valona",
     cityHint: "Località flessibili con tariffe chiare.",
     trustTitle: "Noleggi affidabili",
-    trustSub: "AutoRent per prenotazioni rapide e trasparenti.",
+    trustSub: "Auto Rental per prenotazioni rapide e trasparenti.",
     trustCars: "AUTO IN FLOTTA",
     trustCities: "PUNTI DI RITIRO",
     trustSupport: "SUPPORTO CLIENTI",
@@ -170,7 +170,7 @@ export const it: Dict = {
     marketEyebrow: "MARKET",
     marketTitle: "Partner noleggio & auto in vendita",
     marketText:
-      "Market è una sezione separata: negozi partner e annunci di vendita. AutoRent resta sul noleggio.",
+      "Market è una sezione separata: negozi partner e annunci di vendita. Auto Rental resta sul noleggio.",
     marketCtaPartners: "Vedi i partner",
     marketCtaBuy: "Auto in vendita",
     searchTitle: "Trova un'auto libera",
@@ -281,7 +281,7 @@ export const it: Dict = {
   chat: {
     fab: "Chat",
     open: "Apri chat",
-    title: "AutoRent Chat",
+    title: "Auto Rental Chat",
     subtitle: "Rispondiamo al più presto — oppure continua su WhatsApp.",
     greeting: "Ciao! Come possiamo aiutarti con il noleggio o la prenotazione?",
     messagePlaceholder: "Scrivi il tuo messaggio…",
@@ -289,7 +289,7 @@ export const it: Dict = {
     sent: "Grazie! Il messaggio è stato inviato. Ti risponderemo presto.",
     whatsapp: "Continua su WhatsApp",
     subject: "Chat dal sito",
-    waPrefill: "Ciao AutoRent, ho una domanda sul noleggio auto.",
+    waPrefill: "Ciao Auto Rental, ho una domanda sul noleggio auto.",
   },
   chats: {
     title: "Chat",
@@ -310,19 +310,19 @@ export const it: Dict = {
     replyPrefill: "Ciao {name}, grazie per il tuo messaggio.",
   },
   marketplace: {
-    eyebrow: "MARKET · NON NOLEGGIO AUTORENT",
+    eyebrow: "MARKET · NON NOLEGGIO AUTO RENTAL",
     title: "Market",
     subtitle:
-      "Negozi partner e auto in vendita — chiaramente separati da AutoRent.",
-    splitNote: "Per noleggio AutoRent veloce, vai a",
+      "Negozi partner e auto in vendita — chiaramente separati da Auto Rental.",
+    splitNote: "Per noleggio Auto Rental veloce, vai a",
     splitLink: "Auto",
     tabRent: "Partner (noleggio)",
     tabBuy: "In vendita",
     searchSales: "Cerca auto in vendita…",
-    noShops: "Nessun negozio pubblico ancora. Vedi la flotta AutoRent.",
+    noShops: "Nessun negozio pubblico ancora. Vedi la flotta Auto Rental.",
     noSales: "Nessun annuncio in vendita al momento.",
-    browseFleet: "Vedi auto AutoRent",
-    orBrowse: "Oppure vedi la flotta AutoRent:",
+    browseFleet: "Vedi auto Auto Rental",
+    orBrowse: "Oppure vedi la flotta Auto Rental:",
     albania: "Albania",
     cars: "auto",
     back: "Market",
@@ -335,7 +335,7 @@ export const it: Dict = {
     sellerHub: "Il mio negozio (Market)",
     sellerHubSub: "Gestisci il negozio partner e gli annunci di vendita.",
     sellerSplitNote:
-      "La flotta noleggio AutoRent si gestisce in La mia flotta; qui è solo Market.",
+      "La flotta noleggio Auto Rental si gestisce in La mia flotta; qui è solo Market.",
     viewMarketplace: "Apri Market",
     myShop: "Negozio partner pubblico",
     myShopHelp: "Se pubblico, appare in Market → Partner (/shops/slug).",
@@ -374,26 +374,26 @@ export const it: Dict = {
   terms: {
     title: "Termini e politiche",
     intro:
-      "Questi termini regolano l'uso della piattaforma AutoRent e il noleggio auto nella Repubblica d'Albania. Creando un account o prenotando, accetti questi termini.",
+      "Questi termini regolano l'uso della piattaforma Auto Rental e il noleggio auto nella Repubblica d'Albania. Creando un account o prenotando, accetti questi termini.",
     updated: "Aggiornato: agosto 2026 · Legge applicabile: Repubblica d'Albania.",
     s1: "1. Piattaforma e operatore",
     s1Text:
-      "AutoRent è una piattaforma online per prenotare auto a noleggio in Albania (Tirana, Durazzo, Valona e altre aree indicate). Il servizio è offerto dall'operatore e/o dai contractor partner. Contatti e NIPT (se disponibili) compaiono sul sito o su fattura/contratto.",
+      "Auto Rental è una piattaforma online per prenotare auto a noleggio in Albania (Tirana, Durazzo, Valona e altre aree indicate). Il servizio è offerto dall'operatore e/o dai contractor partner. Contatti e NIPT (se disponibili) compaiono sul sito o su fattura/contratto.",
     s2: "2. Prenotazione",
     s2Text:
-      "La prenotazione è registrata quando confermata sulla piattaforma. La disponibilità dipende dalle date e dallo stato dell'auto. AutoRent può rifiutare o annullare per documenti non validi, pagamento fallito o sospetto abuso — con avviso al cliente.",
+      "La prenotazione è registrata quando confermata sulla piattaforma. La disponibilità dipende dalle date e dallo stato dell'auto. Auto Rental può rifiutare o annullare per documenti non validi, pagamento fallito o sospetto abuso — con avviso al cliente.",
     s3: "3. Requisiti del conducente",
     s3Text:
       "Il conducente deve avere patente valida (albanese o riconosciuta/internazionale secondo le norme) e documento d'identità. Età e esperienza minime possono variare per categoria e saranno comunicate prima della consegna. Solo le persone autorizzate nel contratto possono guidare.",
     s4: "4. Documenti",
     s4Text:
-      "Al ritiro servono patente e ID validi. Puoi caricarli online. Senza documenti validi la consegna può essere rifiutata senza responsabilità di AutoRent per ritardi causati dal cliente.",
+      "Al ritiro servono patente e ID validi. Puoi caricarli online. Senza documenti validi la consegna può essere rifiutata senza responsabilità di Auto Rental per ritardi causati dal cliente.",
     s5: "5. Pagamento e deposito",
     s5Text:
       "I prezzi sono in euro (€) al giorno, più extra e costi di località se applicabili. Pagamento in contanti al ritiro, bonifico o carta (se attiva). L'eventuale deposito è una garanzia e viene restituito dopo il controllo, meno danni o multe giustificati dal contratto.",
     s6: "6. Cancellazione e rimborsi",
     s6Text:
-      "Cancellazione gratuita fino a 24 ore prima del ritiro — importi rimborsati con lo stesso metodo. Entro 24 ore: annullamento dall'account consentito senza rimborso automatico. Dopo la data di inizio non si annulla dall'app. Casi speciali gestiti da AutoRent.",
+      "Cancellazione gratuita fino a 24 ore prima del ritiro — importi rimborsati con lo stesso metodo. Entro 24 ore: annullamento dall'account consentito senza rimborso automatico. Dopo la data di inizio non si annulla dall'app. Casi speciali gestiti da Auto Rental.",
     s7: "7. Uso del veicolo",
     s7Text:
       "L'auto si usa solo su strade consentite secondo il Codice della Strada albanese. Vietato: guida sotto alcol/droghe, gare, uso fuori scopo, subaffitto senza permesso. Carburante, multe, parcheggio e danni da uso scorretto sono a carico del cliente. Riconsegna nel luogo/ora concordati con carburante secondo contratto.",
@@ -405,10 +405,10 @@ export const it: Dict = {
       "Trattiamo dati personali (nome, email, telefono, documenti) per account, prenotazione, fatturazione e comunicazione. I dati non si vendono per marketing terzi. Cookie necessari per login/sessione; cookie analitici (es. Google/Meta) solo con consenso dal banner. Richieste dati: email aziendale sul sito.",
     s10: "10. Contractor e piattaforma",
     s10Text:
-      "Alcune auto sono di contractor partner. AutoRent facilita prenotazione e comunicazione; consegna, stato veicolo e assicurazione possono spettare all'operatore indicato. I reclami possono essere inviati ad AutoRent, che li inoltra al partner se necessario.",
+      "Alcune auto sono di contractor partner. Auto Rental facilita prenotazione e comunicazione; consegna, stato veicolo e assicurazione possono spettare all'operatore indicato. I reclami possono essere inviati ad Auto Rental, che li inoltra al partner se necessario.",
     s11: "11. Legge e controversie",
     s11Text:
-      "Questi termini sono regolati dalla legge della Repubblica d'Albania. Le parti cercano prima una soluzione amichevole; in mancanza, sono competenti i tribunali di Tirana salvo diversa legge imperativa. AutoRent può aggiornare i termini; vale la versione pubblicata sul sito.",
+      "Questi termini sono regolati dalla legge della Repubblica d'Albania. Le parti cercano prima una soluzione amichevole; in mancanza, sono competenti i tribunali di Tirana salvo diversa legge imperativa. Auto Rental può aggiornare i termini; vale la versione pubblicata sul sito.",
   },
   favorites: {
     title: "Preferiti",

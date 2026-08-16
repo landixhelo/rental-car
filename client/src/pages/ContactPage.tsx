@@ -56,7 +56,7 @@ export default function ContactPage() {
         path="/contact"
         locale={locale}
         jsonLd={breadcrumbJsonLd([
-          { name: "AutoRent", path: "/" },
+            { name: SITE.name, path: "/" },
           { name: t("contact.title"), path: "/contact" },
         ])}
       />

@@ -6,6 +6,7 @@ import { useLocale, useT } from "../context/LocaleContext";
 import { useToast } from "../hooks/useToast";
 import Seo from "../seo/Seo";
 import { breadcrumbJsonLd, carProductJsonLd } from "../seo/jsonLd";
+import { SITE } from "../seo/site";
 import BookingCalendar from "../components/BookingCalendar";
 import { mediaUrl } from "../lib/mediaUrl";
 import { carPath } from "../lib/carPath";
@@ -260,7 +261,7 @@ export default function CarDetailsPage() {
         image={mediaUrl(car.imageUrl) || undefined}
         jsonLd={[
           breadcrumbJsonLd([
-            { name: "AutoRent", path: "/" },
+            { name: SITE.name, path: "/" },
             { name: t("nav.cars"), path: "/cars" },
             { name: carName, path: carPath(car) },
           ]),

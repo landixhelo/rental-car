@@ -15,7 +15,7 @@ export function getBusinessPublic() {
       : "";
 
   return {
-    name: "AutoRent",
+    name: "Auto Rental",
     phone: phoneDisplay,
     phoneDigits: digits(phoneRaw),
     whatsapp,

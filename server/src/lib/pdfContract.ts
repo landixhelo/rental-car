@@ -103,8 +103,8 @@ export function buildReservationPdf(data: {
       margin: 0,
       size: "A4",
       info: {
-        Title: `AutoRent Faturë ${shortRef(data.id)}`,
-        Author: "AutoRent",
+        Title: `Auto Rental Faturë ${shortRef(data.id)}`,
+        Author: "Auto Rental",
         Subject: "Konfirmim rezervimi / faturë",
       },
     });
@@ -132,7 +132,7 @@ export function buildReservationPdf(data: {
 
     // Header band
     doc.rect(0, 8, pageW, 86).fill(INK);
-    doc.fillColor(WHITE).font(bold).fontSize(22).text("AutoRent", left, 28, {
+    doc.fillColor(WHITE).font(bold).fontSize(22).text("Auto Rental", left, 28, {
       width: contentW * 0.55,
     });
     doc
@@ -395,7 +395,7 @@ export function buildReservationPdf(data: {
       .font(body)
       .fontSize(8)
       .text(
-        "Ky dokument është konfirmim rezervimi / faturë shërbimi qiraje. Klienti duhet të ketë patentë të vlefshme dhe dokument identifikimi në marrje. Anullimet dhe depozita trajtohen sipas Kushteve të AutoRent. Nuk zëvendëson faturë fiskale elektronike nëse kërkohet nga ligji.",
+        "Ky dokument është konfirmim rezervimi / faturë shërbimi qiraje. Klienti duhet të ketë patentë të vlefshme dhe dokument identifikimi në marrje. Anullimet dhe depozita trajtohen sipas Kushteve të Auto Rental. Nuk zëvendëson faturë fiskale elektronike nëse kërkohet nga ligji.",
         left + 14,
         y + 26,
         { width: contentW - 28, align: "left" }
@@ -419,7 +419,7 @@ export function buildReservationPdf(data: {
       .font(body)
       .fontSize(8)
       .text("Nënshkrimi i klientit", left, y + 42, { width: sigW })
-      .text("Nënshkrimi i AutoRent", left + sigW + 40, y + 42, {
+      .text("Nënshkrimi i Auto Rental", left + sigW + 40, y + 42, {
         width: sigW,
       });
 

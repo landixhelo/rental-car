@@ -41,7 +41,7 @@ export function evaluateCustomerCancel(startDate: Date): CancelDecision {
   } else if (freeCancel) {
     refundNote = `Anulim falas (≥ ${freeHoursRequired} orë para marrjes). Nëse ke paguar, pagesa kthehet sipas metodës së pagesës.`;
   } else {
-    refundNote = `Anulim brenda ${freeHoursRequired} orëve para marrjes: pa rimbursim automatik. Kontakto AutoRent për raste speciale.`;
+    refundNote = `Anulim brenda ${freeHoursRequired} orëve para marrjes: pa rimbursim automatik. Kontakto Auto Rental për raste speciale.`;
   }
 
   return {

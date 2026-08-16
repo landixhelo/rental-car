@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { api, type Car } from "../lib/api";
 import { mediaUrl } from "../lib/mediaUrl";
+import { SITE } from "../seo/site";
 import { useT } from "../context/LocaleContext";
 import { useToast } from "../hooks/useToast";
 
@@ -45,7 +46,7 @@ export default function FavoritesPage() {
                 <h3>
                   {car.brand} {car.model}
                 </h3>
-                <span className="company-chip">{car.companyName || "AutoRent"}</span>
+                <span className="company-chip">{car.companyName || SITE.name}</span>
                 <p className="muted">
                   €{car.pricePerDay}
                   {t("common.perDay")}

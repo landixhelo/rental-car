@@ -33,7 +33,7 @@ export function webauthnRp() {
     env.WEBAUTHN_RP_ID || hostname.replace(/^www\./i, "") || hostname;
   return {
     rpID,
-    rpName: env.WEBAUTHN_RP_NAME || "AutoRent",
+    rpName: env.WEBAUTHN_RP_NAME || "Auto Rental",
     origins: getAllowedOrigins(),
   };
 }

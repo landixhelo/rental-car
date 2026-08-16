@@ -62,8 +62,8 @@ export async function stripeWebhookHandler(
         if (await userAllowsEmail(updated.user.id, "payment")) {
           await sendMail({
             to: updated.user.email,
-            subject: "AutoRent — pagesa u konfirmua",
-            text: `Përshëndetje ${updated.user.fullName},\n\nPagesa për ${updated.car.brand} ${updated.car.model} u konfirmua.\nRezervimi është CONFIRMED.\n\nFaleminderit,\nAutoRent`,
+            subject: "Auto Rental — pagesa u konfirmua",
+            text: `Përshëndetje ${updated.user.fullName},\n\nPagesa për ${updated.car.brand} ${updated.car.model} u konfirmua.\nRezervimi është CONFIRMED.\n\nFaleminderit,\nAuto Rental`,
           });
         }
       } catch (e) {

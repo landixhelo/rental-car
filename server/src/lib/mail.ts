@@ -106,8 +106,8 @@ export async function sendReservationEmails(input: {
     .join("\n");
 
   const baseText = `Përshëndetje ${input.customerName},\n\nRezervimi u regjistrua me sukses.\n`;
-  const tail = `\n${summary}\n\nPolitika e anulimit:\n${policy}\n\nNa kontakto:\n${contactLine}\n\nwww.landixhelo.me\n\nFaleminderit,\nAutoRent`;
-  const subject = `AutoRent — konfirmim rezervimi (${input.carLabel})`;
+  const tail = `\n${summary}\n\nPolitika e anulimit:\n${policy}\n\nNa kontakto:\n${contactLine}\n\nwww.landixhelo.me\n\nFaleminderit,\nAuto Rental — Via Egnatia`;
+  const subject = `Auto Rental — konfirmim rezervimi (${input.carLabel})`;
 
   const customerAttachments: MailAttachment[] | undefined = input.invoicePdf
     ? [

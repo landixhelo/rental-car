@@ -1,6 +1,8 @@
 export const SITE = {
-  name: "AutoRent",
-  legalName: "AutoRent Albania",
+  name: "Auto Rental",
+  heritage: "Via Egnatia",
+  fullName: "Auto Rental — Via Egnatia",
+  legalName: "Auto Rental Via Egnatia",
   url: "https://www.landixhelo.me",
   localeDefault: "sq_AL",
   locales: {
@@ -14,9 +16,9 @@ export const SITE = {
     it: "Noleggio auto premium in Albania — SUV, berline e sportive. Prenotazione online rapida a Tirana, Durazzo e Valona.",
   },
   keywords: {
-    sq: "qira makinash, rental car albania, qira auto tirane, makina me qira, SUV me qira, AutoRent",
-    en: "car rental albania, rent a car tirana, albania car hire, SUV rental, AutoRent",
-    it: "noleggio auto albania, noleggio tirana, affitto auto albania, SUV noleggio, AutoRent",
+    sq: "qira makinash, auto rental albania, via egnatia, qira auto tirane, makina me qira, SUV me qira",
+    en: "car rental albania, auto rental via egnatia, rent a car tirana, albania car hire, SUV rental",
+    it: "noleggio auto albania, auto rental via egnatia, noleggio tirana, affitto auto albania",
   },
   /** Overridden at runtime from /api/meta when available. */
   phone: "+355689001257",

@@ -49,9 +49,9 @@ export const sq = {
   },
   footer: {
     terms: "Kushtet & Politikat",
-    rights: "© 2026 AutoRent. Të gjitha të drejtat e rezervuara.",
+    rights: "© 2026 Auto Rental — Via Egnatia. Të gjitha të drejtat e rezervuara.",
     blurb:
-      "Qira makinash premium në Shqipëri. Zbuloni koleksionin tonë dhe shijoni një përvojë të thjeshtë e fleksibile.",
+      "Auto Rental — Via Egnatia. Qira makinash në Shqipëri, përgjatë rrugës së lashtë që niste nga Durrësi.",
     explore: "Eksploro",
     support: "Mbështetje",
     contact: "Kontakt",
@@ -93,7 +93,7 @@ export const sq = {
     statusConfirmed: "E konfirmuar",
     vehicle: "Makina",
     pickupLocation: "Lokacioni i marrjes",
-    pickupHint: "Në terminalin e mbërritjes, kërko deskun AutoRent.",
+    pickupHint: "Në terminalin e mbërritjes, kërko deskun Auto Rental.",
     reservationDates: "Datat e rezervimit",
     totalPaid: "Totali",
     paymentMethod: "Metoda e pagesës",
@@ -102,7 +102,7 @@ export const sq = {
     viewReservations: "Shiko rezervimet e mia",
   },
   home: {
-    eyebrow: "QIRA MAKINASH PREMIUM",
+    eyebrow: "AUTO RENTAL · VIA EGNATIA",
     titleBefore: "Përvoja e Drejtimit",
     titleAccent: "Premium",
     titleAfter: "",
@@ -111,7 +111,7 @@ export const sq = {
     explore: "Eksploro Makinat",
     howCta: "Si funksionon",
     createAccount: "Krijo Llogari",
-    why: "Pse AutoRent?",
+    why: "Pse Auto Rental?",
     feature1Title: "Flota Premium",
     feature1Text:
       "Makina luksoze dhe të besueshme, të mirëmbajtura në standardet më të larta për komfortin tënd.",
@@ -154,7 +154,7 @@ export const sq = {
     cityVlora: "Vlorë",
     cityHint: "Lokacione fleksibile me tarifë të qartë.",
     trustTitle: "Besimi i klientëve",
-    trustSub: "AutoRent për rezervime të shpejta dhe transparente.",
+    trustSub: "Auto Rental për rezervime të shpejta dhe transparente.",
     trustCars: "MAKINA NË FLOTË",
     trustCities: "LOKACIONE MARRJEJE",
     trustSupport: "MBËSHTETJE",
@@ -168,7 +168,7 @@ export const sq = {
     marketEyebrow: "MARKET",
     marketTitle: "Partnerë qira & makina në shitje",
     marketText:
-      "Market është seksioni i veçantë: dyqanet e partnerëve dhe listimet për shitje. AutoRent mbetet për qiranë tënde.",
+      "Market është seksioni i veçantë: dyqanet e partnerëve dhe listimet për shitje. Auto Rental mbetet për qiranë tënde.",
     marketCtaPartners: "Shiko partnerët",
     marketCtaBuy: "Makina në shitje",
     searchTitle: "Gjej makinë të lirë",
@@ -277,7 +277,7 @@ export const sq = {
   chat: {
     fab: "Chat",
     open: "Hap chat",
-    title: "AutoRent Chat",
+    title: "Auto Rental Chat",
     subtitle: "Përgjigjemi sa më shpejt — ose shkruaj në WhatsApp.",
     greeting:
       "Përshëndetje! Si mund të ndihmojmë me rezervimin ose flotën?",
@@ -286,7 +286,7 @@ export const sq = {
     sent: "Faleminderit! Mesazhi u dërgua. Do t’ju përgjigjemi së shpejti.",
     whatsapp: "Vazhdo në WhatsApp",
     subject: "Chat nga faqja",
-    waPrefill: "Përshëndetje AutoRent, kam një pyetje për qiranë e makinës.",
+    waPrefill: "Përshëndetje Auto Rental, kam një pyetje për qiranë e makinës.",
   },
   chats: {
     title: "Chatet",
@@ -307,19 +307,19 @@ export const sq = {
     replyPrefill: "Përshëndetje {name}, faleminderit për mesazhin tuaj.",
   },
   marketplace: {
-    eyebrow: "MARKET · JO AUTORENT QIRA",
+    eyebrow: "MARKET · JO AUTO RENTAL QIRA",
     title: "Market",
     subtitle:
-      "Partnerë me flotë qira dhe makina në shitje. I ndarë qartë nga AutoRent.",
-    splitNote: "Për qira të shpejtë AutoRent, shko te",
+      "Partnerë me flotë qira dhe makina në shitje. I ndarë qartë nga Auto Rental.",
+    splitNote: "Për qira të shpejtë Auto Rental, shko te",
     splitLink: "Makinat",
     tabRent: "Partnerë (qira)",
     tabBuy: "Në shitje",
     searchSales: "Kërko makina në shitje…",
-    noShops: "Nuk ka dyqane publike ende. Shiko flotën AutoRent.",
+    noShops: "Nuk ka dyqane publike ende. Shiko flotën Auto Rental.",
     noSales: "Nuk ka listime në shitje për momentin.",
-    browseFleet: "Shiko makinat AutoRent",
-    orBrowse: "Ose shiko flotën AutoRent:",
+    browseFleet: "Shiko makinat Auto Rental",
+    orBrowse: "Ose shiko flotën Auto Rental:",
     albania: "Shqipëri",
     cars: "makina",
     back: "Market",
@@ -332,7 +332,7 @@ export const sq = {
     sellerHub: "Dyqani im (Market)",
     sellerHubSub: "Menaxho dyqanin e partnerit dhe listimet për shitje.",
     sellerSplitNote:
-      "Flota e qirasë AutoRent menaxhohet te Flota ime; këtu është vetëm Market.",
+      "Flota e qirasë Auto Rental menaxhohet te Flota ime; këtu është vetëm Market.",
     viewMarketplace: "Hap Market",
     myShop: "Dyqani publik i partnerit",
     myShopHelp:
@@ -372,26 +372,26 @@ export const sq = {
   terms: {
     title: "Kushtet & Politikat",
     intro:
-      "Këto kushte rregullojnë përdorimin e platformës AutoRent dhe qiranë e makinave në Republikën e Shqipërisë. Duke krijuar llogari ose duke bërë rezervim, ju pranoni këto kushte.",
+      "Këto kushte rregullojnë përdorimin e platformës Auto Rental dhe qiranë e makinave në Republikën e Shqipërisë. Duke krijuar llogari ose duke bërë rezervim, ju pranoni këto kushte.",
     updated: "Përditësuar: Gusht 2026 · Ligji i zbatueshëm: Republika e Shqipërisë.",
     s1: "1. Platforma & operatori",
     s1Text:
-      "AutoRent është platformë online për rezervimin e makinave me qira në Shqipëri (Tiranë, Durrës, Vlorë dhe zona të tjera të shpallura). Shërbimi ofrohet nga operatori i platformës / partnerët kontraktorë të listuar te makina. Të dhënat e kontaktit dhe NIPT (kur disponohen) shfaqen në faqe ose në faturë/kontratë.",
+      "Auto Rental është platformë online për rezervimin e makinave me qira në Shqipëri (Tiranë, Durrës, Vlorë dhe zona të tjera të shpallura). Shërbimi ofrohet nga operatori i platformës / partnerët kontraktorë të listuar te makina. Të dhënat e kontaktit dhe NIPT (kur disponohen) shfaqen në faqe ose në faturë/kontratë.",
     s2: "2. Rezervimi",
     s2Text:
-      "Rezervimi konsiderohet i regjistruar kur konfirmohet në platformë. Disponueshmëria varet nga datat e zgjedhura dhe statusi i makinës. AutoRent mund të refuzojë ose anulojë një rezervim në rast dokumentesh të pavlefshme, pagese të dështuar, ose dyshimi për keqpërdorim — me njoftim te klienti.",
+      "Rezervimi konsiderohet i regjistruar kur konfirmohet në platformë. Disponueshmëria varet nga datat e zgjedhura dhe statusi i makinës. Auto Rental mund të refuzojë ose anulojë një rezervim në rast dokumentesh të pavlefshme, pagese të dështuar, ose dyshimi për keqpërdorim — me njoftim te klienti.",
     s3: "3. Kushtet e shoferit",
     s3Text:
       "Shoferi duhet të ketë patentë të vlefshme (shqiptare ose të njohur/ndërkombëtare sipas rregullave në fuqi) dhe dokument identifikimi (kartë ID ose pasaportë). Mosha minimale dhe përvoja e kërkuar mund të ndryshojnë sipas kategorisë së makinës dhe do të komunikohen para dorëzimit. Makina përdoret vetëm nga personat e autorizuar në kontratë.",
     s4: "4. Dokumentet",
     s4Text:
-      "Në marrje kërkohet patentë e vlefshme dhe dokument identifikimi. Mund t’i ngarkoni edhe gjatë rezervimit online. Në mungesë të dokumenteve të vlefshme, dorëzimi mund të refuzohet pa përgjegjësi të AutoRent për vonesa që shkaktohen nga klienti.",
+      "Në marrje kërkohet patentë e vlefshme dhe dokument identifikimi. Mund t’i ngarkoni edhe gjatë rezervimit online. Në mungesë të dokumenteve të vlefshme, dorëzimi mund të refuzohet pa përgjegjësi të Auto Rental për vonesa që shkaktohen nga klienti.",
     s5: "5. Pagesa & depozita",
     s5Text:
       "Çmimet shfaqen në euro (€) për ditë, plus ekstra dhe tarifa lokacioni kur zbatohen. Pagesa mund të bëhet me cash në marrje, transfer bankar, ose kartë (kur është aktive në platformë). Depozita (nëse zbatohet) mbahet si garanci dhe kthehet pas kontrollit të makinës, duke zbritur dëmet ose gjobat e justifikuara sipas kontratës.",
     s6: "6. Anulimi & rimbursimi",
     s6Text:
-      "Anulim falas deri 24 orë para datës së marrjes — shuma e paguar kthehet sipas metodës së pagesës (cash/transfer/kartë). Nën 24 orë para marrjes: anulimi lejohet nga llogaria, por pa rimbursim automatik. Pas datës së fillimit, klienti nuk mund ta anulojë rezervimin nga platforma. Rastet speciale (forcë madhore, probleme mjekësore me dokumente, etj.) trajtohen nga AutoRent.",
+      "Anulim falas deri 24 orë para datës së marrjes — shuma e paguar kthehet sipas metodës së pagesës (cash/transfer/kartë). Nën 24 orë para marrjes: anulimi lejohet nga llogaria, por pa rimbursim automatik. Pas datës së fillimit, klienti nuk mund ta anulojë rezervimin nga platforma. Rastet speciale (forcë madhore, probleme mjekësore me dokumente, etj.) trajtohen nga Auto Rental.",
     s7: "7. Përdorimi i makinës",
     s7Text:
       "Makina përdoret vetëm në rrugë të lejuara, sipas Kodit Rrugor të Shqipërisë. Ndalohet: vozitja nën ndikimin e alkoolit/drogave, gara, përdorim jashtë qëllimit të qirasë, ose nën-qiraja pa leje. Karburanti, gjobat e trafikut, parkimi dhe dëmet nga keqpërdorimi janë përgjegjësi e klientit. Makina kthehet në të njëjtin lokacion/orë të dakordësuar, me nivel karburanti sipas kontratës.",
@@ -403,10 +403,10 @@ export const sq = {
       "Përpunojmë të dhëna personale (emër, email, telefon, dokumente) për llogari, rezervim, faturim dhe komunikim. Të dhënat nuk shiten te palë të treta për marketing. Cookies të nevojshme përdoren për hyrje/sesion; cookies analitike (p.sh. Google/Meta) aktivizohen vetëm me pëlqimin tuaj nga banner-i i cookies. Për kërkesa mbi të dhënat: kontaktoni email-in e biznesit në faqe.",
     s10: "10. Kontraktorët & platforma",
     s10Text:
-      "Disa makina ofrohen nga kontraktorë partnerë. AutoRent lehtëson rezervimin dhe komunikimin; detyrimet e dorëzimit, gjendjes së makinës dhe sigurimit mund të jenë të operatorit përkatës, siç shënohet në rezervim/kontratë. Ankesat mund të dërgohen te AutoRent, e cila i përcjell te partneri kur është e nevojshme.",
+      "Disa makina ofrohen nga kontraktorë partnerë. Auto Rental lehtëson rezervimin dhe komunikimin; detyrimet e dorëzimit, gjendjes së makinës dhe sigurimit mund të jenë të operatorit përkatës, siç shënohet në rezervim/kontratë. Ankesat mund të dërgohen te Auto Rental, e cila i përcjell te partneri kur është e nevojshme.",
     s11: "11. Ligji & mosmarrëveshjet",
     s11Text:
-      "Këto kushte rregullohen nga legjislacioni i Republikës së Shqipërisë. Për mosmarrëveshjet, palët përpiqen së pari për zgjidhje miqësore; në mungesë të marrëveshjes, kompetente janë gjykatat e Tiranës, përveçse kur ligji i detyrueshëm thotë ndryshe. AutoRent mund të përditësojë këto kushte; versioni i publikuar në faqe është ai në fuqi.",
+      "Këto kushte rregullohen nga legjislacioni i Republikës së Shqipërisë. Për mosmarrëveshjet, palët përpiqen së pari për zgjidhje miqësore; në mungesë të marrëveshjes, kompetente janë gjykatat e Tiranës, përveçse kur ligji i detyrueshëm thotë ndryshe. Auto Rental mund të përditësojë këto kushte; versioni i publikuar në faqe është ai në fuqi.",
   },
   favorites: {
     title: "Favoritet",

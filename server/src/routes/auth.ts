@@ -224,8 +224,8 @@ router.post(
 
       const mailed = await sendMail({
         to: user.email,
-        subject: "AutoRent — rivendos fjalëkalimin",
-        text: `Përshëndetje ${user.fullName},\n\nKliko për të rivendosur fjalëkalimin (vlen 1 orë):\n${resetUrl}\n\nNëse nuk e kërkove ti, injoro këtë email.\n\nAutoRent`,
+        subject: "Auto Rental — rivendos fjalëkalimin",
+        text: `Përshëndetje ${user.fullName},\n\nKliko për të rivendosur fjalëkalimin (vlen 1 orë):\n${resetUrl}\n\nNëse nuk e kërkove ti, injoro këtë email.\n\nAuto Rental`,
       });
 
       // Without SMTP, return the link once so reset still works until email is set up.

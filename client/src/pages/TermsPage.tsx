@@ -1,5 +1,6 @@
 import { useLocale, useT } from "../context/LocaleContext";
 import Seo from "../seo/Seo";
+import { SITE } from "../seo/site";
 import { breadcrumbJsonLd } from "../seo/jsonLd";
 
 const SECTIONS = [
@@ -27,7 +28,7 @@ export default function TermsPage() {
         path="/terms"
         locale={locale}
         jsonLd={breadcrumbJsonLd([
-          { name: "AutoRent", path: "/" },
+          { name: SITE.name, path: "/" },
           { name: t("terms.title"), path: "/terms" },
         ])}
       />
