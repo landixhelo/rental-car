@@ -205,7 +205,7 @@ export default function HomePage() {
           </div>
         </div>
 
-        <a className="hero-scroll" href="#why" aria-label={t("home.scroll")}>
+        <a className="hero-scroll" href="#fleet" aria-label={t("home.scroll")}>
           {t("home.scroll")}
           <span aria-hidden>↓</span>
         </a>
@@ -261,69 +261,7 @@ export default function HomePage() {
         </form>
       </div>
 
-      <section id="why" className="pilot-section pilot-section--grey">
-        <div className="pilot-wrap pilot-features">
-          {FEATURES.map((f) => (
-            <article key={f.titleKey} className="pilot-feature">
-              <span className="pilot-feature-icon" aria-hidden>
-                <FeatureIcon name={f.icon} />
-              </span>
-              <h3>{t(f.titleKey)}</h3>
-              <p>{t(f.textKey)}</p>
-            </article>
-          ))}
-        </div>
-      </section>
-
-      <section id="how" className="pilot-section">
-        <div className="pilot-wrap">
-          <div className="pilot-head">
-            <span className="pilot-eyebrow">{t("home.howEyebrow")}</span>
-            <h2>{t("home.howTitle")}</h2>
-          </div>
-          <ol className="pilot-steps">
-            <li>
-              <span>01</span>
-              <h3>{t("home.how1Title")}</h3>
-              <p>{t("home.how1Text")}</p>
-            </li>
-            <li>
-              <span>02</span>
-              <h3>{t("home.how2Title")}</h3>
-              <p>{t("home.how2Text")}</p>
-            </li>
-            <li>
-              <span>03</span>
-              <h3>{t("home.how3Title")}</h3>
-              <p>{t("home.how3Text")}</p>
-            </li>
-          </ol>
-        </div>
-      </section>
-
-      <section className="pilot-section pilot-section--grey">
-        <div className="pilot-wrap">
-          <div className="pilot-head pilot-head--left">
-            <span className="pilot-eyebrow">{t("home.categoriesEyebrow")}</span>
-            <h2>{t("home.categoriesTitle")}</h2>
-            <p>{t("home.categoriesSub")}</p>
-          </div>
-          <div className="pilot-cats">
-            {CATEGORIES.map((cat) => (
-              <Link
-                key={cat.type}
-                to={`/cars?type=${encodeURIComponent(cat.type)}`}
-                className="pilot-cat"
-              >
-                <img src={cat.image} alt={t(cat.titleKey)} />
-                <strong>{t(cat.titleKey)}</strong>
-              </Link>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      <section className="pilot-section">
+      <section id="fleet" className="pilot-section">
         <div className="pilot-wrap">
           <div className="pilot-head row-between pilot-head--row">
             <div>
@@ -395,6 +333,68 @@ export default function HomePage() {
                 </article>
               ))
             )}
+          </div>
+        </div>
+      </section>
+
+      <section id="why" className="pilot-section pilot-section--grey">
+        <div className="pilot-wrap pilot-features">
+          {FEATURES.map((f) => (
+            <article key={f.titleKey} className="pilot-feature">
+              <span className="pilot-feature-icon" aria-hidden>
+                <FeatureIcon name={f.icon} />
+              </span>
+              <h3>{t(f.titleKey)}</h3>
+              <p>{t(f.textKey)}</p>
+            </article>
+          ))}
+        </div>
+      </section>
+
+      <section id="how" className="pilot-section">
+        <div className="pilot-wrap">
+          <div className="pilot-head">
+            <span className="pilot-eyebrow">{t("home.howEyebrow")}</span>
+            <h2>{t("home.howTitle")}</h2>
+          </div>
+          <ol className="pilot-steps">
+            <li>
+              <span>01</span>
+              <h3>{t("home.how1Title")}</h3>
+              <p>{t("home.how1Text")}</p>
+            </li>
+            <li>
+              <span>02</span>
+              <h3>{t("home.how2Title")}</h3>
+              <p>{t("home.how2Text")}</p>
+            </li>
+            <li>
+              <span>03</span>
+              <h3>{t("home.how3Title")}</h3>
+              <p>{t("home.how3Text")}</p>
+            </li>
+          </ol>
+        </div>
+      </section>
+
+      <section className="pilot-section pilot-section--grey">
+        <div className="pilot-wrap">
+          <div className="pilot-head pilot-head--left">
+            <span className="pilot-eyebrow">{t("home.categoriesEyebrow")}</span>
+            <h2>{t("home.categoriesTitle")}</h2>
+            <p>{t("home.categoriesSub")}</p>
+          </div>
+          <div className="pilot-cats">
+            {CATEGORIES.map((cat) => (
+              <Link
+                key={cat.type}
+                to={`/cars?type=${encodeURIComponent(cat.type)}`}
+                className="pilot-cat"
+              >
+                <img src={cat.image} alt={t(cat.titleKey)} />
+                <strong>{t(cat.titleKey)}</strong>
+              </Link>
+            ))}
           </div>
         </div>
       </section>
