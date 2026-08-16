@@ -209,57 +209,57 @@ export default function HomePage() {
           {t("home.scroll")}
           <span aria-hidden>↓</span>
         </a>
-
-        <div className="hero-search-wrap">
-          <form className="home-search" onSubmit={onSearch}>
-            <div className="home-search-head">
-              <strong>{t("home.searchTitle")}</strong>
-              <span>{t("home.searchSub")}</span>
-            </div>
-            <label>
-              {t("home.searchPickup")}
-              <input
-                type="date"
-                min={today}
-                value={search.startDate}
-                onChange={(e) => onStartChange(e.target.value)}
-                required
-              />
-            </label>
-            <label>
-              {t("home.searchReturn")}
-              <input
-                type="date"
-                min={
-                  search.startDate
-                    ? addDays(search.startDate, 1)
-                    : addDays(today, 1)
-                }
-                value={search.endDate}
-                onChange={(e) => onEndChange(e.target.value)}
-                required
-              />
-            </label>
-            <label>
-              {t("home.searchCity")}
-              <select
-                value={search.location}
-                onChange={(e) =>
-                  setSearch({ ...search, location: e.target.value })
-                }
-              >
-                <option value="all">{t("home.searchAnyCity")}</option>
-                <option value="Tiranë">Tiranë</option>
-                <option value="Durrës">Durrës</option>
-                <option value="Vlorë">Vlorë</option>
-              </select>
-            </label>
-            <button className="btn" type="submit">
-              {t("home.searchBtn")}
-            </button>
-          </form>
-        </div>
       </section>
+
+      <div className="hero-search-wrap">
+        <form className="home-search" onSubmit={onSearch}>
+          <div className="home-search-head">
+            <strong>{t("home.searchTitle")}</strong>
+            <span>{t("home.searchSub")}</span>
+          </div>
+          <label>
+            {t("home.searchPickup")}
+            <input
+              type="date"
+              min={today}
+              value={search.startDate}
+              onChange={(e) => onStartChange(e.target.value)}
+              required
+            />
+          </label>
+          <label>
+            {t("home.searchReturn")}
+            <input
+              type="date"
+              min={
+                search.startDate
+                  ? addDays(search.startDate, 1)
+                  : addDays(today, 1)
+              }
+              value={search.endDate}
+              onChange={(e) => onEndChange(e.target.value)}
+              required
+            />
+          </label>
+          <label>
+            {t("home.searchCity")}
+            <select
+              value={search.location}
+              onChange={(e) =>
+                setSearch({ ...search, location: e.target.value })
+              }
+            >
+              <option value="all">{t("home.searchAnyCity")}</option>
+              <option value="Tiranë">Tiranë</option>
+              <option value="Durrës">Durrës</option>
+              <option value="Vlorë">Vlorë</option>
+            </select>
+          </label>
+          <button className="btn" type="submit">
+            {t("home.searchBtn")}
+          </button>
+        </form>
+      </div>
 
       <section id="why" className="pilot-section pilot-section--grey">
         <div className="pilot-wrap pilot-features">
