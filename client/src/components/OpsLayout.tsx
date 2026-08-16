@@ -210,7 +210,7 @@ export default function OpsLayout() {
 
   return (
     <OpsSearchContext.Provider value={searchCtx}>
-      <div className={`ops-shell${sidebarOpen ? " sidebar-open" : ""}`}>
+      <div className={`ops-shell${sidebarOpen ? " sidebar-open" : ""}${isStaff ? "" : " is-customer"}`}>
         {sidebarOpen ? (
           <button
             type="button"

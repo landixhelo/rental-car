@@ -507,6 +507,7 @@ main { flex: 1; width: 100%; }
   gap: 2px;
   overflow-y: auto;
   flex: 1;
+  align-content: start;
   padding-right: 2px;
 }
 .ops-nav-link {
@@ -534,6 +535,28 @@ main { flex: 1; width: 100%; }
   background: color-mix(in srgb, var(--ops-accent) 28%, transparent);
   color: #fff;
   box-shadow: inset 3px 0 0 var(--ops-accent);
+}
+.ops-shell.is-customer .ops-add-btn {
+  padding: 8px 12px;
+  font-size: 0.82rem;
+  margin-bottom: 12px;
+  border-radius: 10px;
+}
+.ops-shell.is-customer .ops-nav-link {
+  padding: 8px 10px;
+  gap: 8px;
+  font-size: 0.86rem;
+  border-radius: 8px;
+}
+.ops-shell.is-customer .ops-nav-link svg {
+  width: 18px;
+  height: 18px;
+}
+.ops-shell.is-customer .brand-logo--ops {
+  height: 48px;
+}
+.ops-shell.is-customer .ops-brand {
+  padding-bottom: 10px;
 }
 .ops-nav-link.is-soon {
   opacity: 0.42;
