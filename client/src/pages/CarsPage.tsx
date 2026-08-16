@@ -411,10 +411,16 @@ export default function CarsPage() {
               {pageCars.map((car) => (
                 <article key={car.id} className="pilot-car fleet-car">
                   <div className="pilot-car-media">
-                    <img
-                      src={mediaUrl(car.imageUrl)}
-                      alt={`${car.brand} ${car.model}`}
-                    />
+                    <Link
+                      to={carPath(car)}
+                      className="pilot-car-photo"
+                      aria-label={`${car.brand} ${car.model}`}
+                    >
+                      <img
+                        src={mediaUrl(car.imageUrl)}
+                        alt={`${car.brand} ${car.model}`}
+                      />
+                    </Link>
                     <span
                       className={`pilot-car-badge status-${(
                         car.status || "AVAILABLE"
@@ -434,7 +440,9 @@ export default function CarsPage() {
                   <div className="pilot-car-body">
                     <div className="row-between">
                       <h3>
-                        {car.brand} {car.model}
+                        <Link to={carPath(car)}>
+                          {car.brand} {car.model}
+                        </Link>
                       </h3>
                       <strong>
                         €{car.pricePerDay}

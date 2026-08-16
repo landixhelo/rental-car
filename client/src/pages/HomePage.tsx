@@ -279,10 +279,16 @@ export default function HomePage() {
               cars.map((car) => (
                 <article key={car.id} className="pilot-car">
                   <div className="pilot-car-media">
-                    <img
-                      src={mediaUrl(car.imageUrl)}
-                      alt={`${car.brand} ${car.model}`}
-                    />
+                    <Link
+                      to={carPath(car)}
+                      className="pilot-car-photo"
+                      aria-label={`${car.brand} ${car.model}`}
+                    >
+                      <img
+                        src={mediaUrl(car.imageUrl)}
+                        alt={`${car.brand} ${car.model}`}
+                      />
+                    </Link>
                     <span className="pilot-car-badge">
                       {t("cars.available")}
                     </span>
@@ -298,7 +304,9 @@ export default function HomePage() {
                   <div className="pilot-car-body">
                     <div className="row-between">
                       <h3>
-                        {car.brand} {car.model}
+                        <Link to={carPath(car)}>
+                          {car.brand} {car.model}
+                        </Link>
                       </h3>
                       <strong>
                         €{car.pricePerDay}
