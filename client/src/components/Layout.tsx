@@ -6,7 +6,7 @@ import ChatWidget from "./ChatWidget";
 import BrandLockup from "./BrandLockup";
 import { useAuth } from "../context/AuthContext";
 import { useLocale } from "../context/LocaleContext";
-import { applyBusinessMeta, SITE } from "../seo/site";
+import { applyBusinessMeta } from "../seo/site";
 import type { Locale } from "../i18n";
 import { isOpsPath } from "./OpsLayout";
 
@@ -478,7 +478,7 @@ export default function Layout() {
       <footer className="footer site-footer">
         <div className="site-footer-grid">
           <div className="site-footer-brand">
-            <strong>{SITE.fullName}</strong>
+            <BrandLockup size="footer" />
             <p>{t("footer.blurb")}</p>
           </div>
           <div>

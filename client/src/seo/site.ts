@@ -31,7 +31,7 @@ export const SITE = {
     country: "AL",
     full: "Tiranë, Shqipëri",
   },
-  ogImage: "https://www.landixhelo.me/og-cover.svg",
+  ogImage: "https://www.landixhelo.me/logo.png",
   twitter: "@autorent",
 } as const;
 

@@ -293,57 +293,30 @@ main { flex: 1; width: 100%; }
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  font-family: Sora, "DM Sans", system-ui, sans-serif;
-  font-weight: 700;
-  font-size: 1.15rem;
-  letter-spacing: -0.02em;
   min-width: 0;
   flex-shrink: 0;
 }
-.brand-lockup {
-  display: flex;
-  flex-direction: column;
-  line-height: 1.05;
-  min-width: 0;
-}
-.brand-text {
-  white-space: nowrap;
-}
-.brand-sub {
-  font-size: 0.62rem;
-  font-weight: 600;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  color: var(--accent);
-  white-space: nowrap;
-}
-.app-shell.is-home .brand-sub {
-  color: #e91e4d;
-}
-.brand-mark {
-  width: 28px;
-  height: 28px;
-  border-radius: 8px;
-  display: grid;
-  place-items: center;
-  background: var(--accent-soft);
-  color: var(--accent);
-  flex-shrink: 0;
-}
-.brand-mark svg {
-  width: 16px;
-  height: 16px;
-}
-.app-shell.is-home .brand-mark {
+.brand-logo {
+  display: block;
+  width: auto;
+  object-fit: contain;
   background: transparent;
-  color: #121212;
-  border-radius: 0;
-  width: 24px;
-  height: 24px;
 }
-.app-shell.is-home .brand-mark svg {
-  width: 22px;
-  height: 22px;
+.brand-logo--nav {
+  height: 64px;
+}
+.brand-logo--footer {
+  height: 120px;
+  margin-bottom: 10px;
+}
+.brand-logo--ops {
+  height: 92px;
+  margin-bottom: 8px;
+  border-radius: 12px;
+  background: #f7f4ee;
+}
+.app-shell.is-home .brand-logo--nav {
+  height: 68px;
 }
 .nav-brand-row {
   display: flex;
@@ -496,12 +469,7 @@ main { flex: 1; width: 100%; }
 }
 .ops-brand-link {
   display: block;
-  color: var(--ops-accent) !important;
-  font-family: Georgia, "Times New Roman", serif;
-  font-size: 1.55rem;
-  font-weight: 700;
-  letter-spacing: -0.02em;
-  line-height: 1;
+  line-height: 0;
 }
 .ops-brand-sub {
   display: block;
@@ -6504,9 +6472,8 @@ th { color: var(--text-muted); font-weight: 600; }
     min-width: 0;
   }
 
-  .brand-text {
-    overflow: hidden;
-    text-overflow: ellipsis;
+  .brand-logo--nav {
+    height: 52px;
   }
 
   .app-shell.is-home .navbar {

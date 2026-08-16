@@ -14,7 +14,7 @@ export function organizationJsonLd() {
     alternateName: [SITE.name, SITE.heritage],
     legalName: SITE.legalName,
     url: SITE.url,
-    logo: absoluteUrl("/favicon.svg"),
+    logo: absoluteUrl("/logo.png"),
     image: SITE.ogImage,
     email,
     telephone: phone,
