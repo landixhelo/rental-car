@@ -7,7 +7,7 @@ import {
   requireContractorOrAdmin,
 } from "../middleware/auth.js";
 import { validate } from "../middleware/validate.js";
-import { isWebPushConfigured, vapidPublicKey } from "../lib/webPush.js";
+import { isWebPushConfigured, sendWebPushToUsers, vapidPublicKey } from "../lib/webPush.js";
 
 const router = Router();
 
@@ -90,6 +90,33 @@ router.post(
       const { endpoint } = req.body as { endpoint: string };
       await prisma.pushSubscription.deleteMany({
         where: { endpoint, userId: req.user!.id },
+      });
+      res.json({ ok: true });
+    } catch (err) {
+      next(err);
+    }
+  }
+);
+
+router.post(
+  "/test",
+  requireAuth,
+  requireContractorOrAdmin,
+  async (req, res, next) => {
+    try {
+      if (!isWebPushConfigured()) {
+        throw new AppError("Push notifications are not configured", 503);
+      }
+      const count = await prisma.pushSubscription.count({
+        where: { userId: req.user!.id },
+      });
+      if (!count) {
+        throw new AppError("Enable phone notifications first", 400);
+      }
+      await sendWebPushToUsers([req.user!.id], {
+        title: "Auto Rental",
+        body: "Njoftimi në telefon funksionon. Rezervimet e reja do të vijnë këtu.",
+        url: "/reservations",
       });
       res.json({ ok: true });
     } catch (err) {

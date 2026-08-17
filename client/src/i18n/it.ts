@@ -97,6 +97,8 @@ export const it: Dict = {
     how: "Come fare",
     bannerTitle: "Avvisi per nuove prenotazioni",
     bannerBody: "Attiva le notifiche sul telefono per saperlo subito quando qualcuno prenota.",
+    test: "Invia una notifica di prova",
+    testSent: "Prova inviata. Controlla le notifiche del telefono.",
   },
   locations: {
     pickupTitle: "Ritiro",

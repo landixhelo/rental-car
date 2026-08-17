@@ -95,6 +95,8 @@ export const sq = {
     how: "Si bëhet",
     bannerTitle: "Merr njoftim për rezervime të reja",
     bannerBody: "Aktivizo njoftimet në telefon që të dish menjëherë kur dikush rezervon.",
+    test: "Dërgo njoftim prove",
+    testSent: "Njoftimi i provës u dërgua. Shiko njoftimet e telefonit.",
   },
   locations: {
     pickupTitle: "Marrja",

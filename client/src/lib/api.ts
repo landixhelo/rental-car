@@ -300,6 +300,8 @@ export const api = {
       method: "POST",
       body: JSON.stringify({ endpoint }),
     }),
+  pushTest: () =>
+    request<{ ok: boolean }>("/api/push/test", { method: "POST" }),
   publicReviews: () =>
     request<{
       average: number;
