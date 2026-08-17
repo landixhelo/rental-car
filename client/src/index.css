@@ -575,6 +575,21 @@ main { flex: 1; width: 100%; }
   color: rgba(255, 255, 255, 0.85);
   white-space: nowrap;
 }
+.ops-nav-badge {
+  margin-left: auto;
+  min-width: 20px;
+  height: 20px;
+  padding: 0 6px;
+  border-radius: 999px;
+  background: var(--ops-accent, #e11c49);
+  color: #fff;
+  font-size: 0.72rem;
+  font-weight: 800;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+}
 .ops-page {
   width: min(1100px, 100%);
   margin: 0 auto;
@@ -1045,6 +1060,24 @@ main { flex: 1; width: 100%; }
   cursor: pointer;
   text-decoration: none;
 }
+.ops-icon-badge {
+  position: absolute;
+  top: -4px;
+  right: -4px;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 5px;
+  border-radius: 999px;
+  background: var(--ops-accent, #e11c49);
+  color: #fff;
+  font-size: 0.68rem;
+  font-weight: 800;
+  line-height: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 0 0 2px #fff;
+}
 .ops-dot {
   position: absolute;
   top: 8px;
@@ -1124,6 +1157,11 @@ main { flex: 1; width: 100%; }
   font-weight: 600;
   color: #344054;
   cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  width: 100%;
 }
 .settings-side-group button:hover {
   background: #f2f4f7;
@@ -4537,6 +4575,26 @@ textarea { min-height: 90px; resize: vertical; }
   border: 1px solid var(--border);
 }
 .review-item p { margin: 6px 0 0; color: var(--text-muted); }
+.review-item.is-unread {
+  border-color: color-mix(in srgb, var(--accent) 45%, var(--border));
+  background: color-mix(in srgb, var(--accent) 8%, var(--bg-soft));
+}
+.review-item strong {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.notify-new {
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: #fff;
+  background: var(--accent);
+  border-radius: 999px;
+  padding: 2px 7px;
+}
 .review-form-title {
   margin: 0 0 8px;
   font-size: 0.95rem;

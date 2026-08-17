@@ -3,6 +3,7 @@ import { Link, useSearchParams } from "react-router-dom";
 import { api, type BusinessHourRow, type User } from "../lib/api";
 import { useAuth } from "../context/AuthContext";
 import { useLocale, useT } from "../context/LocaleContext";
+import { useUnreadNotifications } from "../context/UnreadContext";
 import { useToast } from "../hooks/useToast";
 import { registerPasskey, supportsPasskeys } from "../lib/passkeys";
 import type { Locale } from "../i18n";
@@ -83,6 +84,7 @@ function syncFromUser(user: User | null | undefined) {
 
 export default function ProfilePage() {
   const { user, setUser } = useAuth();
+  const { count, label, markSeen } = useUnreadNotifications();
   const { show, Toast } = useToast();
   const t = useT();
   const { locale, setLocale } = useLocale();
@@ -132,6 +134,11 @@ export default function ProfilePage() {
       .then((r) => setPasskeys(r.passkeys))
       .catch(() => {});
   }, [user?.id]);
+
+  useEffect(() => {
+    if (tab !== "notifications") return;
+    markSeen();
+  }, [tab, user?.id, markSeen]);
 
   function setTab(next: TabId) {
     setParams(next === "profile" ? {} : { tab: next });
@@ -407,7 +414,10 @@ export default function ProfilePage() {
                     className={tab === item.id ? "active" : undefined}
                     onClick={() => setTab(item.id)}
                   >
-                    {item.label}
+                    <span>{item.label}</span>
+                    {item.id === "notifications" && count > 0 ? (
+                      <span className="nav-badge">{label}</span>
+                    ) : null}
                   </button>
                 ))}
               </div>
@@ -992,8 +1002,16 @@ export default function ProfilePage() {
                   <p className="muted">{t("profile.noNotifications")}</p>
                 )}
                 {notifications.map((n) => (
-                  <div key={n.id} className="review-item">
-                    <strong>{n.title}</strong>
+                  <div
+                    key={n.id}
+                    className={`review-item${n.read ? "" : " is-unread"}`}
+                  >
+                    <strong>
+                      {n.title}
+                      {!n.read ? (
+                        <span className="notify-new">{t("profile.unread")}</span>
+                      ) : null}
+                    </strong>
                     <p>{n.message}</p>
                   </div>
                 ))}

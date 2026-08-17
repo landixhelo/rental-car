@@ -461,6 +461,7 @@ export const en: Dict = {
     notifyDocumentHint: "When document status changes.",
     notifications: "Notifications",
     noNotifications: "No notifications.",
+    unread: "New",
     navAccount: "ACCOUNT",
     navBusiness: "BUSINESS",
     navPreferences: "PREFERENCES",

@@ -75,10 +75,8 @@ export default function ReservationsPage() {
         setFleet([]);
       }
 
-      if (isFleetManager) {
-        await api.markReservationNotificationsRead().catch(() => {});
-        window.dispatchEvent(new Event("autorent:reservations-seen"));
-      }
+      await api.markReservationNotificationsRead().catch(() => {});
+      window.dispatchEvent(new Event("autorent:reservations-seen"));
     } finally {
       setLoading(false);
     }

@@ -469,11 +469,7 @@ router.get("/notifications", requireAuth, async (req, res, next) => {
 router.get("/notifications/unread-count", requireAuth, async (req, res, next) => {
   try {
     const count = await prisma.notification.count({
-      where: {
-        userId: req.user!.id,
-        read: false,
-        title: { contains: "Rezervim", mode: "insensitive" },
-      },
+      where: { userId: req.user!.id, read: false },
     });
     res.json({ count });
   } catch (err) {
@@ -484,11 +480,7 @@ router.get("/notifications/unread-count", requireAuth, async (req, res, next) =>
 router.patch("/notifications/read", requireAuth, async (req, res, next) => {
   try {
     await prisma.notification.updateMany({
-      where: {
-        userId: req.user!.id,
-        read: false,
-        title: { contains: "Rezervim", mode: "insensitive" },
-      },
+      where: { userId: req.user!.id, read: false },
       data: { read: true },
     });
     res.json({ ok: true });

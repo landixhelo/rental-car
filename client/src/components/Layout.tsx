@@ -6,6 +6,7 @@ import ChatWidget from "./ChatWidget";
 import BrandLockup from "./BrandLockup";
 import { useAuth } from "../context/AuthContext";
 import { useLocale } from "../context/LocaleContext";
+import { useUnreadNotifications } from "../context/UnreadContext";
 import { applyBusinessMeta } from "../seo/site";
 import type { Locale } from "../i18n";
 import { isOpsPath } from "./OpsLayout";
@@ -16,7 +17,8 @@ export default function Layout() {
   const location = useLocation();
   const [menuOpen, setMenuOpen] = useState(false);
   const [profileOpen, setProfileOpen] = useState(false);
-  const [reservationBadge, setReservationBadge] = useState(0);
+  const { count: reservationBadge, label: badgeLabel } =
+    useUnreadNotifications();
   const [whatsapp, setWhatsapp] = useState("355689001257");
   const [isMobileNav, setIsMobileNav] = useState(
     () =>
@@ -25,29 +27,13 @@ export default function Layout() {
   );
   const profileRef = useRef<HTMLDivElement>(null);
 
-  const showReservationBadge =
-    user?.role === "CONTRACTOR" ||
-    user?.role === "ADMIN" ||
-    user?.role === "SUPER_ADMIN";
+  const isHome = location.pathname === "/";
+  const isOps = isOpsPath(location.pathname);
+  const showNotificationBadge = Boolean(user) && reservationBadge > 0;
   const canManageFleet =
     user?.role === "CONTRACTOR" ||
     user?.role === "ADMIN" ||
     user?.role === "SUPER_ADMIN";
-  const isHome = location.pathname === "/";
-  const isOps = isOpsPath(location.pathname);
-
-  async function refreshBadge() {
-    if (!showReservationBadge) {
-      setReservationBadge(0);
-      return;
-    }
-    try {
-      const res = await api.unreadReservationCount();
-      setReservationBadge(res.count || 0);
-    } catch {
-      // ignore
-    }
-  }
 
   useEffect(() => {
     api
@@ -75,21 +61,6 @@ export default function Layout() {
   }, []);
 
   useEffect(() => {
-    refreshBadge();
-    if (!showReservationBadge) return;
-    const onFocus = () => refreshBadge();
-    const onSeen = () => setReservationBadge(0);
-    const interval = window.setInterval(refreshBadge, 30000);
-    window.addEventListener("focus", onFocus);
-    window.addEventListener("autorent:reservations-seen", onSeen);
-    return () => {
-      window.clearInterval(interval);
-      window.removeEventListener("focus", onFocus);
-      window.removeEventListener("autorent:reservations-seen", onSeen);
-    };
-  }, [user?.id, user?.role, showReservationBadge]);
-
-  useEffect(() => {
     setMenuOpen(false);
     setProfileOpen(false);
   }, [location.pathname]);
@@ -113,8 +84,6 @@ export default function Layout() {
     setMenuOpen(false);
     setProfileOpen(false);
   }
-
-  const badgeLabel = reservationBadge > 9 ? "9+" : String(reservationBadge);
 
   const profileActive = [
     "/profile",
@@ -207,7 +176,7 @@ export default function Layout() {
                         {(user.fullName || "U").charAt(0).toUpperCase()}
                       </span>
                       <span className="nav-user-name">{user.fullName}</span>
-                      {showReservationBadge && reservationBadge > 0 ? (
+                      {showNotificationBadge ? (
                         <span
                           className="nav-badge"
                           aria-label={`${reservationBadge} ${t("nav.notifications")}`}
@@ -225,6 +194,19 @@ export default function Layout() {
                       {t("nav.profile")}
                     </NavLink>
                     <NavLink
+                      to="/profile?tab=notifications"
+                      role="menuitem"
+                      onClick={closeMenus}
+                      className="nav-item-badge"
+                    >
+                      {t("profile.navNotifications")}
+                      {showNotificationBadge ? (
+                        <span className="nav-badge" aria-hidden>
+                          {badgeLabel}
+                        </span>
+                      ) : null}
+                    </NavLink>
+                    <NavLink
                       to="/reservations"
                       role="menuitem"
                       onClick={closeMenus}
@@ -233,7 +215,7 @@ export default function Layout() {
                       }
                     >
                       {t("nav.reservations")}
-                      {showReservationBadge && reservationBadge > 0 ? (
+                      {showNotificationBadge ? (
                         <span className="nav-badge" aria-hidden>
                           {badgeLabel}
                         </span>
@@ -337,7 +319,7 @@ export default function Layout() {
                 aria-label={t("nav.toggleMenu")}
               >
                 {menuOpen ? "✕" : "☰"}
-                {user && showReservationBadge && reservationBadge > 0 ? (
+                {user && showNotificationBadge ? (
                   <span className="nav-badge menu-toggle-badge" aria-hidden>
                     {badgeLabel}
                   </span>
@@ -385,12 +367,24 @@ export default function Layout() {
                   {t("nav.profile")}
                 </NavLink>
                 <NavLink
+                  to="/profile?tab=notifications"
+                  onClick={closeMenus}
+                  className="nav-item-badge"
+                >
+                  {t("profile.navNotifications")}
+                  {showNotificationBadge ? (
+                    <span className="nav-badge" aria-hidden>
+                      {badgeLabel}
+                    </span>
+                  ) : null}
+                </NavLink>
+                <NavLink
                   to="/reservations"
                   onClick={closeMenus}
                   className="nav-item-badge"
                 >
                   {t("nav.reservations")}
-                  {showReservationBadge && reservationBadge > 0 ? (
+                  {showNotificationBadge ? (
                     <span className="nav-badge" aria-hidden>
                       {badgeLabel}
                     </span>

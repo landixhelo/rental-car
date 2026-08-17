@@ -461,6 +461,7 @@ export const sq = {
     notifyDocumentHint: "Kur ndryshon statusi i dokumentit.",
     notifications: "Njoftimet",
     noNotifications: "Nuk ka njoftime.",
+    unread: "E re",
     navAccount: "LLOGARIA",
     navBusiness: "BIZNESI",
     navPreferences: "PREFERENCAT",

@@ -3,6 +3,7 @@ import { AuthProvider } from "./context/AuthContext";
 import { ThemeProvider } from "./context/ThemeContext";
 import { LocaleProvider } from "./context/LocaleContext";
 import { ToastProvider } from "./context/ToastContext";
+import { UnreadProvider } from "./context/UnreadContext";
 import Layout from "./components/Layout";
 import OpsLayout from "./components/OpsLayout";
 import CheckoutDetailsPage from "./pages/CheckoutDetailsPage";
@@ -41,6 +42,7 @@ export default function App() {
     <ThemeProvider>
       <LocaleProvider>
         <AuthProvider>
+          <UnreadProvider>
           <BrowserRouter>
             <ToastProvider>
               <Analytics />
@@ -214,6 +216,7 @@ export default function App() {
               </Routes>
             </ToastProvider>
           </BrowserRouter>
+          </UnreadProvider>
         </AuthProvider>
       </LocaleProvider>
     </ThemeProvider>

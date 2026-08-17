@@ -2,6 +2,7 @@ import { createContext, useContext, useEffect, useMemo, useState } from "react";
 import { Link, NavLink, Outlet, useLocation } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { useT } from "../context/LocaleContext";
+import { useUnreadNotifications } from "../context/UnreadContext";
 import BrandLockup from "./BrandLockup";
 
 type OpsSearchCtx = {
@@ -101,6 +102,7 @@ export default function OpsLayout() {
   const { user, logout } = useAuth();
   const t = useT();
   const location = useLocation();
+  const { count, label } = useUnreadNotifications();
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [query, setQuery] = useState("");
 
@@ -267,6 +269,9 @@ export default function OpsLayout() {
               >
                 <Icon path={item.icon} />
                 <span>{item.label}</span>
+                {item.to === "/reservations" && count > 0 ? (
+                  <span className="ops-nav-badge">{label}</span>
+                ) : null}
                 {item.soon ? (
                   <em className="ops-nav-soon">{t("dashboard.soon")}</em>
                 ) : null}
@@ -322,11 +327,18 @@ export default function OpsLayout() {
 
             <div className="ops-top-actions">
               <Link
-                to="/reservations"
+                to="/profile?tab=notifications"
                 className="ops-icon-btn"
-                aria-label={t("nav.notifications")}
+                aria-label={
+                  count > 0
+                    ? `${count} ${t("nav.notifications")}`
+                    : t("nav.notifications")
+                }
               >
                 <Icon path={ICONS.bell} size={18} />
+                {count > 0 ? (
+                  <span className="ops-icon-badge">{label}</span>
+                ) : null}
               </Link>
               <Link to="/faq" className="ops-icon-btn" aria-label={t("nav.faq")}>
                 <Icon path={ICONS.help} size={18} />
