@@ -16,6 +16,20 @@
       "headers": [
         { "key": "Cache-Control", "value": "public, max-age=3600" }
       ]
+    },
+    {
+      "source": "/sw.js",
+      "headers": [
+        { "key": "Cache-Control", "value": "no-cache, no-store, must-revalidate" },
+        { "key": "Service-Worker-Allowed", "value": "/" }
+      ]
+    },
+    {
+      "source": "/manifest.webmanifest",
+      "headers": [
+        { "key": "Content-Type", "value": "application/manifest+json" },
+        { "key": "Cache-Control", "value": "public, max-age=3600" }
+      ]
     }
   ],
   "rewrites": [
@@ -32,7 +46,7 @@
       "destination": "https://rental-car-production.up.railway.app/api/seo/sitemap.xml"
     },
     {
-      "source": "/(.*)",
+      "source": "/((?!sw\\.js$|manifest\\.webmanifest$|pwa/).*)",
       "destination": "/index.html"
     }
   ]

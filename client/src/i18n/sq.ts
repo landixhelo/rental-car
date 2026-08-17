@@ -65,6 +65,17 @@ export const sq = {
     necessary: "Vetëm të nevojshme",
     accept: "Prano të gjitha",
   },
+  pwa: {
+    title: "Shto në ekran",
+    body: "Hape Auto Rental si app — pa Play Store. Më e shpejtë, me një tap.",
+    install: "Instalo",
+    later: "Jo tani",
+    iosBody: "Në Safari: prek Share, pastaj Add to Home Screen.",
+    iosShare: "Share",
+    iosAdd: "Add to Home Screen",
+    iosOther: "Hape këtë faqe në Safari, pastaj Share → Add to Home Screen.",
+    androidBody: "Në Chrome: prek ⋮ lart djathtas, pastaj Instalo app.",
+  },
   checkout: {
     steps: "Hapat e rezervimit",
     stepDates: "Datat",

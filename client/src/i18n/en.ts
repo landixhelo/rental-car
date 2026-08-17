@@ -67,6 +67,17 @@ export const en: Dict = {
     necessary: "Necessary only",
     accept: "Accept all",
   },
+  pwa: {
+    title: "Add to Home Screen",
+    body: "Open Auto Rental like an app — no app store. Faster, one tap away.",
+    install: "Install",
+    later: "Not now",
+    iosBody: "In Safari: tap Share, then Add to Home Screen.",
+    iosShare: "Share",
+    iosAdd: "Add to Home Screen",
+    iosOther: "Open this page in Safari, then Share → Add to Home Screen.",
+    androidBody: "In Chrome: tap ⋮ at the top right, then Install app.",
+  },
   checkout: {
     steps: "Booking steps",
     stepDates: "Dates",

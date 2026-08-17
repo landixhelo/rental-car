@@ -34,6 +34,7 @@ import PromoCodesPage from "./pages/PromoCodesPage";
 import ReportsPage from "./pages/ReportsPage";
 import Analytics from "./components/Analytics";
 import CookieConsent from "./components/CookieConsent";
+import PwaInstall from "./components/PwaInstall";
 
 export default function App() {
   return (
@@ -44,6 +45,7 @@ export default function App() {
             <ToastProvider>
               <Analytics />
               <CookieConsent />
+              <PwaInstall />
               <Routes>
                 <Route element={<Layout />}>
                   <Route index element={<HomePage />} />

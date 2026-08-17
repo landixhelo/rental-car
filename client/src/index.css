@@ -4491,6 +4491,7 @@ textarea { min-height: 90px; resize: vertical; }
   .navbar,
   .footer,
   .chat-widget,
+  .pwa-banner,
   .booking-stepper,
   .confirm-actions,
   .confirm-card-foot button {
@@ -5103,6 +5104,77 @@ textarea { min-height: 90px; resize: vertical; }
     width: 100%;
   }
   .cookie-banner-actions .btn {
+    flex: 1 1 auto;
+  }
+}
+
+.pwa-banner {
+  position: fixed;
+  left: 12px;
+  right: 12px;
+  bottom: calc(86px + env(safe-area-inset-bottom, 0px));
+  z-index: 1180;
+  max-width: 520px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  padding: 12px 14px;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.18);
+}
+.pwa-banner-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  object-fit: cover;
+  flex: 0 0 auto;
+}
+.pwa-banner-text {
+  flex: 1 1 160px;
+  min-width: 0;
+}
+.pwa-banner-text strong {
+  display: block;
+  margin-bottom: 2px;
+  font-size: 0.98rem;
+}
+.pwa-banner-text p {
+  margin: 0;
+  color: var(--text-muted);
+  font-size: 0.86rem;
+  line-height: 1.4;
+}
+.pwa-ios-steps {
+  font-weight: 650;
+  color: var(--text);
+}
+.pwa-banner-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-left: auto;
+}
+.pwa-banner-actions .btn {
+  width: auto;
+  min-width: 0;
+  padding: 8px 14px;
+}
+@media (max-width: 560px) {
+  .pwa-banner {
+    left: 10px;
+    right: 10px;
+    bottom: calc(88px + env(safe-area-inset-bottom, 0px));
+  }
+  .pwa-banner-actions {
+    width: 100%;
+    margin-left: 0;
+  }
+  .pwa-banner-actions .btn {
     flex: 1 1 auto;
   }
 }

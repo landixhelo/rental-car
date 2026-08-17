@@ -67,6 +67,17 @@ export const it: Dict = {
     necessary: "Solo necessari",
     accept: "Accetta tutti",
   },
+  pwa: {
+    title: "Aggiungi alla schermata Home",
+    body: "Apri Auto Rental come un'app — senza store. Più veloce, a un tocco.",
+    install: "Installa",
+    later: "Non ora",
+    iosBody: "In Safari: tocca Condividi, poi Aggiungi alla schermata Home.",
+    iosShare: "Condividi",
+    iosAdd: "Aggiungi alla schermata Home",
+    iosOther: "Apri questa pagina in Safari, poi Condividi → Aggiungi alla schermata Home.",
+    androidBody: "In Chrome: tocca ⋮ in alto a destra, poi Installa app.",
+  },
   checkout: {
     steps: "Passi della prenotazione",
     stepDates: "Date",
