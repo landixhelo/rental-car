@@ -11,9 +11,9 @@ export const SITE = {
     it: "it_IT",
   } as const,
   description: {
-    sq: "Qira makinash premium në Shqipëri — SUV, sedan dhe sportive. Rezervim online i shpejtë në Tiranë, Durrës dhe Vlorë.",
-    en: "Premium car rental in Albania — SUVs, sedans and sports cars. Fast online booking in Tirana, Durrës and Vlorë.",
-    it: "Noleggio auto premium in Albania — SUV, berline e sportive. Prenotazione online rapida a Tirana, Durazzo e Valona.",
+    sq: "Qira makinash në Shqipëri — Tiranë, Durrës, Vlorë, Sarandë dhe Aeroporti i Tiranës. Rezervim online ose WhatsApp.",
+    en: "Car rental in Albania — Tirana, Durrës, Vlorë, Sarandë and Tirana Airport. Book online or on WhatsApp.",
+    it: "Noleggio auto in Albania — Tirana, Durazzo, Valona, Saranda e aeroporto di Tirana. Prenota online o su WhatsApp.",
   },
   keywords: {
     sq: "qira makinash, auto rental albania, via egnatia, qira auto tirane, makina me qira, SUV me qira",

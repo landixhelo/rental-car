@@ -9,6 +9,7 @@ import OpsLayout from "./components/OpsLayout";
 import CheckoutDetailsPage from "./pages/CheckoutDetailsPage";
 import CheckoutConfirmedPage from "./pages/CheckoutConfirmedPage";
 import { Protected } from "./components/Protected";
+import LocationPage from "./pages/LocationPage";
 import HomePage from "./pages/HomePage";
 import CarsPage from "./pages/CarsPage";
 import CarDetailsPage from "./pages/CarDetailsPage";
@@ -95,6 +96,10 @@ export default function App() {
                   <Route path="contact" element={<ContactPage />} />
                   <Route path="faq" element={<FaqPage />} />
                   <Route path="terms" element={<TermsPage />} />
+                  <Route
+                    path="car-rental-:city"
+                    element={<LocationPage />}
+                  />
 
                   <Route element={<OpsLayout />}>
                     <Route

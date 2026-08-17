@@ -7,6 +7,40 @@ import { idParamSchema, reviewSchema } from "../validators/schemas.js";
 
 const router = Router();
 
+router.get("/", async (_req, res, next) => {
+  try {
+    const [reviews, agg] = await Promise.all([
+      prisma.review.findMany({
+        where: { comment: { not: null } },
+        include: {
+          user: { select: { fullName: true } },
+          car: { select: { brand: true, model: true } },
+        },
+        orderBy: { createdAt: "desc" },
+        take: 6,
+      }),
+      prisma.review.aggregate({
+        _avg: { rating: true },
+        _count: { _all: true },
+      }),
+    ]);
+    res.json({
+      average: Number(agg._avg.rating || 0),
+      count: agg._count._all,
+      reviews: reviews.map((r) => ({
+        id: r.id,
+        rating: r.rating,
+        comment: r.comment,
+        userName: r.user.fullName,
+        carLabel: `${r.car.brand} ${r.car.model}`,
+        createdAt: r.createdAt,
+      })),
+    });
+  } catch (err) {
+    next(err);
+  }
+});
+
 router.post("/", requireAuth, validate(reviewSchema), async (req, res, next) => {
   try {
     const { carId, rating, comment } = req.body;

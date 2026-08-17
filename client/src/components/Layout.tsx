@@ -7,7 +7,7 @@ import BrandLockup from "./BrandLockup";
 import { useAuth } from "../context/AuthContext";
 import { useLocale } from "../context/LocaleContext";
 import { useUnreadNotifications } from "../context/UnreadContext";
-import { applyBusinessMeta } from "../seo/site";
+import { applyBusinessMeta, businessRuntime } from "../seo/site";
 import type { Locale } from "../i18n";
 import { isOpsPath } from "./OpsLayout";
 
@@ -486,25 +486,29 @@ export default function Layout() {
             <p>{t("footer.blurb")}</p>
           </div>
           <div>
-            <h4>{t("footer.explore")}</h4>
+            <h4>{t("footer.locations")}</h4>
             <div className="footer-links">
-              <Link to="/cars">{t("nav.cars")}</Link>
-              <a href={isHome ? "#cities" : "/#cities"}>{t("nav.locations")}</a>
-              <a href={isHome ? "#how" : "/#how"}>{t("nav.how")}</a>
-              <a href={isHome ? "#why" : "/#why"}>{t("footer.about")}</a>
+              <Link to="/car-rental-tirana">Tiranë</Link>
+              <Link to="/car-rental-durres">Durrës</Link>
+              <Link to="/car-rental-airport">Tirana Airport</Link>
+              <Link to="/car-rental-vlore">Vlorë</Link>
+              <Link to="/car-rental-sarande">Sarandë</Link>
             </div>
           </div>
           <div>
-            <h4>{t("footer.support")}</h4>
+            <h4>{t("footer.quickLinks")}</h4>
             <div className="footer-links">
-              <Link to="/contact">{t("nav.contact")}</Link>
+              <Link to="/cars">{t("nav.cars")}</Link>
+              <a href={isHome ? "#why" : "/#why"}>{t("footer.about")}</a>
+              <a href={isHome ? "#cities" : "/#cities"}>{t("nav.locations")}</a>
               <Link to="/faq">{t("nav.faq")}</Link>
-              <Link to="/terms">{t("footer.terms")}</Link>
+              <Link to="/contact">{t("nav.contact")}</Link>
             </div>
           </div>
           <div>
             <h4>{t("footer.contact")}</h4>
             <div className="footer-links">
+              <a href={`tel:+${whatsapp}`}>{t("footer.phone")}</a>
               <a
                 href={`https://wa.me/${whatsapp}`}
                 target="_blank"
@@ -512,11 +516,25 @@ export default function Layout() {
               >
                 WhatsApp
               </a>
-              <a href="mailto:info@autorent.al">info@autorent.al</a>
+              <a href={`mailto:${businessRuntime.email || "info@autorent.al"}`}>
+                {businessRuntime.email || "info@autorent.al"}
+              </a>
+              <a
+                href="https://www.google.com/maps/search/?api=1&query=Tirana+Albania"
+                target="_blank"
+                rel="noreferrer"
+              >
+                {t("footer.maps")}
+              </a>
             </div>
           </div>
         </div>
-        <p className="site-footer-copy">{t("footer.rights")}</p>
+        <p className="site-footer-copy">
+          {t("footer.rights")}{" "}
+          <Link to="/terms">{t("footer.terms")}</Link>
+          {" · "}
+          <Link to="/terms#privacy">{t("footer.privacy")}</Link>
+        </p>
       </footer>
       ) : null}
 

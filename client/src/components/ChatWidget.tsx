@@ -1,7 +1,6 @@
-import { type FormEvent, useEffect, useId, useState } from "react";
+import { useEffect, useId, useState } from "react";
 import { useLocation } from "react-router-dom";
 import { api } from "../lib/api";
-import { useAuth } from "../context/AuthContext";
 import { useT } from "../context/LocaleContext";
 import { applyBusinessMeta, businessRuntime } from "../seo/site";
 
@@ -15,20 +14,9 @@ const HIDDEN_PREFIXES = [
 
 export default function ChatWidget() {
   const t = useT();
-  const { user } = useAuth();
   const location = useLocation();
   const titleId = useId();
-  const [open, setOpen] = useState(false);
-  const [sending, setSending] = useState(false);
-  const [sent, setSent] = useState(false);
-  const [error, setError] = useState("");
   const [whatsapp, setWhatsapp] = useState("355689001257");
-  const [form, setForm] = useState({
-    name: "",
-    email: "",
-    phone: "",
-    message: "",
-  });
 
   const hidden = HIDDEN_PREFIXES.some(
     (p) =>
@@ -51,149 +39,30 @@ export default function ChatWidget() {
       .catch(() => {});
   }, []);
 
-  useEffect(() => {
-    if (!user) return;
-    setForm((f) => ({
-      ...f,
-      name: f.name || user.fullName || "",
-      email: f.email || user.email || "",
-      phone: f.phone || user.phone || "",
-    }));
-  }, [user]);
-
-  useEffect(() => {
-    setOpen(false);
-    setSent(false);
-    setError("");
-  }, [location.pathname]);
-
   if (hidden) return null;
-
-  async function onSubmit(e: FormEvent) {
-    e.preventDefault();
-    setSending(true);
-    setError("");
-    try {
-      await api.contact({
-        name: form.name.trim(),
-        email: form.email.trim(),
-        phone: form.phone.trim() || undefined,
-        subject: t("chat.subject"),
-        message: form.message.trim(),
-      });
-      setSent(true);
-      setForm((f) => ({ ...f, message: "" }));
-    } catch (err) {
-      setError(err instanceof Error ? err.message : t("common.error"));
-    } finally {
-      setSending(false);
-    }
-  }
 
   const waHref = `https://wa.me/${whatsapp}?text=${encodeURIComponent(
     t("chat.waPrefill")
   )}`;
 
   return (
-    <div className={`chat-widget${open ? " open" : ""}`}>
-      {open ? (
-        <div
-          className="chat-panel"
-          role="dialog"
-          aria-modal="false"
-          aria-labelledby={titleId}
-        >
-          <header className="chat-panel-head">
-            <div>
-              <strong id={titleId}>{t("chat.title")}</strong>
-              <p>{t("chat.subtitle")}</p>
-            </div>
-            <button
-              type="button"
-              className="chat-close"
-              onClick={() => setOpen(false)}
-              aria-label={t("common.close")}
-            >
-              ✕
-            </button>
-          </header>
-
-          <div className="chat-body">
-            <div className="chat-bubble bot">{t("chat.greeting")}</div>
-
-            {sent ? (
-              <div className="chat-bubble bot ok">{t("chat.sent")}</div>
-            ) : (
-              <form className="chat-form" onSubmit={onSubmit}>
-                <input
-                  name="name"
-                  autoComplete="name"
-                  placeholder={t("contact.name")}
-                  value={form.name}
-                  onChange={(e) =>
-                    setForm({ ...form, name: e.target.value })
-                  }
-                  required
-                />
-                <input
-                  name="email"
-                  type="email"
-                  autoComplete="email"
-                  placeholder={t("auth.email")}
-                  value={form.email}
-                  onChange={(e) =>
-                    setForm({ ...form, email: e.target.value })
-                  }
-                  required
-                />
-                <input
-                  name="phone"
-                  type="tel"
-                  autoComplete="tel"
-                  placeholder={t("auth.phone")}
-                  value={form.phone}
-                  onChange={(e) =>
-                    setForm({ ...form, phone: e.target.value })
-                  }
-                />
-                <textarea
-                  name="message"
-                  rows={3}
-                  placeholder={t("chat.messagePlaceholder")}
-                  value={form.message}
-                  onChange={(e) =>
-                    setForm({ ...form, message: e.target.value })
-                  }
-                  required
-                />
-                {error ? <p className="chat-error">{error}</p> : null}
-                <button className="btn" type="submit" disabled={sending}>
-                  {sending ? t("common.loading") : t("chat.send")}
-                </button>
-              </form>
-            )}
-
-            <a
-              className="chat-whatsapp"
-              href={waHref}
-              target="_blank"
-              rel="noreferrer"
-            >
-              {t("chat.whatsapp")}
-            </a>
-          </div>
-        </div>
-      ) : null}
-
-      <button
-        type="button"
-        className="chat-fab"
-        onClick={() => setOpen((v) => !v)}
-        aria-expanded={open}
-        aria-label={open ? t("common.close") : t("chat.open")}
+    <div className="chat-widget">
+      <a
+        id={titleId}
+        className="wa-fab"
+        href={waHref}
+        target="_blank"
+        rel="noreferrer"
+        aria-label={t("home.ctaWhatsapp")}
       >
-        {open ? "✕" : t("chat.fab")}
-      </button>
+        <svg viewBox="0 0 24 24" width="26" height="26" aria-hidden>
+          <path
+            fill="currentColor"
+            d="M20 11.5A8.5 8.5 0 0 1 7.4 18.7L4 20l1.4-3.3A8.5 8.5 0 1 1 20 11.5zm-8.5 6.7c1.4 0 2.7-.4 3.8-1.1l.3-.2 2.2.6-.6-2.1.2-.3a6.7 6.7 0 1 0-5.9 3.1zm3.7-5c-.2-.1-1.2-.6-1.4-.7-.2-.1-.3-.1-.5.1l-.7.8c-.1.2-.3.2-.5.1a5.5 5.5 0 0 1-2.6-2.3c-.2-.3 0-.4.1-.6l.4-.5c.1-.1.1-.3.2-.4 0-.1 0-.3 0-.4l-1.4-3.3c-.2-.4-.3-.3-.5-.3h-.4c-.2 0-.4.1-.6.3-.2.2-.8.8-.8 1.9s.8 2.2.9 2.4c.9 1.5 2.2 2.7 3.8 3.5.5.2 1 .4 1.3.5.6.2 1.1.2 1.5.1.5-.1 1.2-.5 1.4-1 .2-.5.2-.9.1-1 0-.1-.2-.2-.4-.3z"
+          />
+        </svg>
+        <span>{t("home.ctaWhatsapp")}</span>
+      </a>
     </div>
   );
 }

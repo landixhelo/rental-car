@@ -287,6 +287,19 @@ export const api = {
     request<{ ok: boolean }>("/api/auth/notifications/read", {
       method: "PATCH",
     }),
+  publicReviews: () =>
+    request<{
+      average: number;
+      count: number;
+      reviews: Array<{
+        id: string;
+        rating: number;
+        comment: string | null;
+        userName: string;
+        carLabel: string;
+        createdAt: string;
+      }>;
+    }>("/api/reviews"),
 
   cars: (params?: Record<string, string>) => {
     const q = new URLSearchParams(params || {}).toString();

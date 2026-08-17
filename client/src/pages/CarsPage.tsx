@@ -1,15 +1,14 @@
-import { Link, useSearchParams } from "react-router-dom";
+import { useSearchParams } from "react-router-dom";
 import { useEffect, useMemo, useState, type FormEvent } from "react";
 import { api, type Car } from "../lib/api";
 import { useAuth } from "../context/AuthContext";
 import { useLocale, useT } from "../context/LocaleContext";
 import { useToast } from "../hooks/useToast";
-import { mediaUrl } from "../lib/mediaUrl";
-import { carPath } from "../lib/carPath";
 import Seo from "../seo/Seo";
 import { SITE } from "../seo/site";
 import { breadcrumbJsonLd, itemListCarsJsonLd } from "../seo/jsonLd";
 import { addDays, clampDate, tiraneToday } from "../lib/dates";
+import FleetCarCard from "../components/FleetCarCard";
 
 const PAGE_SIZE = 4;
 
@@ -117,12 +116,6 @@ export default function CarsPage() {
   const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
   const pageCars = filtered.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
 
-  function statusLabel(car: Car) {
-    if (car.status === "RESERVED") return t("cars.reserved");
-    if (car.status === "MAINTENANCE") return t("cars.maintenance");
-    return t("cars.available");
-  }
-
   const types = ["SUV", "Sedan", "Sports", "Luxury"] as const;
   const fuels = ["Petrol", "Diesel", "Electric", "Hybrid"] as const;
   const seatOpts = ["2", "4", "5", "7"] as const;
@@ -175,6 +168,7 @@ export default function CarsPage() {
             <option value="Tiranë">Tiranë</option>
             <option value="Durrës">Durrës</option>
             <option value="Vlorë">Vlorë</option>
+            <option value="Sarandë">Sarandë</option>
           </select>
         </label>
         <label className="fleet-search-field">
@@ -409,74 +403,11 @@ export default function CarsPage() {
           ) : (
             <div className="fleet-grid">
               {pageCars.map((car) => (
-                <article key={car.id} className="pilot-car fleet-car">
-                  <div className="pilot-car-media">
-                    <Link
-                      to={carPath(car)}
-                      className="pilot-car-photo"
-                      aria-label={`${car.brand} ${car.model}`}
-                    >
-                      <img
-                        src={mediaUrl(car.imageUrl)}
-                        alt={`${car.brand} ${car.model}`}
-                      />
-                    </Link>
-                    <span
-                      className={`pilot-car-badge status-${(
-                        car.status || "AVAILABLE"
-                      ).toLowerCase()}`}
-                    >
-                      {statusLabel(car)}
-                    </span>
-                    <button
-                      type="button"
-                      className={`pilot-fav${car.isFavorite ? " active" : ""}`}
-                      onClick={() => toggleFavorite(car)}
-                      aria-label={t("nav.favorites")}
-                    >
-                      ♥
-                    </button>
-                  </div>
-                  <div className="pilot-car-body">
-                    <div className="row-between">
-                      <h3>
-                        <Link to={carPath(car)}>
-                          {car.brand} {car.model}
-                        </Link>
-                      </h3>
-                      <strong>
-                        €{car.pricePerDay}
-                        <small>{t("common.perDay")}</small>
-                      </strong>
-                    </div>
-                    <p className="pilot-car-loc">{car.location}</p>
-                    <div className="pilot-car-specs">
-                      <span>
-                        {t("cars.transmission")}
-                        <b>{car.transmission || "—"}</b>
-                      </span>
-                      <span>
-                        {t("cars.seats")}
-                        <b>
-                          {car.seats || "—"} {t("cars.seatsUnit")}
-                        </b>
-                      </span>
-                      <span>
-                        {t("cars.fuel")}
-                        <b>{car.fuel || "—"}</b>
-                      </span>
-                    </div>
-                    <div className="row-between pilot-car-foot">
-                      <span className="pilot-rating">
-                        ★ {car.ratingAvg || "—"}
-                        <small>({car.ratingCount || 0})</small>
-                      </span>
-                      <Link to={carPath(car)} className="btn">
-                        {t("home.viewDetails")}
-                      </Link>
-                    </div>
-                  </div>
-                </article>
+                <FleetCarCard
+                  key={car.id}
+                  car={car}
+                  onToggleFavorite={toggleFavorite}
+                />
               ))}
             </div>
           )}

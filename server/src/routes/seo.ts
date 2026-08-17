@@ -7,6 +7,11 @@ const SITE = "https://www.landixhelo.me";
 const STATIC_PATHS: Array<{ path: string; changefreq: string; priority: string }> = [
   { path: "/", changefreq: "daily", priority: "1.0" },
   { path: "/cars", changefreq: "daily", priority: "0.9" },
+  { path: "/car-rental-tirana", changefreq: "weekly", priority: "0.9" },
+  { path: "/car-rental-durres", changefreq: "weekly", priority: "0.85" },
+  { path: "/car-rental-vlore", changefreq: "weekly", priority: "0.85" },
+  { path: "/car-rental-sarande", changefreq: "weekly", priority: "0.85" },
+  { path: "/car-rental-airport", changefreq: "weekly", priority: "0.9" },
   { path: "/contact", changefreq: "monthly", priority: "0.7" },
   { path: "/faq", changefreq: "monthly", priority: "0.7" },
   { path: "/terms", changefreq: "yearly", priority: "0.4" },

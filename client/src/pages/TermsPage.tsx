@@ -39,7 +39,11 @@ export default function TermsPage() {
       </p>
       <div className="panel terms-panel">
         {SECTIONS.map((key) => (
-          <section key={key} className="terms-section">
+          <section
+            key={key}
+            id={key === "s9" ? "privacy" : undefined}
+            className="terms-section"
+          >
             <h3>{t(`terms.${key}`)}</h3>
             <p className="muted">{t(`terms.${key}Text`)}</p>
           </section>

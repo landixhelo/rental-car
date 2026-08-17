@@ -32,6 +32,8 @@ export function organizationJsonLd() {
       { "@type": "City", name: "Tirana" },
       { "@type": "City", name: "Durrës" },
       { "@type": "City", name: "Vlorë" },
+      { "@type": "City", name: "Sarandë" },
+      { "@type": "Airport", name: "Tirana International Airport" },
       { "@type": "Country", name: "Albania" },
     ],
     priceRange: "€€",
@@ -159,6 +161,21 @@ export function faqJsonLd(
         text: item.answer,
       },
     })),
+  };
+}
+
+export function localRentalJsonLd(city: string, path: string) {
+  const phone = businessRuntime.phone || SITE.phone;
+  return {
+    "@context": "https://schema.org",
+    "@type": ["AutoRental", "LocalBusiness"],
+    name: `${SITE.fullName} — ${city}`,
+    url: absoluteUrl(path),
+    image: SITE.ogImage,
+    telephone: phone,
+    parentOrganization: { "@id": `${SITE.url}/#organization` },
+    areaServed: { "@type": "Place", name: city },
+    priceRange: "€€",
   };
 }
 
