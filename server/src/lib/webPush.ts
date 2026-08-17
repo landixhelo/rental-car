@@ -35,12 +35,24 @@ export async function sendWebPushToUsers(
   payload: PushPayload
 ) {
   const ids = Array.from(new Set(userIds.filter(Boolean)));
-  if (!ids.length || !ensureConfigured()) return;
+  if (!ids.length) return;
+  if (!ensureConfigured()) {
+    console.warn("[push] skipped — VAPID keys missing");
+    return;
+  }
 
   const rows = await prisma.pushSubscription.findMany({
     where: { userId: { in: ids } },
   });
-  if (!rows.length) return;
+  if (!rows.length) {
+    console.warn(
+      "[push] no registered phones for",
+      ids.length,
+      "staff user(s)"
+    );
+    return;
+  }
+  console.info("[push] sending to", rows.length, "device(s)");
 
   const body = JSON.stringify({
     title: payload.title,

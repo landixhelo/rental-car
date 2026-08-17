@@ -37,6 +37,7 @@ import ReportsPage from "./pages/ReportsPage";
 import Analytics from "./components/Analytics";
 import CookieConsent from "./components/CookieConsent";
 import PwaInstall from "./components/PwaInstall";
+import { StaffPushBanner } from "./components/StaffPush";
 
 export default function App() {
   return (
@@ -49,6 +50,7 @@ export default function App() {
               <Analytics />
               <CookieConsent />
               <PwaInstall />
+              <StaffPushBanner />
               <Routes>
                 <Route element={<Layout />}>
                   <Route index element={<HomePage />} />

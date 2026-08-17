@@ -97,6 +97,8 @@ export const en: Dict = {
     how: "How to",
     bannerTitle: "Get alerts for new bookings",
     bannerBody: "Enable phone notifications so you know immediately when someone books.",
+    test: "Send a test notification",
+    testSent: "Test sent. Check your phone notifications.",
   },
   locations: {
     pickupTitle: "Pickup",

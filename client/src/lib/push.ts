@@ -45,12 +45,11 @@ export async function enablePush() {
 
   const reg = await getRegistration();
   const existing = await reg.pushManager.getSubscription();
-  const sub =
-    existing ||
-    (await reg.pushManager.subscribe({
-      userVisibleOnly: true,
-      applicationServerKey: urlBase64ToUint8Array(key),
-    }));
+  if (existing) await existing.unsubscribe().catch(() => {});
+  const sub = await reg.pushManager.subscribe({
+    userVisibleOnly: true,
+    applicationServerKey: urlBase64ToUint8Array(key),
+  });
 
   const json = sub.toJSON();
   if (!json.endpoint || !json.keys?.p256dh || !json.keys?.auth) {

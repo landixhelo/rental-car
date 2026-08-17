@@ -13,9 +13,7 @@ export async function notifyStaffNewReservation(input: {
   const message = `${input.customerName} rezervoi ${input.carLabel} (${input.startDate} → ${input.endDate}). Totali: €${input.totalPrice}.`;
   const recipientIds = new Set<string>();
 
-  if (input.ownerId && input.ownerId !== input.customerId) {
-    recipientIds.add(input.ownerId);
-  }
+  if (input.ownerId) recipientIds.add(input.ownerId);
 
   const staff = await prisma.user.findMany({
     where: {
@@ -24,9 +22,7 @@ export async function notifyStaffNewReservation(input: {
     },
     select: { id: true },
   });
-  for (const user of staff) {
-    if (user.id !== input.customerId) recipientIds.add(user.id);
-  }
+  for (const user of staff) recipientIds.add(user.id);
 
   for (const userId of recipientIds) {
     await prisma.notification.create({

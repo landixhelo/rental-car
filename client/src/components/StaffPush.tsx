@@ -71,6 +71,7 @@ export function StaffPushBanner() {
     setBusy(true);
     try {
       await enablePush();
+      await api.pushTest().catch(() => {});
       setStatus("hidden");
     } catch {
       setStatus(await readStatus());
@@ -134,13 +135,15 @@ export function StaffPushCard() {
     setError("");
     try {
       await enablePush();
+      await api.pushTest();
       setStatus("on");
+      setError(t("push.testSent"));
     } catch (err) {
       const code = err instanceof Error ? err.message : "";
       if (code === "denied") setStatus("denied");
       else if (code === "unsupported") setStatus("unsupported");
       else if (code === "disabled") setStatus("disabled");
-      else setError(t("push.error"));
+      else setError(code || t("push.error"));
       setStatus(await readStatus());
     } finally {
       setBusy(false);
@@ -155,6 +158,19 @@ export function StaffPushCard() {
       setStatus("off");
     } catch {
       setError(t("push.error"));
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  async function test() {
+    setBusy(true);
+    setError("");
+    try {
+      await api.pushTest();
+      setError(t("push.testSent"));
+    } catch (err) {
+      setError(err instanceof Error ? err.message : t("push.error"));
     } finally {
       setBusy(false);
     }
@@ -179,6 +195,9 @@ export function StaffPushCard() {
       {status === "on" ? (
         <div className="push-card-actions">
           <p className="push-on">{t("push.enabled")}</p>
+          <button type="button" className="btn" onClick={test} disabled={busy}>
+            {t("push.test")}
+          </button>
           <button type="button" className="btn ghost" onClick={disable} disabled={busy}>
             {t("push.disable")}
           </button>
