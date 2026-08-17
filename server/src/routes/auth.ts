@@ -53,7 +53,6 @@ function publicUser(user: {
   phone: string | null;
   companyName?: string | null;
   businessPhone?: string | null;
-  businessWhatsapp?: string | null;
   businessAddress?: string | null;
   bookingNotifyEmail?: string | null;
   avatarUrl?: string | null;
@@ -89,7 +88,6 @@ function publicUser(user: {
     phone: user.phone,
     companyName: user.companyName ?? null,
     businessPhone: user.businessPhone ?? null,
-    businessWhatsapp: user.businessWhatsapp ?? null,
     businessAddress: user.businessAddress ?? null,
     bookingNotifyEmail: user.bookingNotifyEmail ?? null,
     avatarUrl: user.avatarUrl ?? null,
@@ -341,7 +339,6 @@ router.patch(
         const staffKeys = [
           "companyName",
           "businessPhone",
-          "businessWhatsapp",
           "businessAddress",
         ] as const;
         for (const key of staffKeys) {

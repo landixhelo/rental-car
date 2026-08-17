@@ -6,8 +6,7 @@ function digits(phone: string) {
 }
 
 export function getBusinessPublic() {
-  const whatsapp = digits(env.WHATSAPP_PHONE || env.BUSINESS_PHONE || "");
-  const phoneRaw = env.BUSINESS_PHONE || env.WHATSAPP_PHONE || "";
+  const phoneRaw = env.BUSINESS_PHONE || "";
   const phoneDisplay = phoneRaw.startsWith("+")
     ? phoneRaw
     : phoneRaw
@@ -18,7 +17,6 @@ export function getBusinessPublic() {
     name: "Auto Rental",
     phone: phoneDisplay,
     phoneDigits: digits(phoneRaw),
-    whatsapp,
     email: env.BUSINESS_EMAIL || env.ADMIN_EMAIL || "devbyland@gmail.com",
     nipt: env.BUSINESS_NIPT || "",
     address: env.BUSINESS_ADDRESS || "Tiranë, Shqipëri",

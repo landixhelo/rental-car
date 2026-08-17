@@ -18,7 +18,7 @@ export default function Layout() {
   const [profileOpen, setProfileOpen] = useState(false);
   const { count: reservationBadge, label: badgeLabel } =
     useUnreadNotifications();
-  const [whatsapp, setWhatsapp] = useState("355689001257");
+  const [phoneDigits, setPhoneDigits] = useState("355689001257");
   const [isMobileNav, setIsMobileNav] = useState(
     () =>
       typeof window !== "undefined" &&
@@ -39,11 +39,8 @@ export default function Layout() {
       .meta()
       .then((m) => {
         applyBusinessMeta(m.business);
-        const wa = (m.business?.whatsapp || m.whatsapp || "").replace(
-          /[^\d]/g,
-          ""
-        );
-        if (wa) setWhatsapp(wa);
+        const digits = (m.business?.phoneDigits || "").replace(/[^\d]/g, "");
+        if (digits) setPhoneDigits(digits);
       })
       .catch(() => {});
   }, []);
@@ -507,7 +504,7 @@ export default function Layout() {
           <div>
             <h4>{t("footer.contact")}</h4>
             <div className="footer-links">
-              <a href={`tel:+${whatsapp}`}>{t("footer.phone")}</a>
+              <a href={`tel:+${phoneDigits}`}>{t("footer.phone")}</a>
               <a href={`mailto:${businessRuntime.email || "info@autorent.al"}`}>
                 {businessRuntime.email || "info@autorent.al"}
               </a>

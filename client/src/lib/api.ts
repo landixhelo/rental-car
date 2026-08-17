@@ -18,7 +18,6 @@ export type User = {
   phone?: string | null;
   companyName?: string | null;
   businessPhone?: string | null;
-  businessWhatsapp?: string | null;
   businessAddress?: string | null;
   bookingNotifyEmail?: string | null;
   avatarUrl?: string | null;
@@ -156,11 +155,9 @@ export const api = {
       locations: Array<{ id: string; name: string; fee: number }>;
       extras: Array<{ id: string; name: string; price: number }>;
       cardEnabled?: boolean;
-      whatsapp?: string;
       business?: {
         phone?: string;
         phoneDigits?: string;
-        whatsapp?: string;
         email?: string;
         nipt?: string;
         address?: string;
@@ -212,7 +209,6 @@ export const api = {
     avatarUrl?: string | null;
     companyName?: string | null;
     businessPhone?: string | null;
-    businessWhatsapp?: string | null;
     businessAddress?: string | null;
     bookingNotifyEmail?: string | null;
     notifyBookingEmail?: boolean;
@@ -421,22 +417,6 @@ export const api = {
     }>("/api/reservations", {
       method: "POST",
       body: formData,
-    }),
-  createWhatsAppReservation: (body: {
-    guestName: string;
-    guestPhone: string;
-    guestEmail?: string;
-    carId: string;
-    startDate: string;
-    endDate: string;
-    pickupLocationId: string;
-    returnLocationId: string;
-    notes?: string;
-    totalPrice?: number;
-  }) =>
-    request<{ reservation: unknown }>("/api/reservations/whatsapp", {
-      method: "POST",
-      body: JSON.stringify(body),
     }),
   myReservations: () =>
     request<{ reservations: any[] }>("/api/reservations/mine"),

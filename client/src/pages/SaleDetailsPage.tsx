@@ -82,18 +82,6 @@ export default function SaleDetailsPage() {
               {listing.seller.phone ? (
                 <a href={`tel:${phoneDigits}`}>{listing.seller.phone}</a>
               ) : null}
-              {phoneDigits ? (
-                <a
-                  className="btn"
-                  href={`https://wa.me/${phoneDigits}?text=${encodeURIComponent(
-                    t("marketplace.saleWa", { title: listing.title })
-                  )}`}
-                  target="_blank"
-                  rel="noreferrer"
-                >
-                  WhatsApp
-                </a>
-              ) : null}
             </div>
           ) : null}
         </div>

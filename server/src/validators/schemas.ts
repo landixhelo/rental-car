@@ -49,7 +49,6 @@ export const updateProfileSchema = z.object({
     avatarUrl: z.string().trim().max(500).optional().nullable().or(z.literal("")),
     companyName: z.string().trim().max(120).optional().nullable(),
     businessPhone: z.string().trim().max(40).optional().nullable(),
-    businessWhatsapp: z.string().trim().max(40).optional().nullable(),
     businessAddress: z.string().trim().max(200).optional().nullable(),
     bookingNotifyEmail: z
       .union([z.string().trim().email(), z.literal(""), z.null()])
@@ -152,30 +151,6 @@ export const reservationSchema = z.object({
     extras: z.array(z.string()).max(10).default([]),
     paymentMethod: z.enum(["CASH", "BANK_TRANSFER", "CARD"]),
     notes: z.string().trim().max(500).optional(),
-  }),
-});
-
-export const whatsappReservationSchema = z.object({
-  body: z.object({
-    guestName: z.string().trim().min(2).max(100),
-    guestPhone: z.string().trim().min(6).max(30),
-    guestEmail: z.preprocess(
-      (v) => (typeof v === "string" && v.trim() === "" ? undefined : v),
-      z.string().trim().email().max(200).optional()
-    ),
-    carId: z.string().cuid(),
-    startDate: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
-    endDate: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
-    pickupLocationId: z.string().min(1),
-    returnLocationId: z.string().min(1),
-    notes: z.preprocess(
-      (v) => (typeof v === "string" && v.trim() === "" ? undefined : v),
-      z.string().trim().max(500).optional()
-    ),
-    totalPrice: z.preprocess(
-      (v) => (v === "" || v == null ? undefined : v),
-      z.coerce.number().positive().max(100_000).optional()
-    ),
   }),
 });
 

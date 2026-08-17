@@ -198,16 +198,9 @@ export default function ReservationDetailPage() {
         <Link to="/reservations" className="rental-detail-back">
           ← {t("reservations.backToList")}
         </Link>
-        <div className="reservation-card-badges">
-          {r.channel === "WHATSAPP" ? (
-            <span className="badge channel-WHATSAPP">
-              {t("reservations.whatsAppBadge")}
-            </span>
-          ) : null}
-          <span className={`badge status-${r.status}`}>
-            {t(`status.${r.status}`)}
-          </span>
-        </div>
+        <span className={`badge status-${r.status}`}>
+          {t(`status.${r.status}`)}
+        </span>
       </div>
 
       <header className="rental-detail-hero">
@@ -270,14 +263,6 @@ export default function ReservationDetailPage() {
               <dt>{t("reservations.createdAt")}</dt>
               <dd>
                 {formatShortDate(String(r.createdAt).slice(0, 10), locale)}
-              </dd>
-            </div>
-            <div>
-              <dt>{t("reservations.channel")}</dt>
-              <dd>
-                {r.channel === "WHATSAPP"
-                  ? t("reservations.channelWhatsApp")
-                  : t("reservations.channelOnline")}
               </dd>
             </div>
           </dl>

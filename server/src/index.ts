@@ -82,7 +82,6 @@ app.get("/api/meta", (_req, res) => {
     locations: LOCATIONS,
     extras: EXTRAS,
     cardEnabled: stripeEnabled(),
-    whatsapp: business.whatsapp,
     business,
   });
 });

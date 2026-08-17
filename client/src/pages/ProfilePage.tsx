@@ -58,7 +58,6 @@ function syncFromUser(user: User | null | undefined) {
     phone: user?.phone || "",
     companyName: user?.companyName || "",
     businessPhone: user?.businessPhone || "",
-    businessWhatsapp: user?.businessWhatsapp || "",
     businessAddress: user?.businessAddress || "",
     bookingNotifyEmail: user?.bookingNotifyEmail || "",
     notifyBookingEmail: user?.notifyBookingEmail ?? true,
@@ -217,7 +216,6 @@ export default function ProfilePage() {
         phone: form.phone,
         companyName: form.companyName,
         businessPhone: form.businessPhone,
-        businessWhatsapp: form.businessWhatsapp,
         businessAddress: form.businessAddress,
         bookingNotifyEmail: form.bookingNotifyEmail.trim() || "",
       });
@@ -679,8 +677,7 @@ export default function ProfilePage() {
                     onChange={(e) => patchForm("companyName", e.target.value)}
                   />
                 </label>
-                <div className="settings-grid-2">
-                  <label className="settings-field">
+                <label className="settings-field">
                     <span>{t("profile.businessPhone")}</span>
                     <input
                       value={form.businessPhone}
@@ -689,16 +686,6 @@ export default function ProfilePage() {
                       }
                     />
                   </label>
-                  <label className="settings-field">
-                    <span>{t("profile.businessWhatsapp")}</span>
-                    <input
-                      value={form.businessWhatsapp}
-                      onChange={(e) =>
-                        patchForm("businessWhatsapp", e.target.value)
-                      }
-                    />
-                  </label>
-                </div>
                 <label className="settings-field">
                   <span>{t("profile.businessAddress")}</span>
                   <input

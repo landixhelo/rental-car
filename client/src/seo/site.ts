@@ -40,7 +40,6 @@ export type SeoLocale = keyof typeof SITE.description;
 export type BusinessInfo = {
   phone?: string;
   phoneDigits?: string;
-  whatsapp?: string;
   email?: string;
   nipt?: string;
   address?: string;
@@ -64,7 +63,6 @@ export function applyBusinessMeta(b: BusinessInfo | undefined) {
   if (!b) return;
   if (b.phone) businessRuntime.phone = b.phone;
   if (b.phoneDigits) businessRuntime.phoneDigits = b.phoneDigits;
-  if (b.whatsapp) businessRuntime.whatsapp = b.whatsapp;
   if (b.email) businessRuntime.email = b.email;
   if (b.nipt !== undefined) businessRuntime.nipt = b.nipt;
   if (b.address) businessRuntime.address = b.address;

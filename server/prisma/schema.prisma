@@ -55,12 +55,6 @@ enum DepositStatus {
   FORFEITED
 }
 
-/** Where the booking was agreed — site checkout vs staff-logged WhatsApp deal. */
-enum BookingChannel {
-  ONLINE
-  WHATSAPP
-}
-
 /** Public marketplace listing lifecycle (rental cars + sale ads). */
 enum ListingStatus {
   DRAFT
@@ -92,7 +86,6 @@ model User {
   notifyPaymentEmail   Boolean        @default(true)
   notifyDocumentEmail  Boolean        @default(true)
   businessPhone        String?
-  businessWhatsapp     String?
   businessAddress      String?
   bookingNotifyEmail   String?
   avatarUrl            String?
@@ -210,7 +203,6 @@ model Reservation {
   platformFee    Decimal           @db.Decimal(10, 2) @default(0)
   ownerPayout    Decimal           @db.Decimal(10, 2) @default(0)
   status         ReservationStatus @default(CONFIRMED)
-  channel        BookingChannel    @default(ONLINE)
   cancelReason   String?
   createdAt      DateTime          @default(now())
   updatedAt      DateTime          @updatedAt

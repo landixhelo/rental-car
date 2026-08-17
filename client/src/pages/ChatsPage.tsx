@@ -228,18 +228,6 @@ export default function ChatsPage() {
                       {selected.phone}
                     </a>
                   ) : null}
-                  {selected.phone ? (
-                    <a
-                      href={`https://wa.me/${selected.phone.replace(/[^\d]/g, "")}?text=${encodeURIComponent(
-                        t("chats.replyPrefill", { name: selected.name })
-                      )}`}
-                      target="_blank"
-                      rel="noreferrer"
-                      className="chats-wa"
-                    >
-                      WhatsApp
-                    </a>
-                  ) : null}
                 </footer>
               </>
             ) : (

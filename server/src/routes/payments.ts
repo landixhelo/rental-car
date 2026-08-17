@@ -78,7 +78,6 @@ export async function stripeWebhookHandler(
 router.get("/config", (_req, res) => {
   res.json({
     cardEnabled: stripeEnabled(),
-    whatsapp: env.WHATSAPP_PHONE.replace(/[^\d]/g, ""),
   });
 });
 
