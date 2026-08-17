@@ -6746,6 +6746,7 @@ th { color: var(--text-muted); font-weight: 600; }
     -webkit-overflow-scrolling: touch;
     position: relative;
     z-index: 36;
+    min-width: 0;
   }
 
   .app-shell.is-home .nav-links {
@@ -6821,14 +6822,23 @@ th { color: var(--text-muted); font-weight: 600; }
   }
 
   .nav-menu-logout {
-    position: sticky;
-    bottom: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    box-sizing: border-box;
     margin-top: 8px;
-    color: var(--danger, #e11c49) !important;
-    border-color: color-mix(in srgb, var(--danger, #e11c49) 35%, var(--border)) !important;
+    padding: 12px;
+    border-radius: 12px;
+    border: 1px solid color-mix(in srgb, var(--danger, #e11c49) 35%, var(--border));
+    background: transparent;
+    color: var(--danger, #e11c49);
+    font: inherit;
+    font-size: 0.95rem;
     font-weight: 700;
-    text-align: center !important;
-    justify-content: center !important;
+    cursor: pointer;
   }
   .nav-menu-user-text {
     min-width: 0;
@@ -6865,6 +6875,7 @@ th { color: var(--text-muted); font-weight: 600; }
   .nav-links .link-btn {
     width: 100%;
     max-width: 100%;
+    min-width: 0;
     box-sizing: border-box;
     text-align: left;
     padding: 12px 12px;
@@ -6959,7 +6970,7 @@ th { color: var(--text-muted); font-weight: 600; }
   }
 
   .hero-actions .btn,
-  .btn {
+  main .btn {
     width: 100%;
   }
 

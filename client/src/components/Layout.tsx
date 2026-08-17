@@ -428,7 +428,7 @@ export default function Layout() {
                 ) : null}
                 <button
                   type="button"
-                  className="btn ghost nav-menu-logout"
+                  className="nav-menu-logout"
                   onClick={() => {
                     closeMenus();
                     logout();
