@@ -5547,7 +5547,7 @@ textarea { min-height: 90px; resize: vertical; }
   display: grid;
   gap: 16px;
   margin-top: 18px;
-  padding-bottom: 72px; /* clear WhatsApp FAB on mobile */
+  padding-bottom: 16px;
 }
 .reservation-card {
   display: grid;
@@ -7072,7 +7072,7 @@ th { color: var(--text-muted); font-weight: 600; }
 }
 .fleet-sell-actions {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: 1fr;
   gap: 8px;
 }
 .fleet-sell-actions .btn {

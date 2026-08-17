@@ -46,8 +46,6 @@ export default function ContactPage() {
     }
   }
 
-  const wa = (biz.whatsapp || biz.phoneDigits || "").replace(/[^\d]/g, "");
-
   return (
     <div className="section">
       <Seo
@@ -108,16 +106,6 @@ export default function ContactPage() {
           <button className="btn" type="submit">
             {t("common.send")}
           </button>
-          {wa ? (
-            <a
-              className="whatsapp"
-              href={`https://wa.me/${wa}`}
-              target="_blank"
-              rel="noreferrer"
-            >
-              {t("contact.whatsapp")}
-            </a>
-          ) : null}
         </form>
         <div className="panel contact-details">
           <p>
@@ -130,7 +118,7 @@ export default function ContactPage() {
             <p>
               <strong>{t("auth.phone")}</strong>
               <br />
-              <a href={`tel:${biz.phoneDigits || wa}`}>{biz.phone}</a>
+              <a href={`tel:${biz.phoneDigits || biz.phone}`}>{biz.phone}</a>
             </p>
           ) : null}
           <p>

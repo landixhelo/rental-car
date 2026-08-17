@@ -2,7 +2,6 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { Link, NavLink, Outlet, useLocation } from "react-router-dom";
 import { api } from "../lib/api";
 import Breadcrumbs from "./Breadcrumbs";
-import ChatWidget from "./ChatWidget";
 import BrandLockup from "./BrandLockup";
 import { useAuth } from "../context/AuthContext";
 import { useLocale } from "../context/LocaleContext";
@@ -509,13 +508,6 @@ export default function Layout() {
             <h4>{t("footer.contact")}</h4>
             <div className="footer-links">
               <a href={`tel:+${whatsapp}`}>{t("footer.phone")}</a>
-              <a
-                href={`https://wa.me/${whatsapp}`}
-                target="_blank"
-                rel="noreferrer"
-              >
-                WhatsApp
-              </a>
               <a href={`mailto:${businessRuntime.email || "info@autorent.al"}`}>
                 {businessRuntime.email || "info@autorent.al"}
               </a>
@@ -537,8 +529,6 @@ export default function Layout() {
         </p>
       </footer>
       ) : null}
-
-      {!isOps ? <ChatWidget /> : null}
     </div>
   );
 }
