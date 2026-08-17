@@ -422,6 +422,22 @@ export const api = {
       method: "POST",
       body: formData,
     }),
+  createWhatsAppReservation: (body: {
+    guestName: string;
+    guestPhone: string;
+    guestEmail?: string;
+    carId: string;
+    startDate: string;
+    endDate: string;
+    pickupLocationId: string;
+    returnLocationId: string;
+    notes?: string;
+    totalPrice?: number;
+  }) =>
+    request<{ reservation: unknown }>("/api/reservations/whatsapp", {
+      method: "POST",
+      body: JSON.stringify(body),
+    }),
   myReservations: () =>
     request<{ reservations: any[] }>("/api/reservations/mine"),
   fleetReservations: () =>

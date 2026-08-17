@@ -7,7 +7,12 @@ import {
   cancelReservationSchema,
   idParamSchema,
   reservationSchema,
+  whatsappReservationSchema,
 } from "../validators/schemas.js";
+import {
+  findOrCreateWhatsAppGuest,
+  isPlaceholderGuestEmail,
+} from "../lib/whatsappGuest.js";
 import { EXTRAS, calcDays, getLocation } from "../lib/pricing.js";
 import { sendMail, sendReservationEmails } from "../lib/mail.js";
 import { buildReservationPdf } from "../lib/pdfContract.js";
@@ -128,6 +133,287 @@ router.get("/fleet", requireAuth, requireContractorOrAdmin, async (req, res, nex
     next(err);
   }
 });
+
+router.post(
+  "/whatsapp",
+  requireAuth,
+  requireContractorOrAdmin,
+  validate(whatsappReservationSchema),
+  async (req, res, next) => {
+    try {
+      const {
+        guestName,
+        guestPhone,
+        guestEmail,
+        carId,
+        startDate,
+        endDate,
+        pickupLocationId,
+        returnLocationId,
+        notes,
+        totalPrice: customTotal,
+      } = req.body as {
+        guestName: string;
+        guestPhone: string;
+        guestEmail?: string;
+        carId: string;
+        startDate: string;
+        endDate: string;
+        pickupLocationId: string;
+        returnLocationId: string;
+        notes?: string;
+        totalPrice?: number;
+      };
+
+      const start = parseDateOnly(startDate);
+      const end = parseDateOnly(endDate);
+      const totalDays = calcDays(start, end);
+      if (totalDays <= 0) {
+        throw new AppError("Intervali i datave është i pavlefshëm");
+      }
+
+      const car = await prisma.car.findUnique({
+        where: { id: carId },
+        include: {
+          owner: {
+            select: {
+              id: true,
+              email: true,
+              commissionPercent: true,
+              requireDeposit: true,
+              defaultDepositEur: true,
+              cancellationPolicyText: true,
+            },
+          },
+        },
+      });
+      if (!car) throw new AppError("Car not found", 404);
+      if (car.status === "MAINTENANCE") {
+        throw new AppError("Makina është në mirëmbajtje");
+      }
+      if (
+        req.user!.role === "CONTRACTOR" &&
+        car.ownerId !== req.user!.id
+      ) {
+        throw new AppError("Forbidden", 403);
+      }
+
+      const overlap = await prisma.reservation.findFirst({
+        where: {
+          carId,
+          status: { in: ["PENDING", "CONFIRMED"] },
+          startDate: { lt: end },
+          endDate: { gt: start },
+        },
+      });
+      if (overlap) {
+        throw new AppError(
+          "Makina është e rezervuar për këto data. Zgjidh data të tjera.",
+          409
+        );
+      }
+
+      const guest = await findOrCreateWhatsAppGuest({
+        fullName: guestName,
+        phone: guestPhone,
+        email: guestEmail,
+      });
+
+      const pickup = getLocation(pickupLocationId);
+      const ret = getLocation(returnLocationId);
+      const carSubtotal = totalDays * Number(car.pricePerDay);
+      const locationFees = pickup.fee + ret.fee;
+      const computedTotal = carSubtotal + locationFees;
+      const totalPrice =
+        customTotal != null && Number.isFinite(customTotal)
+          ? Math.round(customTotal * 100) / 100
+          : computedTotal;
+      const commissionPct = Number(car.owner?.commissionPercent ?? 10);
+      const platformFee =
+        car.ownerId && commissionPct > 0
+          ? Math.round(totalPrice * (commissionPct / 100) * 100) / 100
+          : 0;
+      const ownerPayout = car.ownerId
+        ? Math.round((totalPrice - platformFee) * 100) / 100
+        : totalPrice;
+
+      let depositAmount = 0;
+      if (car.owner?.requireDeposit === false) {
+        depositAmount = 0;
+      } else if (
+        car.owner?.defaultDepositEur != null &&
+        Number(car.owner.defaultDepositEur) >= 0
+      ) {
+        depositAmount = Number(car.owner.defaultDepositEur);
+      } else if (env.DEFAULT_DEPOSIT_EUR > 0) {
+        depositAmount = env.DEFAULT_DEPOSIT_EUR;
+      } else if (car.owner?.requireDeposit === true) {
+        depositAmount = Number(car.pricePerDay);
+      } else {
+        depositAmount =
+          env.DEFAULT_DEPOSIT_EUR > 0
+            ? env.DEFAULT_DEPOSIT_EUR
+            : Number(car.pricePerDay);
+      }
+
+      const noteParts = ["[WhatsApp]"];
+      if (notes?.trim()) noteParts.push(notes.trim());
+
+      const created = await prisma.reservation.create({
+        data: {
+          userId: guest.id,
+          carId,
+          startDate: start,
+          endDate: end,
+          totalDays,
+          carSubtotal,
+          extras: [],
+          extrasTotal: 0,
+          pickupLocation: pickup.name,
+          returnLocation: ret.name,
+          locationFees,
+          totalPrice,
+          notes: noteParts.join(" "),
+          paymentMethod: "CASH",
+          paymentStatus: PaymentStatus.PAY_ON_PICKUP,
+          depositAmount,
+          depositStatus: depositAmount > 0 ? "HELD" : "NONE",
+          platformFee,
+          ownerPayout,
+          status: "CONFIRMED",
+          channel: "WHATSAPP",
+        },
+        include: {
+          car: {
+            select: {
+              brand: true,
+              model: true,
+              year: true,
+              imageUrl: true,
+              ownerId: true,
+            },
+          },
+          user: { select: { fullName: true, email: true, phone: true } },
+        },
+      });
+
+      res.status(201).json({
+        reservation: {
+          ...created,
+          carSubtotal: Number(created.carSubtotal),
+          extrasTotal: Number(created.extrasTotal),
+          locationFees: Number(created.locationFees),
+          totalPrice: Number(created.totalPrice),
+          depositAmount: Number(created.depositAmount),
+        },
+      });
+
+      void (async () => {
+        try {
+          const title = "Rezervim WhatsApp u regjistrua";
+          const message = `${created.user.fullName} · ${created.car.brand} ${created.car.model} (${startDate} → ${endDate}). Totali: €${Number(created.totalPrice)}.`;
+
+          await prisma.notification.create({
+            data: {
+              userId: req.user!.id,
+              title,
+              message,
+            },
+          });
+
+          if (created.car.ownerId && created.car.ownerId !== req.user!.id) {
+            await prisma.notification.create({
+              data: {
+                userId: created.car.ownerId,
+                title,
+                message,
+              },
+            });
+          }
+
+          const superAdmins = await prisma.user.findMany({
+            where: { role: "SUPER_ADMIN", isActive: true },
+            select: { id: true },
+          });
+          for (const admin of superAdmins) {
+            if (admin.id === req.user!.id || admin.id === created.car.ownerId) {
+              continue;
+            }
+            await prisma.notification.create({
+              data: { userId: admin.id, title, message },
+            });
+          }
+        } catch (notifyErr) {
+          console.error(
+            "[notify] WhatsApp reservation notification failed:",
+            notifyErr instanceof Error ? notifyErr.message : notifyErr
+          );
+        }
+
+        try {
+          if (isPlaceholderGuestEmail(created.user.email)) {
+            return;
+          }
+          let invoicePdf: Buffer | null = null;
+          try {
+            invoicePdf = await buildReservationPdf({
+              id: created.id,
+              customerName: created.user.fullName,
+              customerEmail: created.user.email,
+              customerPhone: created.user.phone,
+              carLabel: `${created.car.brand} ${created.car.model} (${created.car.year})`,
+              startDate,
+              endDate,
+              totalDays: created.totalDays,
+              pickupLocation: created.pickupLocation,
+              returnLocation: created.returnLocation,
+              paymentMethod: created.paymentMethod,
+              paymentStatus: created.paymentStatus,
+              status: created.status,
+              carSubtotal: Number(created.carSubtotal),
+              extrasTotal: Number(created.extrasTotal),
+              locationFees: Number(created.locationFees),
+              totalPrice: Number(created.totalPrice),
+              depositAmount: Number(created.depositAmount || 0),
+              depositStatus: created.depositStatus,
+              extras: [],
+              createdAt: created.createdAt.toISOString().slice(0, 10),
+            });
+          } catch (pdfErr) {
+            console.error(
+              "[pdf] WhatsApp reservation invoice failed:",
+              pdfErr instanceof Error ? pdfErr.message : pdfErr
+            );
+          }
+          await sendReservationEmails({
+            customerEmail: created.user.email,
+            customerName: created.user.fullName,
+            carLabel: `${created.car.brand} ${created.car.model}`,
+            startDate,
+            endDate,
+            totalPrice: Number(created.totalPrice),
+            paymentMethod: created.paymentMethod,
+            paymentStatus: created.paymentStatus,
+            status: created.status,
+            adminEmail: env.ADMIN_EMAIL || env.BUSINESS_EMAIL,
+            ownerEmail: car.owner?.email,
+            invoicePdf,
+            skipCustomerEmail: false,
+            cancellationPolicyOverride:
+              car.owner?.cancellationPolicyText || null,
+          });
+        } catch (mailErr) {
+          console.error(
+            "[mail] WhatsApp reservation email failed:",
+            mailErr instanceof Error ? mailErr.message : mailErr
+          );
+        }
+      })();
+    } catch (err) {
+      next(err);
+    }
+  }
+);
 
 router.get("/", requireAuth, requireAdmin, async (_req, res, next) => {
   try {
@@ -635,7 +921,10 @@ async function cancelReservationHandler(
 
     void (async () => {
       try {
-        if (await userAllowsEmail(reservation.user.id, "cancel")) {
+        if (
+          !isPlaceholderGuestEmail(reservation.user.email) &&
+          (await userAllowsEmail(reservation.user.id, "cancel"))
+        ) {
           await sendMail({
             to: reservation.user.email,
             subject: "Auto Rental — rezervimi u anulua",

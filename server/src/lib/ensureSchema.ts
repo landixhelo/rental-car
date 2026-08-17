@@ -57,6 +57,17 @@ export async function ensureSchema() {
     `);
 
     await prisma.$executeRawUnsafe(`
+      DO $$ BEGIN
+        CREATE TYPE "BookingChannel" AS ENUM ('ONLINE', 'WHATSAPP');
+      EXCEPTION WHEN duplicate_object THEN NULL;
+      END $$;
+    `);
+    await prisma.$executeRawUnsafe(`
+      ALTER TABLE "Reservation"
+      ADD COLUMN IF NOT EXISTS "channel" "BookingChannel" NOT NULL DEFAULT 'ONLINE'
+    `);
+
+    await prisma.$executeRawUnsafe(`
       CREATE TABLE IF NOT EXISTS "Passkey" (
         "id" TEXT NOT NULL,
         "userId" TEXT NOT NULL,

@@ -4,10 +4,12 @@ import { api } from "../lib/api";
 import CancelReservationModal, {
   type CancelReservationTarget,
 } from "../components/CancelReservationModal";
+import WhatsAppBookingModal from "../components/WhatsAppBookingModal";
 import { consumeFlash } from "../lib/flash";
 import { mediaUrl } from "../lib/mediaUrl";
 import { carPath } from "../lib/carPath";
 import { formatReservationCode, formatShortDate } from "../lib/bookingDraft";
+import { isPlaceholderGuestEmail } from "../lib/guestEmail";
 import { useAuth } from "../context/AuthContext";
 import { useLocale, useT } from "../context/LocaleContext";
 import { useToast } from "../hooks/useToast";
@@ -52,6 +54,7 @@ export default function ReservationsPage() {
   const [cancelTarget, setCancelTarget] =
     useState<CancelReservationTarget | null>(null);
   const [cancelling, setCancelling] = useState(false);
+  const [waOpen, setWaOpen] = useState(false);
   const { show, Toast } = useToast();
   const today = tiraneToday();
 
@@ -265,6 +268,17 @@ export default function ReservationsPage() {
         }}
         onConfirm={confirmCancel}
       />
+      {isFleetManager ? (
+        <WhatsAppBookingModal
+          open={waOpen}
+          onClose={() => setWaOpen(false)}
+          onCreated={async () => {
+            setWaOpen(false);
+            show(t("reservations.whatsAppOk"), 5000);
+            await load().catch(() => {});
+          }}
+        />
+      ) : null}
       {flash ? (
         <div className="flash-success" role="status">
           <strong>{flash.title}</strong>
@@ -518,16 +532,31 @@ export default function ReservationsPage() {
             </>
           )}
         </>
-      ) : loading ? (
-        <p className="muted">{t("common.loading")}</p>
-      ) : !fleet.length ? (
-        <div className="res-empty">
-          <p>{t("reservations.empty")}</p>
-          <Link className="btn" to="/contractor">
-            {t("nav.fleet")}
-          </Link>
-        </div>
       ) : (
+        <>
+          <div className="res-hero">
+            <div>
+              <h1>{t("reservations.fleet")}</h1>
+              <p>{t("reservations.whatsAppHeroSub")}</p>
+            </div>
+            <button
+              type="button"
+              className="btn res-new"
+              onClick={() => setWaOpen(true)}
+            >
+              + {t("reservations.addWhatsApp")}
+            </button>
+          </div>
+          {loading ? (
+            <p className="muted">{t("common.loading")}</p>
+          ) : !fleet.length ? (
+            <div className="res-empty">
+              <p>{t("reservations.empty")}</p>
+              <Link className="btn" to="/contractor">
+                {t("nav.fleet")}
+              </Link>
+            </div>
+          ) : (
         <div className="reservation-list">
           {fleet.map((r) => (
             <article
@@ -546,13 +575,20 @@ export default function ReservationsPage() {
                   <h3>
                     {r.car?.brand} {r.car?.model}
                   </h3>
-                  <span className={`badge status-${r.status}`}>
-                    {statusText(r.status)}
-                  </span>
+                  <div className="reservation-card-badges">
+                    {r.channel === "WHATSAPP" ? (
+                      <span className="badge channel-WHATSAPP">
+                        {t("reservations.whatsAppBadge")}
+                      </span>
+                    ) : null}
+                    <span className={`badge status-${r.status}`}>
+                      {statusText(r.status)}
+                    </span>
+                  </div>
                 </div>
                 <p className="reservation-customer">
                   <strong>{r.user?.fullName}</strong>
-                  {r.user?.email ? (
+                  {r.user?.email && !isPlaceholderGuestEmail(r.user.email) ? (
                     <span className="muted"> · {r.user.email}</span>
                   ) : null}
                   {r.user?.phone ? (
@@ -674,6 +710,8 @@ export default function ReservationsPage() {
             </article>
           ))}
         </div>
+          )}
+        </>
       )}
     </div>
   );

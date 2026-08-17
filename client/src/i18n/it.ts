@@ -725,6 +725,22 @@ export const it: Dict = {
     DEP_HELD: "Trattenuto",
     DEP_RETURNED: "Restituito",
     DEP_FORFEITED: "Trattenuto definitivo",
+    addWhatsApp: "Registra prenotazione WhatsApp",
+    whatsAppTitle: "Prenotazione da WhatsApp",
+    whatsAppSub:
+      "Quando il cliente accetta su WhatsApp, registrala qui: l’auto viene bloccata e la prenotazione compare nella flotta.",
+    whatsAppHeroSub:
+      "Registra qui gli accordi WhatsApp, così l’auto non viene prenotata due volte.",
+    whatsAppBadge: "WhatsApp",
+    whatsAppOk: "Prenotazione WhatsApp salvata",
+    whatsAppSave: "Salva prenotazione",
+    whatsAppPriceHint: "lascia vuoto per la tariffa giornaliera",
+    whatsAppNoCars: "Aggiungi un’auto alla flotta per registrare prenotazioni.",
+    whatsAppNeedContact: "Inserisci nome e numero WhatsApp del cliente.",
+    whatsAppEmailOptional: "Opzionale",
+    channel: "Canale",
+    channelOnline: "Online",
+    channelWhatsApp: "WhatsApp",
   },
   details: {
     seats: "Posti",

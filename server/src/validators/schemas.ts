@@ -155,6 +155,30 @@ export const reservationSchema = z.object({
   }),
 });
 
+export const whatsappReservationSchema = z.object({
+  body: z.object({
+    guestName: z.string().trim().min(2).max(100),
+    guestPhone: z.string().trim().min(6).max(30),
+    guestEmail: z.preprocess(
+      (v) => (typeof v === "string" && v.trim() === "" ? undefined : v),
+      z.string().trim().email().max(200).optional()
+    ),
+    carId: z.string().cuid(),
+    startDate: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
+    endDate: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
+    pickupLocationId: z.string().min(1),
+    returnLocationId: z.string().min(1),
+    notes: z.preprocess(
+      (v) => (typeof v === "string" && v.trim() === "" ? undefined : v),
+      z.string().trim().max(500).optional()
+    ),
+    totalPrice: z.preprocess(
+      (v) => (v === "" || v == null ? undefined : v),
+      z.coerce.number().positive().max(100_000).optional()
+    ),
+  }),
+});
+
 export const reviewSchema = z.object({
   body: z.object({
     carId: z.string().cuid(),

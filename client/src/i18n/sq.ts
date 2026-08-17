@@ -724,6 +724,22 @@ export const sq = {
     DEP_HELD: "E mbajtur",
     DEP_RETURNED: "E kthyer",
     DEP_FORFEITED: "E mbajtur përfundimisht",
+    addWhatsApp: "Regjistro rezervim WhatsApp",
+    whatsAppTitle: "Rezervim nga WhatsApp",
+    whatsAppSub:
+      "Kur klienti bie dakord në WhatsApp, regjistroje këtu. Makina bllokohet dhe rezervimi shfaqet te flota.",
+    whatsAppHeroSub:
+      "Regjistro këtu rezervimet e rëna dakord në WhatsApp, që makina të mos merret dy herë.",
+    whatsAppBadge: "WhatsApp",
+    whatsAppOk: "Rezervimi nga WhatsApp u ruajt",
+    whatsAppSave: "Ruaj rezervimin",
+    whatsAppPriceHint: "lëre bosh për tarifën ditore",
+    whatsAppNoCars: "Shto një makinë në flotë për të regjistruar rezervime.",
+    whatsAppNeedContact: "Shkruaj emrin dhe numrin e WhatsApp.",
+    whatsAppEmailOptional: "Opsionale",
+    channel: "Kanali",
+    channelOnline: "Online",
+    channelWhatsApp: "WhatsApp",
   },
   details: {
     seats: "Vende",

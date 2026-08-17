@@ -723,6 +723,22 @@ export const en: Dict = {
     DEP_HELD: "Held",
     DEP_RETURNED: "Returned",
     DEP_FORFEITED: "Forfeited",
+    addWhatsApp: "Log WhatsApp booking",
+    whatsAppTitle: "WhatsApp booking",
+    whatsAppSub:
+      "When a customer agrees on WhatsApp, log it here so the car is blocked and the booking appears in the fleet list.",
+    whatsAppHeroSub:
+      "Log deals agreed on WhatsApp here so the same car is not booked twice.",
+    whatsAppBadge: "WhatsApp",
+    whatsAppOk: "WhatsApp booking saved",
+    whatsAppSave: "Save booking",
+    whatsAppPriceHint: "leave empty for the daily rate",
+    whatsAppNoCars: "Add a car to the fleet before logging bookings.",
+    whatsAppNeedContact: "Enter the customer name and WhatsApp number.",
+    whatsAppEmailOptional: "Optional",
+    channel: "Channel",
+    channelOnline: "Online",
+    channelWhatsApp: "WhatsApp",
   },
   details: {
     seats: "Seats",

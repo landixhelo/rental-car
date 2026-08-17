@@ -5595,6 +5595,39 @@ textarea { min-height: 90px; resize: vertical; }
   font-size: 1.15rem;
   line-height: 1.25;
 }
+.reservation-card-badges {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 6px;
+}
+.badge.channel-WHATSAPP {
+  background: rgba(37, 211, 102, 0.16);
+  color: #128c7e;
+}
+.wa-booking-modal {
+  width: min(640px, 100%);
+}
+.wa-booking-modal .muted {
+  margin: 6px 0 0;
+  font-size: 0.88rem;
+  font-weight: 400;
+}
+.wa-booking-form {
+  display: grid;
+  gap: 12px;
+}
+.wa-booking-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+@media (max-width: 560px) {
+  .wa-booking-row {
+    grid-template-columns: 1fr;
+  }
+}
 .reservation-card-body .company-chip {
   margin: 0;
 }

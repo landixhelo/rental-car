@@ -16,6 +16,7 @@ import {
   transmissionLabel,
 } from "../lib/labels";
 import { mediaUrl } from "../lib/mediaUrl";
+import { isPlaceholderGuestEmail } from "../lib/guestEmail";
 
 const STATUSES = [
   "PENDING",
@@ -197,9 +198,16 @@ export default function ReservationDetailPage() {
         <Link to="/reservations" className="rental-detail-back">
           ← {t("reservations.backToList")}
         </Link>
-        <span className={`badge status-${r.status}`}>
-          {t(`status.${r.status}`)}
-        </span>
+        <div className="reservation-card-badges">
+          {r.channel === "WHATSAPP" ? (
+            <span className="badge channel-WHATSAPP">
+              {t("reservations.whatsAppBadge")}
+            </span>
+          ) : null}
+          <span className={`badge status-${r.status}`}>
+            {t(`status.${r.status}`)}
+          </span>
+        </div>
       </div>
 
       <header className="rental-detail-hero">
@@ -264,6 +272,14 @@ export default function ReservationDetailPage() {
                 {formatShortDate(String(r.createdAt).slice(0, 10), locale)}
               </dd>
             </div>
+            <div>
+              <dt>{t("reservations.channel")}</dt>
+              <dd>
+                {r.channel === "WHATSAPP"
+                  ? t("reservations.channelWhatsApp")
+                  : t("reservations.channelOnline")}
+              </dd>
+            </div>
           </dl>
           {r.notes ? (
             <div className="rental-detail-notes">
@@ -289,7 +305,7 @@ export default function ReservationDetailPage() {
             <div>
               <dt>{t("checkout.email")}</dt>
               <dd>
-                {r.user?.email ? (
+                {r.user?.email && !isPlaceholderGuestEmail(r.user.email) ? (
                   <a href={`mailto:${r.user.email}`}>{r.user.email}</a>
                 ) : (
                   "—"
