@@ -1,9 +1,12 @@
 import { createContext, useContext, useEffect, useMemo, useState } from "react";
 import { Link, NavLink, Outlet, useLocation } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
-import { useT } from "../context/LocaleContext";
+import { useLocale } from "../context/LocaleContext";
 import { useUnreadNotifications } from "../context/UnreadContext";
+import { useBreadcrumbExtra } from "../context/BreadcrumbContext";
+import { pageCrumbs } from "../lib/pageCrumbs";
 import BrandLockup from "./BrandLockup";
+import Breadcrumbs from "./Breadcrumbs";
 
 type OpsSearchCtx = {
   query: string;
@@ -101,11 +104,13 @@ export function isOpsPath(pathname: string) {
 
 export default function OpsLayout() {
   const { user, logout } = useAuth();
-  const t = useT();
+  const { t, locale } = useLocale();
   const location = useLocation();
   const { count, label } = useUnreadNotifications();
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [query, setQuery] = useState("");
+  const crumbs =
+    useBreadcrumbExtra() ?? pageCrumbs(location.pathname, t, locale);
 
   useEffect(() => {
     setSidebarOpen(false);
@@ -361,6 +366,12 @@ export default function OpsLayout() {
             </Link>
           </div>
         </header>
+
+          {crumbs ? (
+            <div className="breadcrumbs-bar">
+              <Breadcrumbs items={crumbs} />
+            </div>
+          ) : null}
 
           <div className="ops-content">
             <Outlet />

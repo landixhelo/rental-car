@@ -1,7 +1,6 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Link, NavLink, Outlet, useLocation } from "react-router-dom";
 import { api } from "../lib/api";
-import Breadcrumbs from "./Breadcrumbs";
 import BrandLockup from "./BrandLockup";
 import { useAuth } from "../context/AuthContext";
 import { useLocale } from "../context/LocaleContext";
@@ -9,6 +8,9 @@ import { useUnreadNotifications } from "../context/UnreadContext";
 import { applyBusinessMeta, businessRuntime } from "../seo/site";
 import type { Locale } from "../i18n";
 import { isOpsPath } from "./OpsLayout";
+import Breadcrumbs from "./Breadcrumbs";
+import { useBreadcrumbExtra } from "../context/BreadcrumbContext";
+import { pageCrumbs } from "../lib/pageCrumbs";
 
 export default function Layout() {
   const { user, logout } = useAuth();
@@ -90,25 +92,8 @@ export default function Layout() {
     "/chats",
   ].some((p) => location.pathname.startsWith(p));
 
-  const staffCrumb = useMemo(() => {
-    const path = location.pathname;
-    if (path === "/admin" || path.startsWith("/admin/")) {
-      return { label: t("nav.admin") };
-    }
-    if (path === "/super-admin" || path.startsWith("/super-admin/")) {
-      return { label: t("nav.superAdmin") };
-    }
-    if (path === "/dashboard" || path.startsWith("/dashboard/")) {
-      return { label: t("nav.dashboard") };
-    }
-    if (path === "/chats" || path.startsWith("/chats/")) {
-      return { label: t("nav.chats") };
-    }
-    if (path === "/contractor" || path.startsWith("/contractor/")) {
-      return { label: t("nav.fleet") };
-    }
-    return null;
-  }, [location.pathname, t]);
+  const crumbs =
+    useBreadcrumbExtra() ?? pageCrumbs(location.pathname, t, locale);
 
   const langSwitch = (
     <div className="lang-switch" role="group" aria-label={t("nav.language")}>
@@ -462,9 +447,9 @@ export default function Layout() {
         />
       ) : null}
 
-      {staffCrumb ? (
+      {crumbs ? (
         <div className="breadcrumbs-bar">
-          <Breadcrumbs items={[staffCrumb]} />
+          <Breadcrumbs items={crumbs} />
         </div>
       ) : null}
         </>

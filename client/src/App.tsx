@@ -2,6 +2,7 @@ import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 import { AuthProvider } from "./context/AuthContext";
 import { ThemeProvider } from "./context/ThemeContext";
 import { LocaleProvider } from "./context/LocaleContext";
+import { BreadcrumbProvider } from "./context/BreadcrumbContext";
 import { ToastProvider } from "./context/ToastContext";
 import { UnreadProvider } from "./context/UnreadContext";
 import Layout from "./components/Layout";
@@ -45,6 +46,7 @@ export default function App() {
         <AuthProvider>
           <UnreadProvider>
           <BrowserRouter>
+            <BreadcrumbProvider>
             <ToastProvider>
               <Analytics />
               <CookieConsent />
@@ -220,6 +222,7 @@ export default function App() {
                 </Route>
               </Routes>
             </ToastProvider>
+            </BreadcrumbProvider>
           </BrowserRouter>
           </UnreadProvider>
         </AuthProvider>

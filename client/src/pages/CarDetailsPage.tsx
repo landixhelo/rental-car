@@ -1,9 +1,10 @@
 import { type FormEvent, useEffect, useMemo, useState } from "react";
-import { Link, useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { api, type Car } from "../lib/api";
 import { useAuth } from "../context/AuthContext";
 import { useLocale, useT } from "../context/LocaleContext";
 import { useToast } from "../hooks/useToast";
+import { usePageBreadcrumbs } from "../context/BreadcrumbContext";
 import Seo from "../seo/Seo";
 import { breadcrumbJsonLd, carProductJsonLd } from "../seo/jsonLd";
 import { SITE } from "../seo/site";
@@ -40,6 +41,15 @@ export default function CarDetailsPage() {
   const [comment, setComment] = useState("");
   const [activeImage, setActiveImage] = useState(0);
   const [showMore, setShowMore] = useState(false);
+
+  usePageBreadcrumbs(
+    car
+      ? [
+          { label: t("details.crumbFleet"), to: "/cars" },
+          { label: `${car.brand} ${car.model}` },
+        ]
+      : null
+  );
 
   useEffect(() => {
     if (!id) return;
@@ -269,14 +279,6 @@ export default function CarDetailsPage() {
         ]}
       />
       {Toast}
-
-      <nav className="detail-crumbs" aria-label="Breadcrumb">
-        <Link to="/">{t("details.crumbHome")}</Link>
-        <span aria-hidden>›</span>
-        <Link to="/cars">{t("details.crumbFleet")}</Link>
-        <span aria-hidden>›</span>
-        <span>{carName}</span>
-      </nav>
 
       <div className="detail-layout">
         <div className="detail-main">
