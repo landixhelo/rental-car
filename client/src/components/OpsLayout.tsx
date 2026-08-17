@@ -7,6 +7,7 @@ import { useBreadcrumbExtra } from "../context/BreadcrumbContext";
 import { pageCrumbs } from "../lib/pageCrumbs";
 import BrandLockup from "./BrandLockup";
 import Breadcrumbs from "./Breadcrumbs";
+import { StaffPushBanner } from "./StaffPush";
 
 type OpsSearchCtx = {
   query: string;
@@ -374,6 +375,7 @@ export default function OpsLayout() {
           ) : null}
 
           <div className="ops-content">
+            <StaffPushBanner />
             <Outlet />
           </div>
         </div>

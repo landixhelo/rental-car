@@ -56,6 +56,13 @@ const envSchema = z.object({
     emptyToUndef,
     z.string().optional().default("Auto Rental")
   ),
+  /** Web Push VAPID keys (npx web-push generate-vapid-keys). */
+  VAPID_PUBLIC_KEY: z.preprocess(emptyToUndef, z.string().optional()),
+  VAPID_PRIVATE_KEY: z.preprocess(emptyToUndef, z.string().optional()),
+  VAPID_SUBJECT: z.preprocess(
+    emptyToUndef,
+    z.string().optional().default("mailto:devbyland@gmail.com")
+  ),
 });
 
 const parsed = envSchema.safeParse(process.env);

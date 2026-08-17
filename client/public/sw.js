@@ -1,5 +1,5 @@
 /* Auto Rental — Via Egnatia PWA */
-const CACHE = "via-egnatia-pwa-v1";
+const CACHE = "via-egnatia-pwa-v2";
 const PRECACHE = [
   "/",
   "/index.html",
@@ -65,5 +65,56 @@ self.addEventListener("fetch", (event) => {
         .catch(() => cached);
       return cached || fetched;
     })
+  );
+});
+
+self.addEventListener("push", (event) => {
+  let data = {
+    title: "Auto Rental",
+    body: "",
+    url: "/reservations",
+  };
+  try {
+    if (event.data) {
+      data = { ...data, ...event.data.json() };
+    }
+  } catch {
+    try {
+      const text = event.data && event.data.text();
+      if (text) data.body = text;
+    } catch {
+      // ignore
+    }
+  }
+
+  event.waitUntil(
+    self.registration.showNotification(data.title, {
+      body: data.body,
+      icon: "/pwa/icon-192.png",
+      badge: "/pwa/icon-192.png",
+      data: { url: data.url || "/reservations" },
+    })
+  );
+});
+
+self.addEventListener("notificationclick", (event) => {
+  event.notification.close();
+  const path =
+    (event.notification.data && event.notification.data.url) || "/reservations";
+  const dest = new URL(path, self.location.origin).href;
+
+  event.waitUntil(
+    self.clients
+      .matchAll({ type: "window", includeUncontrolled: true })
+      .then((clientList) => {
+        for (const client of clientList) {
+          if ("focus" in client) {
+            client.focus();
+            if ("navigate" in client) client.navigate(dest);
+            return;
+          }
+        }
+        if (self.clients.openWindow) return self.clients.openWindow(dest);
+      })
   );
 });
