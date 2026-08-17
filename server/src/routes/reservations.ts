@@ -15,6 +15,7 @@ import { createCheckoutSession, stripeEnabled } from "../lib/stripePay.js";
 import { assertCustomerCanCancel } from "../lib/cancellation.js";
 import { cancellationPolicyText } from "../lib/cancellation.js";
 import { fleetNotifyEmail, userAllowsEmail } from "../lib/notifyPrefs.js";
+import { notifyStaffNewReservation } from "../lib/staffNotify.js";
 import { env } from "../config/env.js";
 import { z } from "zod";
 import { validate } from "../middleware/validate.js";
@@ -452,32 +453,15 @@ router.post(
             },
           });
 
-          if (created.car.ownerId && created.car.ownerId !== req.user!.id) {
-            await prisma.notification.create({
-              data: {
-                userId: created.car.ownerId,
-                title: "Rezervim i ri nga klienti",
-                message: `${created.user.fullName} rezervoi ${created.car.brand} ${created.car.model} (${startDate} → ${endDate}). Totali: €${Number(created.totalPrice)}.`,
-              },
-            });
-          }
-
-          const superAdmins = await prisma.user.findMany({
-            where: { role: "SUPER_ADMIN", isActive: true },
-            select: { id: true },
+          await notifyStaffNewReservation({
+            customerId: req.user!.id,
+            customerName: created.user.fullName,
+            ownerId: created.car.ownerId,
+            carLabel: `${created.car.brand} ${created.car.model}`,
+            startDate,
+            endDate,
+            totalPrice: Number(created.totalPrice),
           });
-          for (const admin of superAdmins) {
-            if (admin.id === req.user!.id || admin.id === created.car.ownerId) {
-              continue;
-            }
-            await prisma.notification.create({
-              data: {
-                userId: admin.id,
-                title: "Rezervim i ri",
-                message: `${created.user.fullName} rezervoi ${created.car.brand} ${created.car.model} (${startDate} → ${endDate}). Totali: €${Number(created.totalPrice)}.`,
-              },
-            });
-          }
         } catch (notifyErr) {
           console.error(
             "[notify] in-app notification failed after reservation:",

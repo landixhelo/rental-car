@@ -51,6 +51,12 @@ SMTP_FROM="AutoRent <devbyland@gmail.com>"
 # Stripe (opsionale — pa këto, opsioni CARD fshihet nga UI)
 STRIPE_SECRET_KEY=sk_live_...
 STRIPE_WEBHOOK_SECRET=whsec_...
+
+# Njoftime push në telefon (admin + kontraktor)
+# Gjenero: cd server && npx web-push generate-vapid-keys
+VAPID_PUBLIC_KEY=
+VAPID_PRIVATE_KEY=
+VAPID_SUBJECT=mailto:devbyland@gmail.com
 ```
 
 ### Frontend (Vercel) — analytics opsionale

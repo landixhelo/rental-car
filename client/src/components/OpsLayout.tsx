@@ -4,6 +4,7 @@ import { useAuth } from "../context/AuthContext";
 import { useT } from "../context/LocaleContext";
 import { useUnreadNotifications } from "../context/UnreadContext";
 import BrandLockup from "./BrandLockup";
+import { StaffPushBanner } from "./StaffPush";
 
 type OpsSearchCtx = {
   query: string;
@@ -363,6 +364,7 @@ export default function OpsLayout() {
         </header>
 
           <div className="ops-content">
+            <StaffPushBanner />
             <Outlet />
           </div>
         </div>

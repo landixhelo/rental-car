@@ -2,8 +2,9 @@ import { type FormEvent, useEffect, useMemo, useState } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 import { api, type BusinessHourRow, type User } from "../lib/api";
 import { useAuth } from "../context/AuthContext";
-import { useLocale, useT } from "../context/LocaleContext";
 import { useUnreadNotifications } from "../context/UnreadContext";
+import { useLocale, useT } from "../context/LocaleContext";
+import { StaffPushCard } from "../components/StaffPush";
 import { useToast } from "../hooks/useToast";
 import { registerPasskey, supportsPasskeys } from "../lib/passkeys";
 import type { Locale } from "../i18n";
@@ -951,6 +952,7 @@ export default function ProfilePage() {
 
           {tab === "notifications" ? (
             <form className="settings-panel" onSubmit={saveNotifications}>
+              <StaffPushCard />
               <div className="settings-card">
                 <h2>{t("profile.notifySection")}</h2>
                 <p className="muted">{t("profile.notifyHint")}</p>

@@ -1111,6 +1111,40 @@ main { flex: 1; width: 100%; }
 .ops-content {
   padding: 20px 22px 32px;
 }
+.push-banner {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px 16px;
+  margin: 0 0 16px;
+  padding: 14px 16px;
+  border: 1px solid var(--ops-line, var(--border));
+  border-radius: 14px;
+  background: #fff;
+}
+.push-banner p {
+  margin: 4px 0 0;
+  color: #667085;
+  font-size: 0.9rem;
+}
+.push-banner-actions {
+  display: flex;
+  gap: 8px;
+  flex-shrink: 0;
+}
+.push-card-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-top: 8px;
+}
+.push-on {
+  margin: 0;
+  font-weight: 600;
+  color: var(--success-text, #067647);
+}
 .ops-page {
   color: #121212;
 }

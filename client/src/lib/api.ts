@@ -287,6 +287,23 @@ export const api = {
     request<{ ok: boolean }>("/api/auth/notifications/read", {
       method: "PATCH",
     }),
+  pushVapidKey: () =>
+    request<{ enabled: boolean; key: string | null }>(
+      "/api/push/vapid-public-key"
+    ),
+  pushSubscribe: (body: {
+    endpoint: string;
+    keys: { p256dh: string; auth: string };
+  }) =>
+    request<{ ok: boolean }>("/api/push/subscribe", {
+      method: "POST",
+      body: JSON.stringify(body),
+    }),
+  pushUnsubscribe: (endpoint: string) =>
+    request<{ ok: boolean }>("/api/push/unsubscribe", {
+      method: "POST",
+      body: JSON.stringify({ endpoint }),
+    }),
   publicReviews: () =>
     request<{
       average: number;
