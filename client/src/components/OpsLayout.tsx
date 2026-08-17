@@ -63,6 +63,7 @@ const ICONS = {
   heart:
     "M20.8 5.6a5 5 0 0 0-7.1 0L12 7.3l-1.7-1.7a5 5 0 0 0-7.1 7.1l1.7 1.7L12 21l7.1-7.1 1.7-1.7a5 5 0 0 0 0-7.1z",
   menu: "M4 6h16M4 12h16M4 18h16",
+  logout: "M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9",
   admin:
     "M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z",
 };
@@ -326,6 +327,14 @@ export default function OpsLayout() {
             </label>
 
             <div className="ops-top-actions">
+              <button
+                type="button"
+                className="ops-logout-top"
+                onClick={() => logout()}
+              >
+                <Icon path={ICONS.logout} size={16} />
+                {t("nav.logout")}
+              </button>
               <Link
                 to="/profile?tab=notifications"
                 className="ops-icon-btn"
@@ -340,12 +349,12 @@ export default function OpsLayout() {
                   <span className="ops-icon-badge">{label}</span>
                 ) : null}
               </Link>
-              <Link to="/faq" className="ops-icon-btn" aria-label={t("nav.faq")}>
+              <Link to="/faq" className="ops-icon-btn ops-icon-optional" aria-label={t("nav.faq")}>
                 <Icon path={ICONS.help} size={18} />
               </Link>
             <Link
               to="/cars"
-              className="ops-icon-btn"
+              className="ops-icon-btn ops-icon-optional"
               aria-label={t("nav.cars")}
             >
               <Icon path={ICONS.apps} size={18} />

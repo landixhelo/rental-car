@@ -341,6 +341,16 @@ export default function Layout() {
                   <strong>{user.fullName}</strong>
                   {user.email ? <span>{user.email}</span> : null}
                 </div>
+                <button
+                  type="button"
+                  className="nav-menu-logout-inline"
+                  onClick={() => {
+                    closeMenus();
+                    logout();
+                  }}
+                >
+                  {t("nav.logout")}
+                </button>
               </div>
             ) : null}
 
@@ -418,7 +428,7 @@ export default function Layout() {
                 ) : null}
                 <button
                   type="button"
-                  className="link-btn nav-menu-logout"
+                  className="btn ghost nav-menu-logout"
                   onClick={() => {
                     closeMenus();
                     logout();
