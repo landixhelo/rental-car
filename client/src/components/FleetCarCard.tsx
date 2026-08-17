@@ -2,8 +2,7 @@ import { Link } from "react-router-dom";
 import type { Car } from "../lib/api";
 import { mediaUrl } from "../lib/mediaUrl";
 import { carPath } from "../lib/carPath";
-import { carWhatsappText, whatsappHref } from "../lib/whatsapp";
-import { useLocale, useT } from "../context/LocaleContext";
+import { useT } from "../context/LocaleContext";
 
 type Props = {
   car: Car;
@@ -12,8 +11,6 @@ type Props = {
 
 export default function FleetCarCard({ car, onToggleFavorite }: Props) {
   const t = useT();
-  const { locale } = useLocale();
-  const wa = whatsappHref(carWhatsappText(car, locale));
 
   function statusLabel() {
     if (car.status === "RESERVED") return t("status.RESERVED");
@@ -95,14 +92,6 @@ export default function FleetCarCard({ car, onToggleFavorite }: Props) {
           <Link to={carPath(car)} className="btn">
             {t("cars.bookNow")}
           </Link>
-          <a
-            className="btn btn-wa"
-            href={wa}
-            target="_blank"
-            rel="noreferrer"
-          >
-            {t("cars.checkWhatsapp")}
-          </a>
         </div>
       </div>
     </article>

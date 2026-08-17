@@ -6,7 +6,6 @@ import { useLocale, useT } from "../context/LocaleContext";
 import { useToast } from "../hooks/useToast";
 import { addDays, clampDate, tiraneToday } from "../lib/dates";
 import { RENTAL_LOCATIONS } from "../lib/rentalLocations";
-import { whatsappHref } from "../lib/whatsapp";
 import FleetCarCard from "../components/FleetCarCard";
 import Seo from "../seo/Seo";
 import { SITE } from "../seo/site";
@@ -45,7 +44,6 @@ export default function HomePage() {
   const [reviewAvg, setReviewAvg] = useState(4.9);
   const [reviewCount, setReviewCount] = useState(0);
   const today = tiraneToday();
-  const wa = whatsappHref(t("chat.waPrefill"));
 
   const [search, setSearch] = useState(() => ({
     startDate: today,
@@ -179,9 +177,9 @@ export default function HomePage() {
             <Link to="/cars" className="btn">
               {t("home.explore")}
             </Link>
-            <a className="btn btn-wa" href={wa} target="_blank" rel="noreferrer">
-              {t("home.ctaWhatsapp")}
-            </a>
+            <Link to="/contact" className="btn ghost">
+              {t("nav.contact")}
+            </Link>
           </div>
         </div>
         <a className="hero-scroll" href="#fleet" aria-label={t("home.scroll")}>
@@ -425,9 +423,9 @@ export default function HomePage() {
             <Link to="/cars" className="btn">
               {t("home.finalCta")}
             </Link>
-            <a className="btn btn-wa" href={wa} target="_blank" rel="noreferrer">
-              {t("home.ctaWhatsapp")}
-            </a>
+            <Link to="/contact" className="btn ghost">
+              {t("nav.contact")}
+            </Link>
           </div>
         </div>
       </section>

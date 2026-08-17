@@ -33,11 +33,11 @@ export const RENTAL_LOCATIONS: RentalLocation[] = [
         h1: "Qira makinash në Tiranë – Via Egnatia",
         title: "Qira makinash Tiranë | Auto Rental — Via Egnatia",
         description:
-          "Qira makinash në Tiranë me marrje në qytet ose dërgesë. SUV, sedan dhe makinë automatike. Çmime nga euro/ditë, rezervim online ose WhatsApp.",
+          "Qira makinash në Tiranë me marrje në qytet ose dërgesë. SUV, sedan dhe makinë automatike. Çmime nga euro/ditë, rezervim online.",
         intro:
           "Auto Rental — Via Egnatia ofron qira makinash në Tiranë për turistë, biznes dhe udhëtime në gjithë Shqipërinë. Zgjidh makinën, datat dhe merr çelësat në qytet — ose kërko dërgesë në adresën tënde.",
         pickup:
-          "Marrja bëhet në Tiranë sipas orarit të biznesit. Koordinatat e sakta i konfirmojmë në WhatsApp pas rezervimit.",
+          "Marrja bëhet në Tiranë sipas orarit të biznesit. Koordinatat e sakta i konfirmojmë pas rezervimit.",
         delivery:
           "Dërgesë në hotel, zyrë ose adresë në Tiranë me njoftim paraprak. Dërgesë edhe në Aeroportin e Tiranës.",
         keywords:
@@ -47,11 +47,11 @@ export const RENTAL_LOCATIONS: RentalLocation[] = [
         h1: "Car Rental in Tirana – Via Egnatia",
         title: "Car Rental Tirana | Auto Rental — Via Egnatia",
         description:
-          "Car rental in Tirana with city pickup or delivery. SUVs, sedans and automatic cars. From €/day. Book online or on WhatsApp.",
+          "Car rental in Tirana with city pickup or delivery. SUVs, sedans and automatic cars. From €/day. Book online.",
         intro:
           "Auto Rental — Via Egnatia offers car rental in Tirana for visitors, business trips and travel across Albania. Choose your car, set the dates, and pick up in the city — or request delivery to your address.",
         pickup:
-          "Pickup is in Tirana during business hours. Exact meeting point is confirmed on WhatsApp after you book.",
+          "Pickup is in Tirana during business hours. Exact meeting point is confirmed after you book.",
         delivery:
           "Hotel, office or address delivery in Tirana with notice. We also deliver to Tirana Airport.",
         keywords:
@@ -61,11 +61,11 @@ export const RENTAL_LOCATIONS: RentalLocation[] = [
         h1: "Noleggio auto a Tirana – Via Egnatia",
         title: "Noleggio auto Tirana | Auto Rental — Via Egnatia",
         description:
-          "Noleggio auto a Tirana con ritiro in città o consegna. SUV, berline e automatiche. Da €/giorno. Prenota online o su WhatsApp.",
+          "Noleggio auto a Tirana con ritiro in città o consegna. SUV, berline e automatiche. Da €/giorno. Prenota online.",
         intro:
           "Auto Rental — Via Egnatia offre noleggio auto a Tirana per turisti, lavoro e viaggi in Albania. Scegli l’auto, le date e ritira in città — oppure richiedi la consegna.",
         pickup:
-          "Il ritiro è a Tirana negli orari di apertura. Il punto esatto si conferma su WhatsApp dopo la prenotazione.",
+          "Il ritiro è a Tirana negli orari di apertura. Il punto esatto si conferma dopo la prenotazione.",
         delivery:
           "Consegna in hotel, ufficio o indirizzo a Tirana. Consegniamo anche all’aeroporto di Tirana.",
         keywords:
@@ -85,11 +85,11 @@ export const RENTAL_LOCATIONS: RentalLocation[] = [
         h1: "Qira makinash në Durrës – Via Egnatia",
         title: "Qira makinash Durrës | Auto Rental — Via Egnatia",
         description:
-          "Qira makinash në Durrës — porti, plazhi dhe nisja e Via Egnatia. Marrje në qytet ose dërgesë. Rezervo online ose në WhatsApp.",
+          "Qira makinash në Durrës — porti, plazhi dhe nisja e Via Egnatia. Marrje në qytet ose dërgesë. Rezervo online.",
         intro:
           "Durrësi është fillimi i rrugës së lashtë Via Egnatia. Këtu ofrojmë qira makinash për plazh, port dhe udhëtime drejt Tiranës, Vlorës ose jugut. Flota është e njëjtë: SUV, sedan dhe automatike.",
         pickup:
-          "Marrje në Durrës (qytet / zonë portuale sipas dakordësisë). Konfirmohet në WhatsApp.",
+          "Marrje në Durrës (qytet / zonë portuale sipas dakordësisë). Konfirmohet pas rezervimit.",
         delivery:
           "Dërgesë në hotel ose adresë në Durrës. Mund të kthesh makinën edhe në Tiranë ose aeroport me njoftim.",
         keywords:
@@ -99,11 +99,11 @@ export const RENTAL_LOCATIONS: RentalLocation[] = [
         h1: "Car Rental in Durrës – Via Egnatia",
         title: "Car Rental Durrës | Auto Rental — Via Egnatia",
         description:
-          "Car rental in Durrës — port, beach and the start of Via Egnatia. City pickup or delivery. Book online or on WhatsApp.",
+          "Car rental in Durrës — port, beach and the start of Via Egnatia. City pickup or delivery. Book online.",
         intro:
           "Durrës is where the ancient Via Egnatia began. Rent a car here for the coast, the port, or trips to Tirana, Vlorë and the south. Same fleet: SUVs, sedans and automatics.",
         pickup:
-          "Pickup in Durrës (city / port area as agreed). Confirmed on WhatsApp.",
+          "Pickup in Durrës (city / port area as agreed). Confirmed after you book.",
         delivery:
           "Hotel or address delivery in Durrës. One-way return to Tirana or the airport is possible with notice.",
         keywords:
@@ -113,11 +113,11 @@ export const RENTAL_LOCATIONS: RentalLocation[] = [
         h1: "Noleggio auto a Durazzo – Via Egnatia",
         title: "Noleggio auto Durazzo | Auto Rental — Via Egnatia",
         description:
-          "Noleggio auto a Durazzo — porto, mare e inizio della Via Egnatia. Ritiro in città o consegna. Prenota online o su WhatsApp.",
+          "Noleggio auto a Durazzo — porto, mare e inizio della Via Egnatia. Ritiro in città o consegna. Prenota online.",
         intro:
           "Durazzo è l’inizio della Via Egnatia. Noleggia un’auto per la costa, il porto o i viaggi verso Tirana, Valona e il sud.",
         pickup:
-          "Ritiro a Durazzo (città / zona porto). Si conferma su WhatsApp.",
+          "Ritiro a Durazzo (città / zona porto). Si conferma dopo la prenotazione.",
         delivery:
           "Consegna in hotel o all’indirizzo a Durazzo. Reso a Tirana o in aeroporto su richiesta.",
         keywords:
@@ -141,7 +141,7 @@ export const RENTAL_LOCATIONS: RentalLocation[] = [
         intro:
           "Vlora është porta e Rivierës. Me makinë nga Auto Rental shkon te Llogaraja, Dhërmiu dhe plazhet e jugut pa pritur transport. Marrje në Vlorë ose dërgesë me njoftim.",
         pickup:
-          "Marrje në Vlorë sipas orarit. Pika e saktë konfirmohet në WhatsApp.",
+          "Marrje në Vlorë sipas orarit. Pika e saktë konfirmohet pas rezervimit.",
         delivery:
           "Dërgesë në hotel në Vlorë. Kthim one-way drejt Tiranës ose aeroportit me dakordësi.",
         keywords:
@@ -155,7 +155,7 @@ export const RENTAL_LOCATIONS: RentalLocation[] = [
         intro:
           "Vlorë is the gateway to the Albanian Riviera. With a rental car you reach Llogara, Dhërmi and the south without waiting for transfers. Pickup in Vlorë or delivery on request.",
         pickup:
-          "Pickup in Vlorë during business hours. Exact point confirmed on WhatsApp.",
+          "Pickup in Vlorë during business hours. Exact point confirmed after you book.",
         delivery:
           "Hotel delivery in Vlorë. One-way return to Tirana or the airport by agreement.",
         keywords:
@@ -169,7 +169,7 @@ export const RENTAL_LOCATIONS: RentalLocation[] = [
         intro:
           "Valona è la porta della Riviera albanese. Con l’auto arrivi a Llogara, Dhërmi e al sud senza aspettare trasferimenti.",
         pickup:
-          "Ritiro a Valona. Il punto esatto si conferma su WhatsApp.",
+          "Ritiro a Valona. Il punto esatto si conferma dopo la prenotazione.",
         delivery:
           "Consegna in hotel a Valona. Reso a Tirana o in aeroporto su accordo.",
         keywords:
@@ -189,11 +189,11 @@ export const RENTAL_LOCATIONS: RentalLocation[] = [
         h1: "Qira makinash në Sarandë – Via Egnatia",
         title: "Qira makinash Sarandë | Auto Rental — Via Egnatia",
         description:
-          "Qira makinash në Sarandë me dërgesë. Ideale për Ksamil, Butrint dhe Rivierën. Rezervo në WhatsApp ose online.",
+          "Qira makinash në Sarandë me dërgesë. Ideale për Ksamil, Butrint dhe Rivierën. Rezervo online.",
         intro:
-          "Saranda është baza për Ksamil, Butrint dhe bregun e jugut. Ofrojmë dërgesë makinash në Sarandë — thuaj datat në WhatsApp dhe ne sjellim makinën te hoteli.",
+          "Saranda është baza për Ksamil, Butrint dhe bregun e jugut. Ofrojmë dërgesë makinash në Sarandë — rezervo datat në platformë dhe ne sjellim makinën te hoteli.",
         pickup:
-          "Marrje / dërgesë në Sarandë me njoftim (zakonisht 24 orë). Konfirmohet në WhatsApp.",
+          "Marrje / dërgesë në Sarandë me njoftim (zakonisht 24 orë). Konfirmohet pas rezervimit.",
         delivery:
           "Dërgesë në hotel në Sarandë dhe Ksamil sipas disponueshmërisë. Kthim në Tiranë ose aeroport me dakordësi.",
         keywords:
@@ -203,11 +203,11 @@ export const RENTAL_LOCATIONS: RentalLocation[] = [
         h1: "Car Rental in Sarandë – Via Egnatia",
         title: "Car Rental Sarandë | Auto Rental — Via Egnatia",
         description:
-          "Car rental in Sarandë with delivery. Ideal for Ksamil, Butrint and the Riviera. Book on WhatsApp or online.",
+          "Car rental in Sarandë with delivery. Ideal for Ksamil, Butrint and the Riviera. Book online.",
         intro:
-          "Sarandë is the base for Ksamil, Butrint and the southern coast. We deliver cars to Sarandë — send your dates on WhatsApp and we bring the car to your hotel.",
+          "Sarandë is the base for Ksamil, Butrint and the southern coast. We deliver cars to Sarandë — book your dates on the site and we bring the car to your hotel.",
         pickup:
-          "Pickup / delivery in Sarandë with notice (usually 24 hours). Confirmed on WhatsApp.",
+          "Pickup / delivery in Sarandë with notice (usually 24 hours). Confirmed after you book.",
         delivery:
           "Hotel delivery in Sarandë and Ksamil subject to availability. Return to Tirana or the airport by agreement.",
         keywords:
@@ -217,9 +217,9 @@ export const RENTAL_LOCATIONS: RentalLocation[] = [
         h1: "Noleggio auto a Saranda – Via Egnatia",
         title: "Noleggio auto Saranda | Auto Rental — Via Egnatia",
         description:
-          "Noleggio auto a Saranda con consegna. Ideale per Ksamil, Butrinto e la Riviera. Prenota su WhatsApp o online.",
+          "Noleggio auto a Saranda con consegna. Ideale per Ksamil, Butrinto e la Riviera. Prenota online.",
         intro:
-          "Saranda è la base per Ksamil, Butrinto e la costa sud. Consegniamo l’auto in hotel — scrivi le date su WhatsApp.",
+          "Saranda è la base per Ksamil, Butrinto e la costa sud. Consegniamo l’auto in hotel — prenota le date sul sito.",
         pickup:
           "Ritiro / consegna a Saranda con preavviso (di solito 24 ore).",
         delivery:
@@ -243,7 +243,7 @@ export const RENTAL_LOCATIONS: RentalLocation[] = [
         description:
           "Car rental Tirana Airport — dërgesë dhe marrje në TIA (Nënë Tereza). Rent a car Tirana Airport, car hire Albania Airport. Rezervo para fluturimit.",
         intro:
-          "Merr makinën sapo të zbardhesh në Aeroportin Ndërkombëtar të Tiranës (Nënë Tereza). Auto Rental — Via Egnatia ofron dërgesë në aeroport: na shkruaj numrin e fluturimit në WhatsApp dhe të presim me makinën.",
+          "Merr makinën sapo të zbardhesh në Aeroportin Ndërkombëtar të Tiranës (Nënë Tereza). Auto Rental — Via Egnatia ofron dërgesë në aeroport: shkruaj numrin e fluturimit te rezervimi dhe të presim me makinën.",
         pickup:
           "Marrje në TIA: të presim në zonën e mbërritjes / parking sipas dakordësisë. Dërgo numrin e fluturimit që të ndjekim vonesat.",
         delivery:
@@ -257,7 +257,7 @@ export const RENTAL_LOCATIONS: RentalLocation[] = [
         description:
           "Car rental Tirana Airport with meet & greet. Rent a car Tirana Airport, Tirana Airport car hire, car rental Albania Airport. Book before you fly.",
         intro:
-          "Get your car as you land at Tirana International Airport (Nënë Tereza). Auto Rental — Via Egnatia delivers to TIA: send your flight number on WhatsApp and we wait with the car.",
+          "Get your car as you land at Tirana International Airport (Nënë Tereza). Auto Rental — Via Egnatia delivers to TIA: add your flight number in the booking notes and we wait with the car.",
         pickup:
           "Airport pickup: we meet you at arrivals / parking as agreed. Share your flight number so we can track delays.",
         delivery:
@@ -269,9 +269,9 @@ export const RENTAL_LOCATIONS: RentalLocation[] = [
         h1: "Noleggio auto Aeroporto di Tirana – Via Egnatia",
         title: "Noleggio auto Aeroporto Tirana | Rent a Car TIA",
         description:
-          "Noleggio auto Aeroporto di Tirana con incontro in arrivi. Prenota prima del volo su WhatsApp o online.",
+          "Noleggio auto Aeroporto di Tirana con incontro in arrivi. Prenota prima del volo online.",
         intro:
-          "Ritira l’auto all’atterraggio all’Aeroporto Internazionale di Tirana (Nënë Tereza). Inviaci il numero del volo su WhatsApp e ti aspettiamo.",
+          "Ritira l’auto all’atterraggio all’Aeroporto Internazionale di Tirana (Nënë Tereza). Indica il numero del volo nella prenotazione e ti aspettiamo.",
         pickup:
           "Ritiro in aeroporto: ci vediamo agli arrivi / parcheggio. Comunica il numero del volo per i ritardi.",
         delivery:

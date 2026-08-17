@@ -99,7 +99,6 @@ export async function sendReservationEmails(input: {
   const policy = cancellationPolicyText(input.cancellationPolicyOverride);
   const contactLine = [
     biz.phone && `Tel: ${biz.phone}`,
-    biz.whatsapp && `WhatsApp: +${biz.whatsapp}`,
     `Email: ${biz.email}`,
   ]
     .filter(Boolean)

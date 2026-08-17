@@ -13,7 +13,6 @@ import {
   locationBySlug,
   RENTAL_LOCATIONS,
 } from "../lib/rentalLocations";
-import { whatsappHref } from "../lib/whatsapp";
 
 export default function LocationPage() {
   const { city } = useParams();
@@ -69,14 +68,6 @@ export default function LocationPage() {
     { question: t("faq.q8"), answer: t("faq.a8") },
     { question: t("faq.q1"), answer: t("faq.a1") },
   ];
-  const wa = whatsappHref(
-    locale === "en"
-      ? `Hello, I need a car in ${loc.cityEn}.`
-      : locale === "it"
-        ? `Salve, vorrei un'auto a ${loc.cityEn}.`
-        : `Përshëndetje, dua një makinë në ${loc.citySq}.`
-  );
-
   return (
     <div className="location-page">
       <Seo
@@ -105,9 +96,9 @@ export default function LocationPage() {
             <Link to="/cars" className="btn">
               {t("home.explore")}
             </Link>
-            <a className="btn btn-wa" href={wa} target="_blank" rel="noreferrer">
-              {t("home.ctaWhatsapp")}
-            </a>
+            <Link to="/contact" className="btn ghost">
+              {t("nav.contact")}
+            </Link>
           </div>
         </div>
       </section>
@@ -177,11 +168,11 @@ export default function LocationPage() {
         <div className="pilot-cta-inner">
           <h2>{t("home.ctaTitle")}</h2>
           <div className="hero-actions">
-            <a className="btn" href={wa} target="_blank" rel="noreferrer">
-              {t("home.ctaWhatsapp")}
-            </a>
-            <Link to="/cars" className="btn ghost">
-              {t("home.ctaCars")}
+            <Link to="/cars" className="btn">
+              {t("home.finalCta")}
+            </Link>
+            <Link to="/contact" className="btn ghost">
+              {t("nav.contact")}
             </Link>
           </div>
         </div>
