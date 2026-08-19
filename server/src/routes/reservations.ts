@@ -454,14 +454,14 @@ router.post(
               : "Rezervimi u konfirmua";
           await prisma.notification.create({
             data: {
-              userId: req.user!.id,
+              userId,
               title,
               message: `Rezervimi për ${created.car.brand} ${created.car.model} (${startDate} → ${endDate}) u ruajt. Pagesa: ${paymentMethod}.`,
             },
           });
 
           await notifyStaffNewReservation({
-            customerId: req.user!.id,
+            customerId: userId,
             customerName: created.user.fullName,
             ownerId: created.car.ownerId,
             carLabel: `${created.car.brand} ${created.car.model}`,
@@ -513,7 +513,7 @@ router.post(
 
         try {
           const allowCustomerMail = await userAllowsEmail(
-            req.user!.id,
+            userId,
             "booking"
           );
           const ownerMail = await fleetNotifyEmail(created.car.ownerId);
@@ -531,7 +531,9 @@ router.post(
             ownerEmail: ownerMail,
             invoicePdf,
             invoiceFilename: `autorent-fature-${created.id.slice(0, 8)}.pdf`,
-            skipCustomerEmail: !allowCustomerMail,
+            skipCustomerEmail:
+              !allowCustomerMail ||
+              isPlaceholderGuestEmail(created.user.email),
             cancellationPolicyOverride: car.owner?.cancellationPolicyText,
           });
           if (!mailResult.sent && allowCustomerMail) {

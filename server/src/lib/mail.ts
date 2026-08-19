@@ -7,21 +7,96 @@ export function isMailConfigured() {
   return Boolean(env.SMTP_HOST && env.SMTP_USER && env.SMTP_PASS);
 }
 
+function mailAuth() {
+  return {
+    user: env.SMTP_USER,
+    pass: env.SMTP_PASS,
+  };
+}
+
+function isGmail() {
+  return /gmail\.com$/i.test(env.SMTP_HOST || "");
+}
+
+function fromAddress() {
+  const user = (env.SMTP_USER || "").trim();
+  const raw = (env.SMTP_FROM || "").trim();
+  // Gmail only accepts the authenticated mailbox as From.
+  if (isGmail() && user) {
+    return `"Auto Rental — Via Egnatia" <${user}>`;
+  }
+  if (raw) return raw;
+  if (!user) return "";
+  return `"Auto Rental — Via Egnatia" <${user}>`;
+}
+
+function isSendableAddress(to: string) {
+  const email = to.trim().toLowerCase();
+  if (!email || !email.includes("@")) return false;
+  if (email.endsWith("@guest.viaegnatia.al")) return false;
+  return true;
+}
+
 function transporter() {
+  const host = env.SMTP_HOST || "";
+  const auth = mailAuth();
+  if (isGmail()) {
+    return nodemailer.createTransport({
+      service: "gmail",
+      auth,
+    });
+  }
   const port = env.SMTP_PORT;
   return nodemailer.createTransport({
-    host: env.SMTP_HOST,
+    host,
     port,
     secure: port === 465,
     requireTLS: port === 587,
     connectionTimeout: 12_000,
     greetingTimeout: 12_000,
     socketTimeout: 20_000,
-    auth: {
-      user: env.SMTP_USER,
-      pass: env.SMTP_PASS,
-    },
+    auth,
   });
+}
+
+export async function verifyMail() {
+  if (!isMailConfigured()) {
+    console.warn("[mail] SMTP not configured — emails will not send");
+    return false;
+  }
+  const passLen = env.SMTP_PASS?.length ?? 0;
+  console.info(
+    "[mail] config host=",
+    env.SMTP_HOST,
+    "user=",
+    env.SMTP_USER,
+    "from=",
+    fromAddress(),
+    "passLen=",
+    passLen
+  );
+  if (isGmail() && passLen !== 16) {
+    console.warn(
+      "[mail] Gmail App Password should be 16 characters (no spaces). passLen=",
+      passLen
+    );
+  }
+  try {
+    await Promise.race([
+      transporter().verify(),
+      new Promise((_, reject) =>
+        setTimeout(() => reject(new Error("SMTP verify timeout (12s)")), 12_000)
+      ),
+    ]);
+    console.info("[mail] SMTP ready via", env.SMTP_HOST);
+    return true;
+  } catch (err) {
+    console.error(
+      "[mail] SMTP login failed:",
+      err instanceof Error ? err.message : err
+    );
+    return false;
+  }
 }
 
 export type MailAttachment = {
@@ -41,10 +116,15 @@ export async function sendMail(options: {
     console.warn("[mail] SMTP not configured — skipped:", options.subject, "→", options.to);
     return { sent: false as const };
   }
+  if (!isSendableAddress(options.to)) {
+    console.warn("[mail] skipped invalid recipient:", options.subject, "→", options.to);
+    return { sent: false as const };
+  }
 
   try {
     await transporter().sendMail({
-      from: env.SMTP_FROM || env.SMTP_USER,
+      from: fromAddress(),
+      replyTo: env.BUSINESS_EMAIL || env.SMTP_USER,
       to: options.to,
       subject: options.subject,
       text: options.text,
