@@ -810,6 +810,8 @@ export const en: Dict = {
     successNoEmail:
       "Reservation confirmed in your account. Email was not sent — check Spam or contact us.",
     writeReview: "Write a review",
+    reviewerName: "Your name",
+    needReviewName: "Enter your name to submit the review.",
     yourRating: "Your rating",
     comment: "Comment",
     submitReview: "Submit review",

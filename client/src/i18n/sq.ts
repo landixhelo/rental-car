@@ -811,6 +811,8 @@ export const sq = {
     successNoEmail:
       "Rezervimi u konfirmua në llogarinë tënde. Email nuk u dërgua — kontrollo Spam ose na shkruaj.",
     writeReview: "Shkruaj një vlerësim",
+    reviewerName: "Emri yt",
+    needReviewName: "Shëno emrin për të dërguar vlerësimin.",
     yourRating: "Vlerësimi yt",
     comment: "Komenti",
     submitReview: "Dërgo vlerësimin",

@@ -38,6 +38,7 @@ export default function CarDetailsPage() {
   const [notes, setNotes] = useState("");
   const [rating, setRating] = useState("5");
   const [comment, setComment] = useState("");
+  const [reviewerName, setReviewerName] = useState("");
   const [activeImage, setActiveImage] = useState(0);
   const [showMore, setShowMore] = useState(false);
 
@@ -58,6 +59,11 @@ export default function CarDetailsPage() {
       })
       .catch((e) => show(e.message));
   }, [id]);
+
+  useEffect(() => {
+    if (!user?.fullName) return;
+    setReviewerName((current) => current || user.fullName);
+  }, [user]);
 
   const images = useMemo(() => {
     if (!car) return [];
@@ -184,11 +190,16 @@ export default function CarDetailsPage() {
   async function onReview(e: FormEvent) {
     e.preventDefault();
     if (!car) return;
+    if (!reviewerName.trim()) {
+      show(t("details.needReviewName"));
+      return;
+    }
     try {
       await api.addReview({
         carId: car.id,
         rating: Number(rating),
         comment,
+        authorName: reviewerName.trim(),
       });
       const refreshed = await api.car(car.id);
       setCar(refreshed.car);
@@ -447,6 +458,15 @@ export default function CarDetailsPage() {
             </div>
             <form className="detail-review-form" onSubmit={onReview}>
               <h3>{t("details.writeReview")}</h3>
+              <label>
+                {t("details.reviewerName")}
+                <input
+                  value={reviewerName}
+                  onChange={(e) => setReviewerName(e.target.value)}
+                  autoComplete="name"
+                  required
+                />
+              </label>
               <label>
                 {t("details.yourRating")}
                 <select

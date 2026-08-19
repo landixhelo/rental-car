@@ -307,7 +307,7 @@ router.get("/:id", optionalAuth, validate(carPublicParamSchema), async (req, res
           id: r.id,
           rating: r.rating,
           comment: r.comment,
-          userName: r.user.fullName,
+          userName: r.authorName || r.user?.fullName || "—",
           createdAt: r.createdAt,
         })),
       }),
