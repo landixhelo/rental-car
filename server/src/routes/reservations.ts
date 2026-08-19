@@ -8,7 +8,7 @@ import {
   idParamSchema,
   reservationSchema,
 } from "../validators/schemas.js";
-import { findOrCreateBookingCustomer } from "../lib/guestEmail.js";
+import { findOrCreateBookingCustomer, isPlaceholderGuestEmail } from "../lib/guestEmail.js";
 import { EXTRAS, calcDays, getLocation } from "../lib/pricing.js";
 import { sendMail, sendReservationEmails } from "../lib/mail.js";
 import { buildReservationPdf } from "../lib/pdfContract.js";
