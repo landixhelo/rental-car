@@ -31,6 +31,7 @@ import CalendarPage from "./pages/CalendarPage";
 import DashboardPage from "./pages/DashboardPage";
 import ChatsPage from "./pages/ChatsPage";
 import CustomersPage from "./pages/CustomersPage";
+import CustomerHistoryPage from "./pages/CustomerHistoryPage";
 import LocationsPage from "./pages/LocationsPage";
 import ReviewsPage from "./pages/ReviewsPage";
 import PromoCodesPage from "./pages/PromoCodesPage";
@@ -169,6 +170,14 @@ export default function App() {
                       element={
                         <Protected contractor>
                           <CustomersPage />
+                        </Protected>
+                      }
+                    />
+                    <Route
+                      path="customers/:id"
+                      element={
+                        <Protected contractor>
+                          <CustomerHistoryPage />
                         </Protected>
                       }
                     />

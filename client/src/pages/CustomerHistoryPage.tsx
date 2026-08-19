@@ -1,0 +1,172 @@
+import { useEffect, useMemo, useState } from "react";
+import { Link, useNavigate, useParams } from "react-router-dom";
+import { useOpsSearch } from "../components/OpsLayout";
+import { usePageBreadcrumbs } from "../context/BreadcrumbContext";
+import { useLocale, useT } from "../context/LocaleContext";
+import { useToast } from "../hooks/useToast";
+import { api } from "../lib/api";
+import {
+  formatReservationCode,
+  formatShortDate,
+} from "../lib/bookingDraft";
+import { isPlaceholderGuestEmail } from "../lib/guestEmail";
+import { mediaUrl } from "../lib/mediaUrl";
+
+type CustomerHistory = Awaited<ReturnType<typeof api.dashboardCustomer>>;
+
+export default function CustomerHistoryPage() {
+  const { id } = useParams<{ id: string }>();
+  const t = useT();
+  const { locale } = useLocale();
+  const { query } = useOpsSearch();
+  const { show } = useToast();
+  const navigate = useNavigate();
+  const [data, setData] = useState<CustomerHistory | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  usePageBreadcrumbs(
+    data
+      ? [
+          { label: t("dashboard.navCustomers"), to: "/customers" },
+          { label: data.customer.fullName },
+        ]
+      : [
+          { label: t("dashboard.navCustomers"), to: "/customers" },
+          { label: t("opsPages.viewHistory") },
+        ]
+  );
+
+  useEffect(() => {
+    if (!id) return;
+    setLoading(true);
+    api
+      .dashboardCustomer(id)
+      .then(setData)
+      .catch((e) => {
+        show(e instanceof Error ? e.message : t("common.error"));
+        navigate("/customers", { replace: true });
+      })
+      .finally(() => setLoading(false));
+  }, [id, navigate, show, t]);
+
+  const filtered = useMemo(() => {
+    const rows = data?.reservations || [];
+    const q = query.trim().toLowerCase();
+    if (!q) return rows;
+    return rows.filter((r) => {
+      const car = `${r.car.brand} ${r.car.model}`.toLowerCase();
+      const status = t(`status.${r.status}`).toLowerCase();
+      return (
+        car.includes(q) ||
+        status.includes(q) ||
+        r.pickupLocation.toLowerCase().includes(q) ||
+        r.returnLocation.toLowerCase().includes(q)
+      );
+    });
+  }, [data, query, t]);
+
+  if (loading || !data) {
+    return (
+      <div className="ops-page">
+        <p className="muted">{t("common.loading")}</p>
+      </div>
+    );
+  }
+
+  const { customer } = data;
+  const showEmail = customer.email && !isPlaceholderGuestEmail(customer.email);
+
+  return (
+    <div className="ops-page">
+      <header className="ops-page-head">
+        <div>
+          <Link to="/customers" className="rental-detail-back">
+            ← {t("opsPages.backToCustomers")}
+          </Link>
+          <h1>{customer.fullName}</h1>
+          <p>{t("opsPages.historySub")}</p>
+          <p className="ops-customer-contact">
+            {showEmail ? (
+              <a href={`mailto:${customer.email}`}>{customer.email}</a>
+            ) : null}
+            {customer.phone ? (
+              <a href={`tel:${customer.phone}`}>{customer.phone}</a>
+            ) : null}
+            <span>
+              {t("opsPages.memberSince")}{" "}
+              {formatShortDate(customer.memberSince, locale)}
+            </span>
+          </p>
+        </div>
+        <div className="ops-page-metrics">
+          <span className="ops-page-count">
+            {filtered.length} {t("opsPages.bookings")}
+          </span>
+          <span className="ops-page-avg">
+            €{customer.revenue} {t("opsPages.revenue")}
+          </span>
+        </div>
+      </header>
+
+      {!filtered.length ? (
+        <div className="ops-empty">{t("opsPages.historyEmpty")}</div>
+      ) : (
+        <div className="reservation-list">
+          {filtered.map((r) => {
+            const code = formatReservationCode(r.id, r.createdAt);
+            const carLabel = `${r.car.brand} ${r.car.model}`;
+            return (
+              <article
+                key={r.id}
+                className="reservation-card fleet-reservation-card"
+              >
+                <div className="reservation-card-media">
+                  {r.car.imageUrl ? (
+                    <img src={mediaUrl(r.car.imageUrl)} alt={carLabel} />
+                  ) : (
+                    <div className="fleet-reservation-fallback" />
+                  )}
+                </div>
+                <div className="reservation-card-body">
+                  <div className="reservation-card-head">
+                    <div>
+                      <h3>{carLabel}</h3>
+                      <p className="muted">
+                        {t("reservations.reservationCode")}: {code}
+                        {r.car.year ? ` · ${r.car.year}` : ""}
+                      </p>
+                    </div>
+                    <span className={`badge status-${r.status}`}>
+                      {t(`status.${r.status}`)}
+                    </span>
+                  </div>
+                  <dl className="reservation-meta">
+                    <div>
+                      <dt>{t("reservations.dates")}</dt>
+                      <dd>
+                        {formatShortDate(r.startDate, locale)} →{" "}
+                        {formatShortDate(r.endDate, locale)}
+                      </dd>
+                    </div>
+                    <div>
+                      <dt>{t("reservations.route")}</dt>
+                      <dd>
+                        {r.pickupLocation} → {r.returnLocation}
+                      </dd>
+                    </div>
+                  </dl>
+                  <p className="total">€{r.totalPrice}</p>
+                  <div className="reservation-actions">
+                    <Link to={`/reservations/${r.id}`} className="btn">
+                      {t("reservations.viewDetails")}
+                    </Link>
+                  </div>
+                </div>
+              </article>
+            );
+          })}
+        </div>
+      )}
+    </div>
+  );
+}

@@ -81,6 +81,12 @@ export function pageCrumbs(
   if (pathname === "/contractor") return [{ label: t("nav.fleet") }];
   if (pathname === "/calendar") return [{ label: t("dashboard.navCalendar") }];
   if (pathname === "/customers") return [{ label: t("dashboard.navCustomers") }];
+  if (pathname.startsWith("/customers/")) {
+    return [
+      { label: t("dashboard.navCustomers"), to: "/customers" },
+      { label: t("opsPages.viewHistory") },
+    ];
+  }
   if (pathname === "/locations") return [{ label: t("dashboard.navLocations") }];
   if (pathname === "/reviews") return [{ label: t("dashboard.navReviews") }];
   if (pathname === "/promo-codes") return [{ label: t("dashboard.navPromo") }];

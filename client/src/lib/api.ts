@@ -379,6 +379,35 @@ export const api = {
         lastStatus: string;
       }>;
     }>("/api/dashboard/customers"),
+  dashboardCustomer: (id: string) =>
+    request<{
+      customer: {
+        id: string;
+        fullName: string;
+        email: string;
+        phone: string | null;
+        memberSince: string;
+        bookings: number;
+        revenue: number;
+      };
+      reservations: Array<{
+        id: string;
+        status: string;
+        totalPrice: number;
+        startDate: string;
+        endDate: string;
+        pickupLocation: string;
+        returnLocation: string;
+        paymentStatus: string;
+        createdAt: string;
+        car: {
+          brand: string;
+          model: string;
+          year: number;
+          imageUrl: string | null;
+        };
+      }>;
+    }>(`/api/dashboard/customers/${encodeURIComponent(id)}`),
   dashboardReviews: () =>
     request<{
       reviews: Array<{

@@ -5,8 +5,11 @@ import {
   requireAuth,
   requireContractorOrAdmin,
 } from "../middleware/auth.js";
+import { AppError } from "../middleware/error.js";
+import { validate } from "../middleware/validate.js";
 import { todayStamp } from "../lib/carAvailability.js";
 import { LOCATIONS } from "../lib/pricing.js";
+import { idParamSchema } from "../validators/schemas.js";
 
 const router = Router();
 
@@ -286,6 +289,87 @@ router.get("/customers", async (req, res, next) => {
       .sort((a, b) => b.bookings - a.bookings);
 
     res.json({ customers });
+  } catch (err) {
+    next(err);
+  }
+});
+
+router.get("/customers/:id", validate(idParamSchema), async (req, res, next) => {
+  try {
+    const userId = req.params.id;
+    const isContractor = req.user!.role === "CONTRACTOR";
+    const reservationWhere: Prisma.ReservationWhereInput = {
+      userId,
+      ...(isContractor ? { car: { ownerId: req.user!.id } } : {}),
+    };
+
+    const [user, reservations] = await Promise.all([
+      prisma.user.findUnique({
+        where: { id: userId },
+        select: {
+          id: true,
+          fullName: true,
+          email: true,
+          phone: true,
+          createdAt: true,
+        },
+      }),
+      prisma.reservation.findMany({
+        where: reservationWhere,
+        select: {
+          id: true,
+          status: true,
+          totalPrice: true,
+          startDate: true,
+          endDate: true,
+          pickupLocation: true,
+          returnLocation: true,
+          paymentStatus: true,
+          createdAt: true,
+          car: {
+            select: {
+              brand: true,
+              model: true,
+              year: true,
+              imageUrl: true,
+            },
+          },
+        },
+        orderBy: { createdAt: "desc" },
+      }),
+    ]);
+
+    if (!user || reservations.length === 0) {
+      throw new AppError("Customer not found", 404);
+    }
+
+    const revenue = reservations
+      .filter((r) => r.status === "CONFIRMED" || r.status === "COMPLETED")
+      .reduce((sum, r) => sum + Number(r.totalPrice), 0);
+
+    res.json({
+      customer: {
+        id: user.id,
+        fullName: user.fullName,
+        email: user.email,
+        phone: user.phone,
+        memberSince: user.createdAt.toISOString().slice(0, 10),
+        bookings: reservations.length,
+        revenue: Math.round(revenue * 100) / 100,
+      },
+      reservations: reservations.map((r) => ({
+        id: r.id,
+        status: r.status,
+        totalPrice: Number(r.totalPrice),
+        startDate: r.startDate.toISOString().slice(0, 10),
+        endDate: r.endDate.toISOString().slice(0, 10),
+        pickupLocation: r.pickupLocation,
+        returnLocation: r.returnLocation,
+        paymentStatus: r.paymentStatus,
+        createdAt: r.createdAt.toISOString(),
+        car: r.car,
+      })),
+    });
   } catch (err) {
     next(err);
   }
