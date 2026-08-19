@@ -28,8 +28,16 @@ const envSchema = z.object({
   SMTP_HOST: z.preprocess(emptyToUndef, z.string().optional()),
   SMTP_PORT: z.preprocess(emptyToUndef, z.coerce.number().default(587)),
   SMTP_USER: z.preprocess(emptyToUndef, z.string().optional()),
-  SMTP_PASS: z.preprocess(emptyToUndef, z.string().optional()),
-  SMTP_FROM: z.preprocess(emptyToUndef, z.string().optional()),
+  SMTP_PASS: z.preprocess((v) => {
+    const x = emptyToUndef(v);
+    return typeof x === "string" ? x.replace(/\s+/g, "") : x;
+  }, z.string().optional()),
+  SMTP_FROM: z.preprocess((v) => {
+    const x = emptyToUndef(v);
+    return typeof x === "string"
+      ? x.trim().replace(/^["']+|["']+$/g, "")
+      : x;
+  }, z.string().optional()),
   STRIPE_SECRET_KEY: z.preprocess(emptyToUndef, z.string().optional()),
   STRIPE_WEBHOOK_SECRET: z.preprocess(emptyToUndef, z.string().optional()),
   WHATSAPP_PHONE: z.preprocess(

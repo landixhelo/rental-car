@@ -26,6 +26,7 @@ import { EXTRAS, LOCATIONS } from "./lib/pricing.js";
 import { stripeEnabled } from "./lib/stripePay.js";
 import { getBusinessPublic } from "./lib/business.js";
 import { ensureSchema } from "./lib/ensureSchema.js";
+import { verifyMail } from "./lib/mail.js";
 
 console.log("Booting AutoRent API...");
 
@@ -120,6 +121,8 @@ async function start() {
   app.listen(env.PORT, "0.0.0.0", () => {
     console.log(`AutoRent API on http://0.0.0.0:${env.PORT}`);
   });
+  // Never block boot on SMTP — a hung Gmail login would take the API down.
+  void verifyMail();
 }
 
 start().catch((err) => {
