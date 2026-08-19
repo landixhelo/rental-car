@@ -3,6 +3,7 @@ import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { api } from "../lib/api";
 import { useLocale, useT } from "../context/LocaleContext";
 import { useToast } from "../hooks/useToast";
+import BrandLockup from "../components/BrandLockup";
 import Seo from "../seo/Seo";
 
 export default function ResetPasswordPage() {
@@ -35,10 +36,16 @@ export default function ResetPasswordPage() {
   }
 
   return (
-    <div className="auth-page">
-      <Seo title={t("auth.resetTitle")} path="/reset-password" locale={locale} noindex />
+    <div className="auth-page ops-login">
+      <Seo
+        title={t("auth.resetTitle")}
+        path="/reset-password"
+        locale={locale}
+        noindex
+      />
       {Toast}
       <form className="panel" onSubmit={onSubmit}>
+        <BrandLockup size="ops" />
         <h1>{t("auth.resetTitle")}</h1>
         <p className="muted">{t("auth.passwordHint")}</p>
         <input

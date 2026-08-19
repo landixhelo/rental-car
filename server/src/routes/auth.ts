@@ -6,7 +6,7 @@ import { prisma } from "../lib/prisma.js";
 import { env, isProd } from "../config/env.js";
 import { AppError } from "../middleware/error.js";
 import { isGuestPasswordHash } from "../lib/guestEmail.js";
-import { isMailConfigured, sendMail } from "../lib/mail.js";
+import { sendMail } from "../lib/mail.js";
 import {
   clearAuthCookie,
   requireAuth,
@@ -178,7 +178,9 @@ router.post(
       password: string;
       rememberMe?: boolean;
     };
-    const user = await prisma.user.findUnique({ where: { email } });
+    const user = await prisma.user.findFirst({
+      where: { email: { equals: String(email).trim(), mode: "insensitive" } },
+    });
     if (!user) throw new AppError("Invalid email or password", 401);
     if (isGuestPasswordHash(user.passwordHash)) {
       throw new AppError("Invalid email or password", 401);
@@ -217,7 +219,9 @@ router.post(
   async (req, res, next) => {
     try {
       const email = String(req.body.email).trim().toLowerCase();
-      const user = await prisma.user.findUnique({ where: { email } });
+      const user = await prisma.user.findFirst({
+        where: { email: { equals: email, mode: "insensitive" } },
+      });
 
       // Always same response (no email enumeration)
       const okMessage = {
@@ -225,7 +229,12 @@ router.post(
           "Nëse email-i ekziston, dërguam një link për rivendosjen e fjalëkalimit.",
       };
 
-      if (!user || !user.isActive) {
+      const isStaff =
+        user?.role === "CONTRACTOR" ||
+        user?.role === "ADMIN" ||
+        user?.role === "SUPER_ADMIN";
+
+      if (!user || !user.isActive || !isStaff) {
         res.json(okMessage);
         return;
       }
@@ -254,11 +263,10 @@ router.post(
         text: `Përshëndetje ${user.fullName},\n\nKliko për të rivendosur fjalëkalimin (vlen 1 orë):\n${resetUrl}\n\nNëse nuk e kërkove ti, injoro këtë email.\n\nAuto Rental`,
       });
 
-      // Without SMTP, return the link once so reset still works until email is set up.
-      if (!mailed.sent && !isMailConfigured()) {
+      if (!mailed.sent) {
         res.json({
           message:
-            "Email nuk është konfiguruar ende. Përdor linkun më poshtë (vlen 1 orë).",
+            "Email nuk u dërgua. Përdor linkun më poshtë (vlen 1 orë).",
           resetUrl,
         });
         return;
