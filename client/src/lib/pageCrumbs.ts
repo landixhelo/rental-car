@@ -16,6 +16,9 @@ export function pageCrumbs(
 ): Crumb[] | null {
   if (pathname === "/") return null;
   if (pathname === "/ops" || pathname === "/new-admin") return null;
+  if (pathname === "/forgot-password" || pathname === "/reset-password") {
+    return null;
+  }
 
   if (pathname === "/cars") {
     return [{ label: t("details.crumbFleet") }];
