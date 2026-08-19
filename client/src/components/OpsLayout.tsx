@@ -1,5 +1,5 @@
 import { createContext, useContext, useEffect, useMemo, useState } from "react";
-import { Link, NavLink, Outlet, useLocation } from "react-router-dom";
+import { Link, NavLink, Outlet, useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { useT } from "../context/LocaleContext";
 import { useUnreadNotifications } from "../context/UnreadContext";
@@ -133,6 +133,7 @@ export default function OpsLayout() {
   const { user, logout } = useAuth();
   const t = useT();
   const location = useLocation();
+  const navigate = useNavigate();
   const { count, label } = useUnreadNotifications();
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [query, setQuery] = useState("");
@@ -255,13 +256,13 @@ export default function OpsLayout() {
 
         <aside className="ops-sidebar">
           <div className="ops-brand">
-            <a
-              href="/"
+            <Link
+              to={isStaff ? "/dashboard" : "/reservations"}
               className="ops-brand-link"
               onClick={() => setSidebarOpen(false)}
             >
               <BrandLockup size="ops" />
-            </a>
+            </Link>
             <span>
               {isStaff
                 ? t("dashboard.fleetManagement")
@@ -327,7 +328,9 @@ export default function OpsLayout() {
               className="ops-logout"
               onClick={() => {
                 setSidebarOpen(false);
-                logout();
+                void logout().then(() => {
+                  navigate(isStaff ? "/ops" : "/login");
+                });
               }}
             >
               {t("nav.logout")}
@@ -360,7 +363,11 @@ export default function OpsLayout() {
               <button
                 type="button"
                 className="ops-logout-top"
-                onClick={() => logout()}
+                onClick={() => {
+                  void logout().then(() => {
+                    navigate(isStaff ? "/ops" : "/login");
+                  });
+                }}
               >
                 <Icon path={ICONS.logout} size={16} />
                 {t("nav.logout")}

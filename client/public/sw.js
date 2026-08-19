@@ -1,5 +1,5 @@
 /* Auto Rental — Via Egnatia PWA */
-const CACHE = "via-egnatia-pwa-v2";
+const CACHE = "via-egnatia-pwa-v3";
 const PRECACHE = [
   "/",
   "/index.html",
@@ -52,19 +52,27 @@ self.addEventListener("fetch", (event) => {
 
   if (url.origin !== self.location.origin) return;
 
+  const networkFirst = url.pathname.startsWith("/assets/");
   event.respondWith(
-    caches.match(req).then((cached) => {
-      const fetched = fetch(req)
-        .then((res) => {
-          if (res.ok) {
-            const copy = res.clone();
-            caches.open(CACHE).then((cache) => cache.put(req, copy));
-          }
-          return res;
-        })
-        .catch(() => cached);
-      return cached || fetched;
-    })
+    (networkFirst ? fetch(req) : Promise.resolve(null))
+      .then((fresh) => {
+        if (fresh && fresh.ok) {
+          const copy = fresh.clone();
+          caches.open(CACHE).then((cache) => cache.put(req, copy));
+          return fresh;
+        }
+        return caches.match(req).then((cached) => {
+          if (cached) return cached;
+          return fetch(req).then((res) => {
+            if (res.ok) {
+              const copy = res.clone();
+              caches.open(CACHE).then((cache) => cache.put(req, copy));
+            }
+            return res;
+          });
+        });
+      })
+      .catch(() => caches.match(req))
   );
 });
 
