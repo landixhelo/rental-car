@@ -245,14 +245,15 @@ model VehicleListing {
 }
 
 model Review {
-  id        String   @id @default(cuid())
-  userId    String
-  carId     String
-  rating    Int
-  comment   String?
-  createdAt DateTime @default(now())
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  car       Car      @relation(fields: [carId], references: [id], onDelete: Cascade)
+  id         String   @id @default(cuid())
+  userId     String?
+  carId      String
+  rating     Int
+  comment    String?
+  authorName String?
+  createdAt  DateTime @default(now())
+  user       User?    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  car        Car      @relation(fields: [carId], references: [id], onDelete: Cascade)
 
   @@unique([userId, carId])
   @@index([carId])

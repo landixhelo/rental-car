@@ -162,6 +162,7 @@ export const reviewSchema = z.object({
     carId: z.string().cuid(),
     rating: z.coerce.number().int().min(1).max(5),
     comment: z.string().trim().max(1000).optional(),
+    authorName: z.string().trim().min(2).max(80),
   }),
 });
 

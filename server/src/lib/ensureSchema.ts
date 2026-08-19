@@ -282,6 +282,15 @@ export async function ensureSchema() {
       console.log(`[schema] closed ${closed} past reservation(s)`);
     }
 
+    await prisma.$executeRawUnsafe(`
+      ALTER TABLE "Review"
+      ADD COLUMN IF NOT EXISTS "authorName" TEXT
+    `);
+    await prisma.$executeRawUnsafe(`
+      ALTER TABLE "Review"
+      ALTER COLUMN "userId" DROP NOT NULL
+    `);
+
     console.log("[schema] ensureSchema OK");
   } catch (err) {
     console.error("[schema] ensureSchema failed:", err);

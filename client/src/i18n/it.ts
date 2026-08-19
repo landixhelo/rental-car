@@ -805,6 +805,8 @@ export const it: Dict = {
     successNoEmail:
       "Prenotazione confermata nel tuo account. Email non inviata — controlla Spam o contattaci.",
     writeReview: "Scrivi una recensione",
+    reviewerName: "Il tuo nome",
+    needReviewName: "Inserisci il nome per inviare la recensione.",
     yourRating: "La tua valutazione",
     comment: "Commento",
     submitReview: "Invia recensione",

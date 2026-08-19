@@ -490,7 +490,12 @@ export const api = {
       method: "DELETE",
     }),
 
-  addReview: (body: { carId: string; rating: number; comment?: string }) =>
+  addReview: (body: {
+    carId: string;
+    rating: number;
+    comment?: string;
+    authorName: string;
+  }) =>
     request<{ review: unknown }>("/api/reviews", {
       method: "POST",
       body: JSON.stringify(body),
