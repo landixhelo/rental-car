@@ -77,6 +77,7 @@ export default function CustomersPage() {
                 <th>{t("opsPages.bookings")}</th>
                 <th>{t("opsPages.revenue")}</th>
                 <th>{t("opsPages.lastBooking")}</th>
+                <th>{t("reservations.actions")}</th>
               </tr>
             </thead>
             <tbody>
@@ -100,6 +101,11 @@ export default function CustomersPage() {
                       {formatShortDate(c.lastEnd, locale)} ·{" "}
                       {t(`status.${c.lastStatus}`)}
                     </div>
+                  </td>
+                  <td className="ops-table-actions">
+                    <Link to={`/customers/${c.id}`} className="btn ghost">
+                      {t("opsPages.viewHistory")}
+                    </Link>
                   </td>
                 </tr>
               ))}
