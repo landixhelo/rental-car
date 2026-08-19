@@ -924,6 +924,7 @@ export const it: Dict = {
     activeBookings: "Prenotazioni attive",
     revenue: "Ricavi (confermati)",
     viewBookings: "Vedi prenotazioni clienti",
+    openCalendar: "Apri calendario",
     myFleet: "La mia flotta",
     empty: "Nessuna auto. Aggiungi la prima sopra.",
     bookingsCol: "Prenotazioni",
