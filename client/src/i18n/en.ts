@@ -332,6 +332,12 @@ export const en: Dict = {
     passwordMismatch: "Passwords do not match.",
     backToLogin: "Back to login",
   },
+  opsLogin: {
+    title: "Fleet panel",
+    sub: "Sign in for admins and contractors.",
+    btn: "Enter panel",
+    notStaff: "This entry is only for fleet staff.",
+  },
   contact: {
     title: "Contact Us",
     name: "Name",

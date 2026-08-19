@@ -96,10 +96,40 @@ export const OPS_PATHS = [
   "/reports",
 ] as const;
 
+export const STAFF_ONLY_PATHS = [
+  "/dashboard",
+  "/contractor",
+  "/chats",
+  "/admin",
+  "/super-admin",
+  "/customers",
+  "/locations",
+  "/reviews",
+  "/promo-codes",
+  "/reports",
+] as const;
+
+/** Hidden staff login URLs — not linked from the public site. */
+export const STAFF_GATE_PATHS = ["/ops", "/new-admin"] as const;
+
 export function isOpsPath(pathname: string) {
   return OPS_PATHS.some(
     (p) => pathname === p || pathname.startsWith(`${p}/`)
   );
+}
+
+export function isStaffOnlyPath(pathname: string) {
+  return STAFF_ONLY_PATHS.some(
+    (p) => pathname === p || pathname.startsWith(`${p}/`)
+  );
+}
+
+export function isStaffGatePath(pathname: string) {
+  return STAFF_GATE_PATHS.some((p) => pathname === p);
+}
+
+export function isStaffRole(role?: string) {
+  return role === "CONTRACTOR" || role === "ADMIN" || role === "SUPER_ADMIN";
 }
 
 export default function OpsLayout() {

@@ -15,6 +15,7 @@ export function pageCrumbs(
   locale: Locale
 ): Crumb[] | null {
   if (pathname === "/") return null;
+  if (pathname === "/ops" || pathname === "/new-admin") return null;
 
   if (pathname === "/cars") {
     return [{ label: t("details.crumbFleet") }];

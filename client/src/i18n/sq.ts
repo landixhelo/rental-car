@@ -330,6 +330,12 @@ export const sq = {
     passwordMismatch: "Fjalëkalimet nuk përputhen.",
     backToLogin: "Kthehu te hyrja",
   },
+  opsLogin: {
+    title: "Paneli i flotës",
+    sub: "Hyrje për admin dhe kontraktorë.",
+    btn: "Hyr në panel",
+    notStaff: "Kjo hyrje është vetëm për stafin e flotës.",
+  },
   contact: {
     title: "Na Kontaktoni",
     name: "Emri",

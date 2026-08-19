@@ -334,6 +334,12 @@ export const it: Dict = {
     passwordMismatch: "Le password non coincidono.",
     backToLogin: "Torna al login",
   },
+  opsLogin: {
+    title: "Pannello flotta",
+    sub: "Accesso per admin e contractor.",
+    btn: "Entra nel pannello",
+    notStaff: "Questo accesso è solo per lo staff della flotta.",
+  },
   contact: {
     title: "Contattaci",
     name: "Nome",
