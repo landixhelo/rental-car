@@ -32,20 +32,21 @@ export default function CheckoutDetailsPage() {
   const [submitting, setSubmitting] = useState(false);
 
   useEffect(() => {
-    if (!user) {
-      navigate("/login?next=/checkout", { replace: true });
-      return;
-    }
     const d = loadBookingDraft();
     if (!d) {
       navigate("/cars", { replace: true });
       return;
     }
     setDraft(d);
-    setFullName(user.fullName || "");
-    setEmail(user.email || "");
     setNotes(d.notes || "");
+  }, [navigate]);
+
+  useEffect(() => {
+    if (!user) return;
+    setFullName((current) => current || user.fullName || "");
+    setEmail((current) => current || user.email || "");
     const rawPhone = (user.phone || "").replace(/\s/g, "");
+    if (!rawPhone) return;
     if (rawPhone.startsWith("+355")) {
       setPhoneCode("+355");
       setPhone(rawPhone.slice(4));
@@ -55,7 +56,7 @@ export default function CheckoutDetailsPage() {
     } else {
       setPhone(rawPhone.replace(/^\+/, ""));
     }
-  }, [user, navigate]);
+  }, [user]);
 
   const dateLabel = useMemo(() => {
     if (!draft) return "";
@@ -64,15 +65,18 @@ export default function CheckoutDetailsPage() {
 
   async function onConfirm(e: FormEvent) {
     e.preventDefault();
-    if (!draft || !user) return;
-    if (!fullName.trim() || !email.trim()) {
+    if (!draft) return;
+    if (!fullName.trim() || !email.trim() || !phone.trim()) {
       show(t("checkout.needContact"));
       return;
     }
     setSubmitting(true);
     try {
       const phoneFull = `${phoneCode} ${phone}`.trim();
-      if (fullName !== user.fullName || phoneFull !== (user.phone || "")) {
+      if (
+        user &&
+        (fullName !== user.fullName || phoneFull !== (user.phone || ""))
+      ) {
         try {
           await api.updateProfile({
             fullName: fullName.trim(),
@@ -90,6 +94,9 @@ export default function CheckoutDetailsPage() {
       fd.append("pickupLocationId", draft.pickupLocationId);
       fd.append("returnLocationId", draft.returnLocationId);
       fd.append("paymentMethod", draft.paymentMethod || "CASH");
+      fd.append("guestFullName", fullName.trim());
+      fd.append("guestEmail", email.trim());
+      fd.append("guestPhone", phoneFull);
       const noteParts = [notes.trim(), phoneFull ? `Tel: ${phoneFull}` : ""]
         .filter(Boolean)
         .join("\n");
@@ -185,12 +192,14 @@ export default function CheckoutDetailsPage() {
       <div className="checkout-layout">
         <form className="checkout-form" onSubmit={onConfirm}>
           <h1>{t("checkout.customerDetails")}</h1>
+          <p className="muted">{t("checkout.guestHint")}</p>
           <div className="checkout-card">
             <label>
               {t("checkout.fullName")}
               <input
                 value={fullName}
                 onChange={(e) => setFullName(e.target.value)}
+                autoComplete="name"
                 required
               />
             </label>
@@ -200,6 +209,7 @@ export default function CheckoutDetailsPage() {
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
+                autoComplete="email"
                 required
               />
             </label>
@@ -221,6 +231,7 @@ export default function CheckoutDetailsPage() {
                   value={phone}
                   onChange={(e) => setPhone(e.target.value)}
                   placeholder="69 000 0000"
+                  autoComplete="tel-national"
                   required
                 />
               </div>

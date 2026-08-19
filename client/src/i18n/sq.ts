@@ -111,6 +111,7 @@ export const sq = {
     stepConfirm: "Konfirmimi",
     backToFleet: "Kthehu te flota",
     customerDetails: "Të dhënat e klientit",
+    guestHint: "Nuk të duhet llogari. Plotëso emrin, emailin dhe telefonin.",
     fullName: "Emri i plotë",
     email: "Email",
     phone: "Telefoni",
@@ -125,7 +126,7 @@ export const sq = {
     duration: "Kohëzgjatja",
     infoBox:
       "Anulim falas deri 48 orë para marrjes. Konfirmim i menjëhershëm.",
-    needContact: "Plotëso emrin dhe emailin.",
+    needContact: "Plotëso emrin, emailin dhe telefonin.",
     confirmedTitle: "Rezervimi u konfirmua",
     confirmedSub: "Makina jote është gati. Ja detajet e rezervimit.",
     reservationId: "ID e rezervimit",

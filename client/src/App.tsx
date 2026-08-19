@@ -59,21 +59,10 @@ export default function App() {
                   <Route index element={<HomePage />} />
                   <Route path="cars" element={<CarsPage />} />
                   <Route path="cars/:id" element={<CarDetailsPage />} />
-                  <Route
-                    path="checkout"
-                    element={
-                      <Protected>
-                        <CheckoutDetailsPage />
-                      </Protected>
-                    }
-                  />
+                  <Route path="checkout" element={<CheckoutDetailsPage />} />
                   <Route
                     path="checkout/confirmed"
-                    element={
-                      <Protected>
-                        <CheckoutConfirmedPage />
-                      </Protected>
-                    }
+                    element={<CheckoutConfirmedPage />}
                   />
                   <Route
                     path="marketplace"
