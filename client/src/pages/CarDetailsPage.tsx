@@ -178,11 +178,6 @@ export default function CarDetailsPage() {
       notes: notes.trim() || undefined,
     });
 
-    if (!user) {
-      show(t("common.requiredLogin"));
-      navigate("/login?next=/checkout");
-      return;
-    }
     navigate("/checkout");
   }
 
@@ -582,11 +577,9 @@ export default function CarDetailsPage() {
             </div>
 
             <button className="btn detail-reserve" type="submit" disabled={!canReserve}>
-              {!user
-                ? t("details.loginToBook")
-                : dateConflict
-                  ? t("details.conflict")
-                  : t("details.reserveNow")}
+              {dateConflict
+                ? t("details.conflict")
+                : t("details.reserveNow")}
             </button>
             <p className="detail-policy">{t("details.policyNote")}</p>
 

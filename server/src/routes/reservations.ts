@@ -1,13 +1,14 @@
 import { PaymentStatus } from "@prisma/client";
 import { prisma } from "../lib/prisma.js";
 import { AppError } from "../middleware/error.js";
-import { requireAuth, requireAdmin, requireContractorOrAdmin } from "../middleware/auth.js";
+import { requireAuth, optionalAuth, requireAdmin, requireContractorOrAdmin } from "../middleware/auth.js";
 import { upload } from "../middleware/upload.js";
 import {
   cancelReservationSchema,
   idParamSchema,
   reservationSchema,
 } from "../validators/schemas.js";
+import { findOrCreateBookingCustomer } from "../lib/guestEmail.js";
 import { EXTRAS, calcDays, getLocation } from "../lib/pricing.js";
 import { sendMail, sendReservationEmails } from "../lib/mail.js";
 import { buildReservationPdf } from "../lib/pdfContract.js";
@@ -155,7 +156,7 @@ router.get("/", requireAuth, requireAdmin, async (_req, res, next) => {
 
 router.post(
   "/",
-  requireAuth,
+  optionalAuth,
   (req, res, next) => {
     upload.single("document")(req, res, (err) => {
       if (err) return next(err);
@@ -188,6 +189,9 @@ router.post(
         extras,
         paymentMethod: raw.paymentMethod,
         notes: raw.notes || undefined,
+        guestFullName: raw.guestFullName || undefined,
+        guestEmail: raw.guestEmail || undefined,
+        guestPhone: raw.guestPhone || undefined,
       });
 
       const {
@@ -198,6 +202,9 @@ router.post(
         returnLocationId,
         paymentMethod,
         notes,
+        guestFullName,
+        guestEmail,
+        guestPhone,
       } = body;
 
       // Parse YYYY-MM-DD as UTC date-only to match Prisma @db.Date
@@ -327,9 +334,29 @@ router.post(
             : Number(car.pricePerDay);
       }
 
+      let userId = req.user?.id;
+      if (!userId) {
+        if (!guestFullName || !guestEmail || !guestPhone) {
+          throw new AppError("Plotëso emrin, emailin dhe telefonin.", 400);
+        }
+        userId = await findOrCreateBookingCustomer({
+          fullName: guestFullName,
+          email: guestEmail,
+          phone: guestPhone,
+        });
+      } else if (req.user?.role === "USER" && guestFullName) {
+        await prisma.user.update({
+          where: { id: userId },
+          data: {
+            fullName: guestFullName,
+            phone: guestPhone || undefined,
+          },
+        });
+      }
+
       const created = await prisma.reservation.create({
         data: {
-          userId: req.user!.id,
+          userId,
           carId,
           startDate: start,
           endDate: end,

@@ -152,6 +152,9 @@ export const reservationSchema = z.object({
     extras: z.array(z.string()).max(10).default([]),
     paymentMethod: z.enum(["CASH", "BANK_TRANSFER", "CARD"]),
     notes: z.string().trim().max(500).optional(),
+    guestFullName: z.string().trim().min(2).max(100).optional(),
+    guestEmail: z.string().trim().email().max(200).optional(),
+    guestPhone: z.string().trim().min(6).max(40).optional(),
   }),
 });
 

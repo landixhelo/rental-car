@@ -113,6 +113,7 @@ export const en: Dict = {
     stepConfirm: "Confirmation",
     backToFleet: "Back to fleet",
     customerDetails: "Customer Details",
+    guestHint: "No account needed. Fill in your name, email and phone.",
     fullName: "Full name",
     email: "Email address",
     phone: "Phone number",
@@ -127,7 +128,7 @@ export const en: Dict = {
     duration: "Duration",
     infoBox:
       "Free cancellation up to 48 hours before pickup. Instant confirmation.",
-    needContact: "Please fill in your name and email.",
+    needContact: "Please fill in your name, email and phone.",
     confirmedTitle: "Reservation Confirmed",
     confirmedSub: "Your car is ready. Here are your reservation details.",
     reservationId: "Reservation ID",

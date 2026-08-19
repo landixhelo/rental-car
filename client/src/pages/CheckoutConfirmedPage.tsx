@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import BookingStepper from "../components/BookingStepper";
+import { useAuth } from "../context/AuthContext";
 import { useLocale, useT } from "../context/LocaleContext";
 import { useToast } from "../hooks/useToast";
 import {
@@ -15,6 +16,7 @@ import { transmissionLabel } from "../lib/labels";
 export default function CheckoutConfirmedPage() {
   const t = useT();
   const { locale } = useLocale();
+  const { user } = useAuth();
   const navigate = useNavigate();
   const { show } = useToast();
   const [data, setData] = useState<ConfirmedBooking | null>(null);
@@ -127,16 +129,18 @@ export default function CheckoutConfirmedPage() {
       </article>
 
       <div className="confirm-actions">
-        <Link
-          to="/reservations"
-          className="btn"
-          onClick={() => clearConfirmedBooking()}
-        >
-          {t("checkout.viewReservations")}
-        </Link>
+        {user ? (
+          <Link
+            to="/reservations"
+            className="btn"
+            onClick={() => clearConfirmedBooking()}
+          >
+            {t("checkout.viewReservations")}
+          </Link>
+        ) : null}
         <Link
           to="/cars"
-          className="btn ghost"
+          className={user ? "btn ghost" : "btn"}
           onClick={() => clearConfirmedBooking()}
         >
           {t("checkout.backToFleet")}

@@ -4268,10 +4268,14 @@ textarea { min-height: 90px; resize: vertical; }
   align-items: start;
 }
 .checkout-form h1 {
-  margin: 0 0 18px;
+  margin: 0 0 8px;
   font-family: Sora, "DM Sans", system-ui, sans-serif;
   font-size: clamp(1.7rem, 3vw, 2.2rem);
   letter-spacing: -0.03em;
+}
+.checkout-form > .muted {
+  margin: 0 0 18px;
+  max-width: 36rem;
 }
 .checkout-card {
   background: #f7f7f8;

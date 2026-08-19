@@ -5,6 +5,7 @@ import rateLimit from "express-rate-limit";
 import { prisma } from "../lib/prisma.js";
 import { env, isProd } from "../config/env.js";
 import { AppError } from "../middleware/error.js";
+import { isGuestPasswordHash } from "../lib/guestEmail.js";
 import { isMailConfigured, sendMail } from "../lib/mail.js";
 import {
   clearAuthCookie,
@@ -123,7 +124,29 @@ router.post(
   async (req, res, next) => {
   try {
     const { fullName, email, password, phone } = req.body;
-    const exists = await prisma.user.findUnique({ where: { email } });
+    const exists = await prisma.user.findFirst({
+      where: { email: { equals: String(email).trim(), mode: "insensitive" } },
+    });
+    if (exists && exists.role === "USER" && isGuestPasswordHash(exists.passwordHash)) {
+      const passwordHash = await bcrypt.hash(password, env.BCRYPT_ROUNDS);
+      const user = await prisma.user.update({
+        where: { id: exists.id },
+        data: {
+          fullName,
+          passwordHash,
+          phone: phone || exists.phone,
+        },
+      });
+      const token = signToken({
+        id: user.id,
+        email: user.email,
+        role: user.role,
+        fullName: user.fullName,
+      });
+      setAuthCookie(res, token);
+      res.status(201).json({ user: publicUser(user) });
+      return;
+    }
     if (exists) throw new AppError("Email already registered", 409);
 
     const passwordHash = await bcrypt.hash(password, env.BCRYPT_ROUNDS);
@@ -157,6 +180,9 @@ router.post(
     };
     const user = await prisma.user.findUnique({ where: { email } });
     if (!user) throw new AppError("Invalid email or password", 401);
+    if (isGuestPasswordHash(user.passwordHash)) {
+      throw new AppError("Invalid email or password", 401);
+    }
 
     const ok = await bcrypt.compare(password, user.passwordHash);
     if (!ok) throw new AppError("Invalid email or password", 401);

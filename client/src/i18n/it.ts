@@ -113,6 +113,7 @@ export const it: Dict = {
     stepConfirm: "Conferma",
     backToFleet: "Torna alla flotta",
     customerDetails: "Dati del cliente",
+    guestHint: "Non serve un account. Compila nome, email e telefono.",
     fullName: "Nome completo",
     email: "Indirizzo email",
     phone: "Telefono",
@@ -127,7 +128,7 @@ export const it: Dict = {
     duration: "Durata",
     infoBox:
       "Cancellazione gratuita fino a 48 ore prima del ritiro. Conferma immediata.",
-    needContact: "Inserisci nome ed email.",
+    needContact: "Inserisci nome, email e telefono.",
     confirmedTitle: "Prenotazione confermata",
     confirmedSub: "La tua auto è pronta. Ecco i dettagli della prenotazione.",
     reservationId: "ID prenotazione",
