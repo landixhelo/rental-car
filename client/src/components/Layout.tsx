@@ -8,7 +8,7 @@ import { useLocale } from "../context/LocaleContext";
 import { useUnreadNotifications } from "../context/UnreadContext";
 import { applyBusinessMeta, businessRuntime } from "../seo/site";
 import type { Locale } from "../i18n";
-import { isOpsPath } from "./OpsLayout";
+import { isOpsPath, isStaffGatePath } from "./OpsLayout";
 
 export default function Layout() {
   const { user, logout } = useAuth();
@@ -28,6 +28,8 @@ export default function Layout() {
 
   const isHome = location.pathname === "/";
   const isOps = isOpsPath(location.pathname);
+  const isStaffGate = isStaffGatePath(location.pathname);
+  const hidePublicChrome = isOps || isStaffGate;
   const showNotificationBadge = Boolean(user) && reservationBadge > 0;
   const canManageFleet =
     user?.role === "CONTRACTOR" ||
@@ -131,10 +133,10 @@ export default function Layout() {
   return (
     <div
       className={`app-shell${isHome ? " is-home" : ""}${
-        isOps ? " is-ops" : ""
+        hidePublicChrome ? " is-ops" : ""
       }`}
     >
-      {!isOps ? (
+      {!hidePublicChrome ? (
         <>
       <nav className="navbar">
           <div className="navbar-shell">
@@ -477,7 +479,7 @@ export default function Layout() {
         <Outlet />
       </main>
 
-      {!isOps ? (
+      {!hidePublicChrome ? (
       <footer className="footer site-footer">
         <div className="site-footer-grid">
           <div className="site-footer-brand">

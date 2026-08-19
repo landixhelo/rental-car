@@ -1,6 +1,7 @@
 import { Navigate, useLocation } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { useT } from "../context/LocaleContext";
+import { isStaffOnlyPath } from "./OpsLayout";
 
 export function Protected({
   children,
@@ -19,9 +20,10 @@ export function Protected({
   if (loading) return <div className="page">{t("common.loading")}</div>;
   if (!user) {
     const next = `${location.pathname}${location.search}`;
+    const gate = isStaffOnlyPath(location.pathname) ? "/ops" : "/login";
     return (
       <Navigate
-        to={`/login?next=${encodeURIComponent(next)}`}
+        to={`${gate}?next=${encodeURIComponent(next)}`}
         replace
       />
     );

@@ -5306,6 +5306,26 @@ textarea { min-height: 90px; resize: vertical; }
   padding: 30px 16px;
 }
 .auth-page .panel { width: min(420px, 100%); }
+.ops-login {
+  min-height: 100vh;
+  background: var(--bg);
+}
+.ops-login .panel {
+  display: grid;
+  gap: 12px;
+}
+.ops-login .brand-logo--ops {
+  height: 44px;
+  width: auto;
+  margin-bottom: 4px;
+}
+.ops-login h1 {
+  margin: 0;
+  font-size: 1.45rem;
+}
+.ops-login .panel > .muted {
+  margin: 0 0 6px;
+}
 .remember-me {
   display: flex;
   align-items: center;
