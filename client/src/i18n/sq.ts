@@ -928,7 +928,13 @@ export const sq = {
     bookingsCol: "Rezervime",
     loadError: "Gabim te makinat",
     calendar: "Kalendari i disponueshmërisë",
-    calendarHint: "Numri tregon sa rezervime aktive bien në atë ditë.",
+    calendarHint:
+      "Numri i vogël tregon sa rezervime bien në atë ditë. Kliko datën për t’i parë poshtë.",
+    calendarToday: "Sot",
+    calendarAllCars: "Të gjitha makinat",
+    calendarDayTitle: "Rezervimet për {date}",
+    calendarEmptyDay: "Nuk ka rezervime në këtë datë.",
+    openBooking: "Hap rezervimin",
   },
   superAdmin: {
     title: "Paneli Super Admin",
@@ -997,6 +1003,8 @@ export const sq = {
     promoTitle: "Kodet promo së shpejti",
     promoBody:
       "Së shpejti do të krijosh kode zbritjeje për klientët. Faqja është gati; funksioni vjen në hapin tjetër.",
+    calendarSub:
+      "Kliko një datë për të parë rezervimet e asaj dite. Numri në kalendar është totali i rezervimeve.",
     reportsSub: "Përmbledhje e të ardhurave, flotës dhe rezervimeve.",
     reportsEmpty: "Nuk ka të dhëna ende.",
     monthlyRevenue: "Të ardhura mujore",

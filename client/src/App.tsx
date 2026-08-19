@@ -27,6 +27,7 @@ import TermsPage from "./pages/TermsPage";
 import AdminPage from "./pages/AdminPage";
 import SuperAdminPage from "./pages/SuperAdminPage";
 import ContractorPage from "./pages/ContractorPage";
+import CalendarPage from "./pages/CalendarPage";
 import DashboardPage from "./pages/DashboardPage";
 import ChatsPage from "./pages/ChatsPage";
 import CustomersPage from "./pages/CustomersPage";
@@ -152,6 +153,14 @@ export default function App() {
                       element={
                         <Protected contractor>
                           <ContractorPage />
+                        </Protected>
+                      }
+                    />
+                    <Route
+                      path="calendar"
+                      element={
+                        <Protected contractor>
+                          <CalendarPage />
                         </Protected>
                       }
                     />

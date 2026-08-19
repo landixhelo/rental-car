@@ -83,6 +83,7 @@ type NavItem = {
 export const OPS_PATHS = [
   "/dashboard",
   "/contractor",
+  "/calendar",
   "/chats",
   "/admin",
   "/super-admin",
@@ -99,6 +100,7 @@ export const OPS_PATHS = [
 export const STAFF_ONLY_PATHS = [
   "/dashboard",
   "/contractor",
+  "/calendar",
   "/chats",
   "/admin",
   "/super-admin",
@@ -182,10 +184,9 @@ export default function OpsLayout() {
     if (isStaff) {
       items.push({ to: "/chats", label: t("nav.chats"), icon: ICONS.customers });
       items.push({
-        to: "/contractor",
+        to: "/calendar",
         label: t("dashboard.navCalendar"),
         icon: ICONS.calendar,
-        hash: "#calendar",
       });
     }
     items.push({

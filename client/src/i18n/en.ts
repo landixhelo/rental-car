@@ -927,7 +927,13 @@ export const en: Dict = {
     bookingsCol: "Bookings",
     loadError: "Could not load cars",
     calendar: "Availability calendar",
-    calendarHint: "The number shows how many active bookings fall on that day.",
+    calendarHint:
+      "The small number shows how many bookings fall on that day. Click a date to see them below.",
+    calendarToday: "Today",
+    calendarAllCars: "All cars",
+    calendarDayTitle: "Bookings for {date}",
+    calendarEmptyDay: "No bookings on this date.",
+    openBooking: "Open booking",
   },
   superAdmin: {
     title: "Super Admin panel",
@@ -994,6 +1000,8 @@ export const en: Dict = {
     promoTitle: "Promo codes coming soon",
     promoBody:
       "You’ll soon create discount codes for customers. The page is ready; the feature lands next.",
+    calendarSub:
+      "Click a date to see that day’s bookings. The number on the calendar is the total.",
     reportsSub: "Overview of revenue, fleet and reservations.",
     reportsEmpty: "No data yet.",
     monthlyRevenue: "Monthly revenue",

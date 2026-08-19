@@ -79,6 +79,7 @@ export function pageCrumbs(
   if (pathname === "/dashboard") return [{ label: t("nav.dashboard") }];
   if (pathname === "/chats") return [{ label: t("nav.chats") }];
   if (pathname === "/contractor") return [{ label: t("nav.fleet") }];
+  if (pathname === "/calendar") return [{ label: t("dashboard.navCalendar") }];
   if (pathname === "/customers") return [{ label: t("dashboard.navCustomers") }];
   if (pathname === "/locations") return [{ label: t("dashboard.navLocations") }];
   if (pathname === "/reviews") return [{ label: t("dashboard.navReviews") }];
