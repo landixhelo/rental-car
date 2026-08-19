@@ -930,6 +930,7 @@ export const sq = {
     activeBookings: "Rezervime aktive",
     revenue: "Të ardhura (konfirmuara)",
     viewBookings: "Shiko rezervimet e klientëve",
+    openCalendar: "Hap kalendarin",
     myFleet: "Flota ime",
     empty: "Nuk ke makina ende. Shto të parën më sipër.",
     bookingsCol: "Rezervime",

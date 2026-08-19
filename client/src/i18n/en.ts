@@ -929,6 +929,7 @@ export const en: Dict = {
     activeBookings: "Active bookings",
     revenue: "Revenue (confirmed)",
     viewBookings: "View customer reservations",
+    openCalendar: "Open calendar",
     myFleet: "My fleet",
     empty: "No cars yet. Add the first one above.",
     bookingsCol: "Bookings",

@@ -4,7 +4,6 @@ import { api, type Car } from "../lib/api";
 import { buildCarJsonPayload, uploadCarImageFiles } from "../lib/carMedia";
 import FeatureCheckboxes from "../components/FeatureCheckboxes";
 import CarImagePicker from "../components/CarImagePicker";
-import FleetCalendar from "../components/FleetCalendar";
 import { useAuth } from "../context/AuthContext";
 import { useT } from "../context/LocaleContext";
 import { useToast } from "../hooks/useToast";
@@ -142,13 +141,14 @@ export default function ContractorPage() {
         </div>
       </div>
 
-      <p style={{ marginBottom: 20 }}>
+      <p style={{ marginBottom: 20, display: "flex", gap: 10, flexWrap: "wrap" }}>
         <Link to="/reservations" className="btn">
           {t("contractor.viewBookings")}
         </Link>
+        <Link to="/calendar" className="btn ghost">
+          {t("contractor.openCalendar")}
+        </Link>
       </p>
-
-      <FleetCalendar reservations={reservations} />
 
       <form className="panel" onSubmit={saveCar} style={{ marginTop: 24 }}>
         <h2>{editId ? t("carForm.editTitle") : t("carForm.addTitle")}</h2>
