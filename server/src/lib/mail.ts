@@ -1,7 +1,20 @@
+import dns from "node:dns";
 import nodemailer from "nodemailer";
 import { env } from "../config/env.js";
 import { cancellationPolicyText } from "./cancellation.js";
 import { getBusinessPublic } from "./business.js";
+
+function lookupIpv4(
+  hostname: string,
+  _options: unknown,
+  callback: (
+    err: NodeJS.ErrnoException | null,
+    address: string,
+    family: number
+  ) => void
+) {
+  dns.lookup(hostname, { family: 4 }, callback);
+}
 
 export function isMailConfigured() {
   return Boolean(env.SMTP_HOST && env.SMTP_USER && env.SMTP_PASS);
@@ -45,6 +58,7 @@ function transporter() {
     greetingTimeout: 20_000,
     socketTimeout: 25_000,
     family: 4 as const,
+    lookup: lookupIpv4,
   };
   if (isGmail()) {
     // Railway often hangs on IPv6 / port 587 to Gmail. Prefer SMTPS + IPv4.
