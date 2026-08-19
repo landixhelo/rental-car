@@ -1,7 +1,7 @@
 import { Navigate, useLocation } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { useT } from "../context/LocaleContext";
-import { isStaffOnlyPath } from "./OpsLayout";
+import { isStaffOnlyPath, isStaffRole } from "./OpsLayout";
 
 export function Protected({
   children,
@@ -28,11 +28,16 @@ export function Protected({
       />
     );
   }
+  const fallback = isStaffRole(user.role)
+    ? "/dashboard"
+    : isStaffOnlyPath(location.pathname)
+      ? "/ops"
+      : "/";
   if (superAdmin && user.role !== "SUPER_ADMIN") {
-    return <Navigate to="/" replace />;
+    return <Navigate to={fallback} replace />;
   }
   if (admin && user.role !== "ADMIN" && user.role !== "SUPER_ADMIN") {
-    return <Navigate to="/" replace />;
+    return <Navigate to={fallback} replace />;
   }
   if (
     contractor &&
@@ -40,7 +45,7 @@ export function Protected({
     user.role !== "ADMIN" &&
     user.role !== "SUPER_ADMIN"
   ) {
-    return <Navigate to="/" replace />;
+    return <Navigate to={fallback} replace />;
   }
   return <>{children}</>;
 }

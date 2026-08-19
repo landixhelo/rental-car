@@ -4,6 +4,7 @@ import { useAuth } from "../context/AuthContext";
 import { useLocale, useT } from "../context/LocaleContext";
 import { useToast } from "../hooks/useToast";
 import { loginWithPasskey, supportsPasskeys } from "../lib/passkeys";
+import { isStaffRole } from "../components/OpsLayout";
 import Seo from "../seo/Seo";
 
 export default function LoginPage() {
@@ -20,12 +21,20 @@ export default function LoginPage() {
   const canUsePasskey = supportsPasskeys();
   const nextPath = searchParams.get("next") || "/";
 
+  function afterLogin(role: string) {
+    if (isStaffRole(role) && (!nextPath || nextPath === "/")) {
+      navigate("/dashboard");
+      return;
+    }
+    navigate(nextPath.startsWith("/") ? nextPath : "/");
+  }
+
   async function onSubmit(e: FormEvent) {
     e.preventDefault();
     try {
-      await login(email, password, rememberMe);
+      const signedIn = await login(email, password, rememberMe);
       show(t("auth.welcome"));
-      navigate(nextPath.startsWith("/") ? nextPath : "/");
+      afterLogin(signedIn.role);
     } catch (err) {
       show(err instanceof Error ? err.message : t("common.error"));
     }
@@ -35,10 +44,10 @@ export default function LoginPage() {
     if (passkeyBusy) return;
     setPasskeyBusy(true);
     try {
-      const user = await loginWithPasskey(email);
-      setUser(user);
+      const signedIn = await loginWithPasskey(email);
+      setUser(signedIn);
       show(t("auth.welcome"));
-      navigate(nextPath.startsWith("/") ? nextPath : "/");
+      afterLogin(signedIn.role);
     } catch (err) {
       const name =
         err && typeof err === "object" && "name" in err
