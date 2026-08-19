@@ -40,10 +40,20 @@ function isSendableAddress(to: string) {
 function transporter() {
   const host = env.SMTP_HOST || "";
   const auth = mailAuth();
+  const timeouts = {
+    connectionTimeout: 20_000,
+    greetingTimeout: 20_000,
+    socketTimeout: 25_000,
+    family: 4 as const,
+  };
   if (isGmail()) {
+    // Railway often hangs on IPv6 / port 587 to Gmail. Prefer SMTPS + IPv4.
     return nodemailer.createTransport({
-      service: "gmail",
+      host: "smtp.gmail.com",
+      port: 465,
+      secure: true,
       auth,
+      ...timeouts,
     });
   }
   const port = env.SMTP_PORT;
@@ -52,10 +62,8 @@ function transporter() {
     port,
     secure: port === 465,
     requireTLS: port === 587,
-    connectionTimeout: 12_000,
-    greetingTimeout: 12_000,
-    socketTimeout: 20_000,
     auth,
+    ...timeouts,
   });
 }
 
@@ -85,7 +93,7 @@ export async function verifyMail() {
     await Promise.race([
       transporter().verify(),
       new Promise((_, reject) =>
-        setTimeout(() => reject(new Error("SMTP verify timeout (12s)")), 12_000)
+        setTimeout(() => reject(new Error("SMTP verify timeout (20s)")), 20_000)
       ),
     ]);
     console.info("[mail] SMTP ready via", env.SMTP_HOST);
