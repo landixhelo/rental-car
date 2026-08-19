@@ -63,7 +63,7 @@ export default function ForgotPasswordPage() {
           </div>
         ) : null}
         <p>
-          <Link to="/login">{t("auth.backToLogin")}</Link>
+          <Link to="/ops">{t("auth.backToLogin")}</Link>
         </p>
       </form>
     </div>

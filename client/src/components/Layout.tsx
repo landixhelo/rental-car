@@ -10,6 +10,25 @@ import { applyBusinessMeta, businessRuntime } from "../seo/site";
 import type { Locale } from "../i18n";
 import { isOpsPath, isStaffGatePath } from "./OpsLayout";
 
+function UserIcon() {
+  return (
+    <svg
+      width="22"
+      height="22"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.8"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden
+    >
+      <circle cx="12" cy="8" r="3.2" />
+      <path d="M5.2 19.2a7.2 7.2 0 0 1 13.6 0" />
+    </svg>
+  );
+}
+
 export default function Layout() {
   const { user, logout } = useAuth();
   const { t, locale, setLocale } = useLocale();
@@ -282,33 +301,28 @@ export default function Layout() {
                   </div>
                 </div>
               ) : (
-                <div className="nav-auth">
-                  <NavLink
-                    to="/login"
-                    className="nav-login"
-                    onClick={closeMenus}
-                  >
-                    {t("nav.login")}
-                  </NavLink>
-                  <NavLink
-                    to="/register"
-                    className="btn nav-signup"
-                    onClick={closeMenus}
-                  >
-                    {t("nav.register")}
-                  </NavLink>
-                </div>
+                <NavLink
+                  to="/ops"
+                  className="nav-user-btn"
+                  onClick={closeMenus}
+                  aria-label={t("nav.staffGate")}
+                  title={t("nav.staffGate")}
+                >
+                  <UserIcon />
+                </NavLink>
               )}
             </div>
             ) : (
             <div className="nav-mobile-only">
               {!user ? (
                 <NavLink
-                  to="/login"
-                  className="nav-login-mobile"
+                  to="/ops"
+                  className="nav-user-btn"
                   onClick={closeMenus}
+                  aria-label={t("nav.staffGate")}
+                  title={t("nav.staffGate")}
                 >
-                  {t("nav.login")}
+                  <UserIcon />
                 </NavLink>
               ) : null}
               <button
@@ -438,21 +452,7 @@ export default function Layout() {
                   {t("nav.logout")}
                 </button>
               </>
-            ) : (
-              <>
-                <p className="nav-menu-section">{t("nav.login")}</p>
-                <NavLink to="/login" onClick={closeMenus}>
-                  {t("nav.login")}
-                </NavLink>
-                <NavLink
-                  to="/register"
-                  className="btn nav-signup nav-menu-cta"
-                  onClick={closeMenus}
-                >
-                  {t("nav.register")}
-                </NavLink>
-              </>
-            )}
+            ) : null}
           </div>
           ) : null}
         </div>

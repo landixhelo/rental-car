@@ -20,7 +20,7 @@ export function Protected({
   if (loading) return <div className="page">{t("common.loading")}</div>;
   if (!user) {
     const next = `${location.pathname}${location.search}`;
-    const gate = isStaffOnlyPath(location.pathname) ? "/ops" : "/login";
+    const gate = "/ops";
     return (
       <Navigate
         to={`${gate}?next=${encodeURIComponent(next)}`}

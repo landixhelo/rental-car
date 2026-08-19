@@ -329,7 +329,7 @@ export default function OpsLayout() {
               onClick={() => {
                 setSidebarOpen(false);
                 void logout().then(() => {
-                  navigate(isStaff ? "/ops" : "/login");
+                  navigate(isStaff ? "/ops" : "/");
                 });
               }}
             >
@@ -365,7 +365,7 @@ export default function OpsLayout() {
                 className="ops-logout-top"
                 onClick={() => {
                   void logout().then(() => {
-                    navigate(isStaff ? "/ops" : "/login");
+                    navigate(isStaff ? "/ops" : "/");
                   });
                 }}
               >

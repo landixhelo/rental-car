@@ -13,9 +13,7 @@ import LocationPage from "./pages/LocationPage";
 import HomePage from "./pages/HomePage";
 import CarsPage from "./pages/CarsPage";
 import CarDetailsPage from "./pages/CarDetailsPage";
-import LoginPage from "./pages/LoginPage";
 import OpsLoginPage from "./pages/OpsLoginPage";
-import RegisterPage from "./pages/RegisterPage";
 import ForgotPasswordPage from "./pages/ForgotPasswordPage";
 import ResetPasswordPage from "./pages/ResetPasswordPage";
 import ReservationsPage from "./pages/ReservationsPage";
@@ -75,13 +73,13 @@ export default function App() {
                     element={<Navigate to="/cars" replace />}
                   />
                   <Route path="seller" element={<Navigate to="/" replace />} />
-                  <Route path="login" element={<LoginPage />} />
+                  <Route path="login" element={<Navigate to="/ops" replace />} />
                   <Route path="ops" element={<OpsLoginPage />} />
                   <Route
                     path="new-admin"
                     element={<Navigate to="/ops" replace />}
                   />
-                  <Route path="register" element={<RegisterPage />} />
+                  <Route path="register" element={<Navigate to="/" replace />} />
                   <Route
                     path="forgot-password"
                     element={<ForgotPasswordPage />}
