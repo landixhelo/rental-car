@@ -936,7 +936,13 @@ export const it: Dict = {
     bookingsCol: "Prenotazioni",
     loadError: "Errore nel caricamento auto",
     calendar: "Calendario disponibilità",
-    calendarHint: "Il numero indica quante prenotazioni attive cadono in quel giorno.",
+    calendarHint:
+      "Il numero piccolo indica quante prenotazioni cadono in quel giorno. Clicca la data per vederle sotto.",
+    calendarToday: "Oggi",
+    calendarAllCars: "Tutte le auto",
+    calendarDayTitle: "Prenotazioni del {date}",
+    calendarEmptyDay: "Nessuna prenotazione in questa data.",
+    openBooking: "Apri prenotazione",
   },
   superAdmin: {
     title: "Pannello Super Admin",
@@ -1003,6 +1009,8 @@ export const it: Dict = {
     promoTitle: "Codici promo in arrivo",
     promoBody:
       "Presto potrai creare codici sconto per i clienti. La pagina è pronta; la funzione arriva dopo.",
+    calendarSub:
+      "Clicca una data per vedere le prenotazioni di quel giorno. Il numero nel calendario è il totale.",
     reportsSub: "Panoramica di ricavi, flotta e prenotazioni.",
     reportsEmpty: "Nessun dato ancora.",
     monthlyRevenue: "Ricavi mensili",
