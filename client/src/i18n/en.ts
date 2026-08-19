@@ -40,6 +40,7 @@ export const en: Dict = {
     superAdmin: "Super Admin",
     logout: "Log out",
     login: "Login",
+    staffGate: "Staff sign in",
     register: "Sign Up",
     notifications: "notifications",
     lightMode: "Light mode",

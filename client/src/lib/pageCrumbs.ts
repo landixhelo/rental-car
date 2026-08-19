@@ -42,13 +42,8 @@ export function pageCrumbs(
     ];
   }
 
-  if (pathname === "/login") return [{ label: t("nav.login") }];
-  if (pathname === "/register") return [{ label: t("nav.register") }];
   if (pathname === "/forgot-password") {
-    return [
-      { label: t("nav.login"), to: "/login" },
-      { label: t("auth.forgotTitle") },
-    ];
+    return [{ label: t("auth.forgotTitle") }];
   }
   if (pathname === "/reset-password") {
     return [{ label: t("auth.resetTitle") }];

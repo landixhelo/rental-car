@@ -28,7 +28,7 @@ export default function ResetPasswordPage() {
     try {
       const res = await api.resetPassword(token, password);
       show(res.message || t("auth.resetOk"));
-      navigate("/login");
+      navigate("/ops");
     } catch (err) {
       show(err instanceof Error ? err.message : t("common.error"));
     }
@@ -59,7 +59,7 @@ export default function ResetPasswordPage() {
           {t("auth.resetBtn")}
         </button>
         <p>
-          <Link to="/login">{t("auth.backToLogin")}</Link>
+          <Link to="/ops">{t("auth.backToLogin")}</Link>
         </p>
       </form>
     </div>

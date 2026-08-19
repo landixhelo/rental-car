@@ -38,6 +38,7 @@ export const sq = {
     superAdmin: "Super Admin",
     logout: "Dil",
     login: "Hyr",
+    staffGate: "Hyrje stafi",
     register: "Regjistrohu",
     notifications: "njoftime",
     lightMode: "Modaliteti i ndritshëm",
