@@ -1,3 +1,4 @@
+import "./lib/ipv4first.js";
 import express from "express";
 import cors from "cors";
 import helmet from "helmet";
