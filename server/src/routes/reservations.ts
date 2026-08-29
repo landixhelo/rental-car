@@ -22,6 +22,7 @@ import { z } from "zod";
 import { validate } from "../middleware/validate.js";
 import { Router, type NextFunction, type Request, type Response } from "express";
 import { notifyBusinessWhatsApp } from "../lib/whatsapp.js";
+import { writeLimiter } from "../middleware/limiters.js";
 
 const router = Router();
 
@@ -156,6 +157,7 @@ router.get("/", requireAuth, requireAdmin, async (_req, res, next) => {
 
 router.post(
   "/",
+  writeLimiter,
   optionalAuth,
   (req, res, next) => {
     upload.single("document")(req, res, (err) => {

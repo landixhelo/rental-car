@@ -4,6 +4,7 @@ import { AppError } from "../middleware/error.js";
 import { optionalAuth } from "../middleware/auth.js";
 import { validate } from "../middleware/validate.js";
 import { idParamSchema, reviewSchema } from "../validators/schemas.js";
+import { writeLimiter } from "../middleware/limiters.js";
 
 const router = Router();
 
@@ -48,7 +49,12 @@ router.get("/", async (_req, res, next) => {
   }
 });
 
-router.post("/", optionalAuth, validate(reviewSchema), async (req, res, next) => {
+router.post(
+  "/",
+  writeLimiter,
+  optionalAuth,
+  validate(reviewSchema),
+  async (req, res, next) => {
   try {
     const { carId, rating, comment, authorName } = req.body;
     const car = await prisma.car.findUnique({ where: { id: carId } });

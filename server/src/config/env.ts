@@ -99,12 +99,19 @@ export function getAllowedOrigins(): string[] {
   const extras = env.CLIENT_ORIGINS.split(",")
     .map((s) => s.trim())
     .filter(Boolean);
+  const localDev = isProd
+    ? []
+    : [
+        "http://localhost:5173",
+        "http://localhost:5174",
+        "http://127.0.0.1:5173",
+        "http://127.0.0.1:5174",
+      ];
   return Array.from(
     new Set([
       env.CLIENT_ORIGIN,
       ...extras,
-      "http://localhost:5173",
-      "http://localhost:5174",
+      ...localDev,
       "https://landixhelo.me",
       "https://www.landixhelo.me",
     ])

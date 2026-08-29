@@ -10,10 +10,12 @@ import {
 } from "../components/OpsLayout";
 import BrandLockup from "../components/BrandLockup";
 import Seo from "../seo/Seo";
+import { isSafeInternalPath } from "../lib/returnTo";
 
 function staffNext(raw: string | null) {
-  const path = (raw || "/dashboard").split("?")[0];
-  if (path.startsWith("/") && isStaffOnlyPath(path)) return raw || "/dashboard";
+  if (!isSafeInternalPath(raw)) return "/dashboard";
+  const path = raw.split("?")[0];
+  if (isStaffOnlyPath(path)) return raw;
   return "/dashboard";
 }
 

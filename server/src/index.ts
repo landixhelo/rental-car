@@ -8,6 +8,7 @@ import rateLimit from "express-rate-limit";
 import path from "path";
 import { env, isProd, getAllowedOrigins } from "./config/env.js";
 import { errorHandler, notFound } from "./middleware/error.js";
+import { applyExtraHeaders, helmetOptions } from "./security/httpHeaders.js";
 import authRoutes from "./routes/auth.js";
 import carRoutes from "./routes/cars.js";
 import mediaRoutes from "./routes/media.js";
@@ -33,25 +34,31 @@ console.log("Booting AutoRent API...");
 
 const app = express();
 
+app.disable("x-powered-by");
 app.set("trust proxy", 1);
 
-app.use(
-  helmet({
-    crossOriginResourcePolicy: { policy: "cross-origin" },
-  })
-);
+app.use(helmet(helmetOptions));
+app.use(applyExtraHeaders);
+app.use((_req, res, next) => {
+  res.removeHeader("Server");
+  next();
+});
 app.use(hpp());
 app.use(
   cors({
     origin: (origin, callback) => {
-      const allowed = getAllowedOrigins();
-      if (!origin || allowed.includes(origin)) {
+      if (!origin) {
         callback(null, true);
-      } else {
-        callback(new Error("Not allowed by CORS"));
+        return;
       }
+      if (getAllowedOrigins().includes(origin)) {
+        callback(null, true);
+        return;
+      }
+      callback(null, false);
     },
     credentials: true,
+    maxAge: 600,
   })
 );
 
@@ -73,11 +80,11 @@ const globalLimiter = rateLimit({
   standardHeaders: true,
   legacyHeaders: false,
 });
-app.use(globalLimiter);
-
 app.get("/api/health", (_req, res) => {
   res.json({ ok: true, service: "autorent-api" });
 });
+
+app.use(globalLimiter);
 
 app.get("/api/meta", (_req, res) => {
   const business = getBusinessPublic();
@@ -95,6 +102,11 @@ app.use(
   express.static(path.resolve(process.cwd(), env.UPLOAD_DIR), {
     fallthrough: true,
     index: false,
+    dotfiles: "deny",
+    setHeaders(res) {
+      res.setHeader("X-Content-Type-Options", "nosniff");
+      res.setHeader("X-Frame-Options", "DENY");
+    },
   })
 );
 

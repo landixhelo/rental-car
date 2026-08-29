@@ -6,6 +6,7 @@ import { useToast } from "../hooks/useToast";
 import { loginWithPasskey, supportsPasskeys } from "../lib/passkeys";
 import { isStaffRole } from "../components/OpsLayout";
 import Seo from "../seo/Seo";
+import { isSafeInternalPath } from "../lib/returnTo";
 
 export default function LoginPage() {
   const { login, setUser } = useAuth();
@@ -19,14 +20,15 @@ export default function LoginPage() {
   const [rememberMe, setRememberMe] = useState(true);
   const [passkeyBusy, setPasskeyBusy] = useState(false);
   const canUsePasskey = supportsPasskeys();
-  const nextPath = searchParams.get("next") || "/";
+  const rawNext = searchParams.get("next") || "/";
+  const nextPath = isSafeInternalPath(rawNext) ? rawNext : "/";
 
   function afterLogin(role: string) {
     if (isStaffRole(role) && (!nextPath || nextPath === "/")) {
       navigate("/dashboard");
       return;
     }
-    navigate(nextPath.startsWith("/") ? nextPath : "/");
+    navigate(nextPath);
   }
 
   async function onSubmit(e: FormEvent) {

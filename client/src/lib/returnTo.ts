@@ -1,5 +1,14 @@
 export const RETURN_TO_PARAM = "from";
 
+/** Same-origin path only — blocks protocol-relative open redirects (`//evil.com`). */
+export function isSafeInternalPath(
+  path: string | null | undefined
+): path is string {
+  if (!path || !path.startsWith("/") || path.startsWith("//")) return false;
+  if (path.includes("://") || path.includes("\\")) return false;
+  return true;
+}
+
 const RETURN_PREFIXES = [
   "/dashboard",
   "/contractor",
@@ -18,8 +27,7 @@ const RETURN_PREFIXES = [
 ] as const;
 
 export function isSafeReturnTo(path: string | null | undefined): path is string {
-  if (!path || !path.startsWith("/") || path.startsWith("//")) return false;
-  if (path.includes("://") || path.includes("\\")) return false;
+  if (!isSafeInternalPath(path)) return false;
   const pathname = path.split("?")[0];
   return RETURN_PREFIXES.some(
     (prefix) => pathname === prefix || pathname.startsWith(`${prefix}/`)
