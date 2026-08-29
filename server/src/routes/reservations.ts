@@ -102,7 +102,7 @@ router.get("/fleet", requireAuth, requireContractorOrAdmin, async (req, res, nex
     const reservations = await prisma.reservation.findMany({
       where,
       include: {
-        user: { select: { fullName: true, email: true, phone: true } },
+        user: { select: { id: true, fullName: true, email: true, phone: true } },
         car: {
           select: {
             brand: true,

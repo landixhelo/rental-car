@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { Link, useNavigate, useParams } from "react-router-dom";
+import { Link, useLocation, useNavigate, useParams } from "react-router-dom";
 import { useOpsSearch } from "../components/OpsLayout";
 import { useLocale, useT } from "../context/LocaleContext";
 import { useToast } from "../hooks/useToast";
@@ -8,18 +8,28 @@ import {
   formatReservationCode,
   formatShortDate,
 } from "../lib/bookingDraft";
-import { isPlaceholderGuestEmail } from "../lib/guestEmail";
 import { mediaUrl } from "../lib/mediaUrl";
+import {
+  backLabelKey,
+  readReturnTo,
+  reservationLocation,
+} from "../lib/returnTo";
 
 type CustomerHistory = Awaited<ReturnType<typeof api.dashboardCustomer>>;
 
+function isPlaceholderGuestEmail(email?: string | null) {
+  return Boolean(email?.toLowerCase().endsWith("@guest.viaegnatia.al"));
+}
+
 export default function CustomerHistoryPage() {
   const { id } = useParams<{ id: string }>();
+  const location = useLocation();
   const t = useT();
   const { locale } = useLocale();
   const { query } = useOpsSearch();
   const { show } = useToast();
   const navigate = useNavigate();
+  const backTo = readReturnTo(location, "/customers");
   const [data, setData] = useState<CustomerHistory | null>(null);
   const [loading, setLoading] = useState(true);
 
@@ -31,7 +41,7 @@ export default function CustomerHistoryPage() {
       .then(setData)
       .catch((e) => {
         show(e instanceof Error ? e.message : t("common.error"));
-        navigate("/customers", { replace: true });
+        navigate(backTo, { replace: true });
       })
       .finally(() => setLoading(false));
   }, [id, navigate, show, t]);
@@ -67,8 +77,8 @@ export default function CustomerHistoryPage() {
     <div className="ops-page">
       <header className="ops-page-head">
         <div>
-          <Link to="/customers" className="rental-detail-back">
-            ← {t("opsPages.backToCustomers")}
+          <Link to={backTo} className="rental-detail-back">
+            ← {t(backLabelKey(backTo))}
           </Link>
           <h1>{customer.fullName}</h1>
           <p>{t("opsPages.historySub")}</p>
@@ -144,7 +154,14 @@ export default function CustomerHistoryPage() {
                   </dl>
                   <p className="total">€{r.totalPrice}</p>
                   <div className="reservation-actions">
-                    <Link to={`/reservations/${r.id}`} className="btn">
+                    <Link
+                      to={
+                        id
+                          ? reservationLocation(r.id, `/customers/${id}`)
+                          : `/reservations/${r.id}`
+                      }
+                      className="btn"
+                    >
                       {t("reservations.viewDetails")}
                     </Link>
                   </div>

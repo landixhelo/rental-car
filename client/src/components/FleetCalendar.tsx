@@ -5,6 +5,7 @@ import { formatShortDate } from "../lib/bookingDraft";
 import { formatDay, monthMatrix, tiraneToday } from "../lib/dates";
 import { statusLabel } from "../lib/labels";
 import { mediaUrl } from "../lib/mediaUrl";
+import { customerHistoryLocation, reservationLocation } from "../lib/returnTo";
 
 export type FleetCalendarReservation = {
   id: string;
@@ -21,6 +22,7 @@ export type FleetCalendarReservation = {
     imageUrl?: string | null;
   };
   user?: {
+    id?: string;
     fullName?: string;
     email?: string;
     phone?: string | null;
@@ -214,7 +216,15 @@ export default function FleetCalendar({
                   <div className="calendar-booking-body">
                     <h4>{carLabel || "—"}</h4>
                     <p>
-                      <strong>{r.user?.fullName || "—"}</strong>
+                      {r.user?.id ? (
+                        <Link
+                          to={customerHistoryLocation(r.user.id, "/calendar")}
+                        >
+                          <strong>{r.user?.fullName || "—"}</strong>
+                        </Link>
+                      ) : (
+                        <strong>{r.user?.fullName || "—"}</strong>
+                      )}
                       {r.user?.phone ? (
                         <>
                           {" · "}
@@ -235,7 +245,10 @@ export default function FleetCalendar({
                     {r.totalPrice != null ? (
                       <strong>€{Number(r.totalPrice)}</strong>
                     ) : null}
-                    <Link to={`/reservations/${r.id}`} className="btn ghost">
+                    <Link
+                      to={reservationLocation(r.id, "/calendar")}
+                      className="btn ghost"
+                    >
                       {t("contractor.openBooking")}
                     </Link>
                   </div>

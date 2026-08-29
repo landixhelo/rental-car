@@ -5,6 +5,7 @@ import { useLocale, useT } from "../context/LocaleContext";
 import { useToast } from "../hooks/useToast";
 import { api } from "../lib/api";
 import { formatShortDate } from "../lib/bookingDraft";
+import { reservationLocation } from "../lib/returnTo";
 
 type Customer = {
   id: string;
@@ -95,9 +96,15 @@ export default function CustomersPage() {
                   <td>{c.bookings}</td>
                   <td>€{c.revenue}</td>
                   <td>
-                    <Link to={`/reservations/${c.lastBookingId}`}>
-                      {c.lastCar}
-                    </Link>
+                    {c.lastBookingId ? (
+                      <Link
+                        to={reservationLocation(c.lastBookingId, "/customers")}
+                      >
+                        {c.lastCar}
+                      </Link>
+                    ) : (
+                      c.lastCar || "—"
+                    )}
                     <div className="muted ops-table-sub">
                       {formatShortDate(c.lastStart, locale)} →{" "}
                       {formatShortDate(c.lastEnd, locale)} ·{" "}

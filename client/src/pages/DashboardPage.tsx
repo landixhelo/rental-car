@@ -5,6 +5,7 @@ import { useAuth } from "../context/AuthContext";
 import { useLocale, useT } from "../context/LocaleContext";
 import { useToast } from "../hooks/useToast";
 import { mediaUrl } from "../lib/mediaUrl";
+import { reservationLocation, customerHistoryLocation } from "../lib/returnTo";
 import { useOpsSearch } from "../components/OpsLayout";
 
 type DashboardData = {
@@ -36,6 +37,7 @@ type DashboardData = {
     startDate: string;
     endDate: string;
     carLabel: string;
+    customerId?: string;
     customerName: string;
     customerEmail: string;
     createdAt: string;
@@ -352,7 +354,20 @@ export default function DashboardPage() {
                       <td>
                         <span className="ops-id">{shortId(r.id)}</span>
                       </td>
-                      <td>{r.customerName}</td>
+                      <td>
+                        {r.customerId ? (
+                          <Link
+                            to={customerHistoryLocation(
+                              r.customerId,
+                              "/dashboard"
+                            )}
+                          >
+                            {r.customerName}
+                          </Link>
+                        ) : (
+                          r.customerName
+                        )}
+                      </td>
                       <td>{r.carLabel}</td>
                       <td className="ops-dates">
                         {formatShort(r.startDate, intlLocale)}
@@ -369,9 +384,9 @@ export default function DashboardPage() {
                       </td>
                       <td>
                         <Link
-                          to="/reservations"
+                          to={reservationLocation(r.id, "/dashboard")}
                           className="ops-eye"
-                          aria-label={t("dashboard.viewAll")}
+                          aria-label={t("reservations.viewDetails")}
                         >
                           →
                         </Link>

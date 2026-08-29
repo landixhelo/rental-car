@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { Link, useNavigate, useParams } from "react-router-dom";
+import { Link, useLocation, useNavigate, useParams } from "react-router-dom";
 import CancelReservationModal, {
   type CancelReservationTarget,
 } from "../components/CancelReservationModal";
@@ -16,6 +16,11 @@ import {
   transmissionLabel,
 } from "../lib/labels";
 import { mediaUrl } from "../lib/mediaUrl";
+import {
+  backLabelKey,
+  customerHistoryLocation,
+  readReturnTo,
+} from "../lib/returnTo";
 
 const STATUSES = [
   "PENDING",
@@ -27,6 +32,7 @@ const STATUSES = [
 
 export default function ReservationDetailPage() {
   const { id } = useParams<{ id: string }>();
+  const location = useLocation();
   const { user } = useAuth();
   const t = useT();
   const { locale } = useLocale();
@@ -39,6 +45,8 @@ export default function ReservationDetailPage() {
   const [cancelling, setCancelling] = useState(false);
   const today = tiraneToday();
 
+  const backTo = readReturnTo(location, "/reservations");
+  const here = `${location.pathname}${location.search}`;
   const isFleetManager =
     user?.role === "CONTRACTOR" ||
     user?.role === "ADMIN" ||
@@ -52,7 +60,7 @@ export default function ReservationDetailPage() {
       setR(res.reservation);
     } catch (err) {
       show(err instanceof Error ? err.message : t("common.error"));
-      navigate("/reservations", { replace: true });
+      navigate(backTo, { replace: true });
     } finally {
       setLoading(false);
     }
@@ -194,8 +202,8 @@ export default function ReservationDetailPage() {
   return (
     <div className="rental-detail">
       <div className="rental-detail-top">
-        <Link to="/reservations" className="rental-detail-back">
-          ← {t("reservations.backToList")}
+        <Link to={backTo} className="rental-detail-back">
+          ← {t(backLabelKey(backTo))}
         </Link>
         <span className={`badge status-${r.status}`}>
           {t(`status.${r.status}`)}
@@ -284,7 +292,15 @@ export default function ReservationDetailPage() {
           <dl className="rental-detail-dl">
             <div>
               <dt>{t("checkout.fullName")}</dt>
-              <dd>{r.user?.fullName || "—"}</dd>
+              <dd>
+                {isFleetManager && r.user?.id ? (
+                  <Link to={customerHistoryLocation(r.user.id, here)}>
+                    {r.user.fullName || "—"}
+                  </Link>
+                ) : (
+                  r.user?.fullName || "—"
+                )}
+              </dd>
             </div>
             <div>
               <dt>{t("checkout.email")}</dt>

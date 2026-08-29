@@ -48,6 +48,7 @@ router.get("/", async (req, res, next) => {
         where: reservationWhere,
         select: {
           id: true,
+          userId: true,
           status: true,
           totalPrice: true,
           startDate: true,
@@ -165,6 +166,7 @@ router.get("/", async (req, res, next) => {
       startDate: r.startDate.toISOString().slice(0, 10),
       endDate: r.endDate.toISOString().slice(0, 10),
       carLabel: `${r.car.brand} ${r.car.model}`,
+      customerId: r.userId,
       customerName: r.user.fullName,
       customerEmail: r.user.email,
       createdAt: r.createdAt.toISOString(),

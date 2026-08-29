@@ -8,6 +8,7 @@ import { consumeFlash } from "../lib/flash";
 import { mediaUrl } from "../lib/mediaUrl";
 import { carPath } from "../lib/carPath";
 import { formatReservationCode, formatShortDate } from "../lib/bookingDraft";
+import { customerHistoryLocation } from "../lib/returnTo";
 import { useAuth } from "../context/AuthContext";
 import { useLocale, useT } from "../context/LocaleContext";
 import { useToast } from "../hooks/useToast";
@@ -551,7 +552,15 @@ export default function ReservationsPage() {
                   </span>
                 </div>
                 <p className="reservation-customer">
-                  <strong>{r.user?.fullName}</strong>
+                  {r.user?.id ? (
+                    <Link
+                      to={customerHistoryLocation(r.user.id, "/reservations")}
+                    >
+                      <strong>{r.user.fullName}</strong>
+                    </Link>
+                  ) : (
+                    <strong>{r.user?.fullName}</strong>
+                  )}
                   {r.user?.email ? (
                     <span className="muted"> · {r.user.email}</span>
                   ) : null}
