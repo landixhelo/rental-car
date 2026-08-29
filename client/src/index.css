@@ -709,6 +709,15 @@ main { flex: 1; width: 100%; }
 .ops-table-actions {
   width: 1%;
   white-space: nowrap;
+  position: sticky;
+  right: 0;
+  background: #fff;
+  box-shadow: -10px 0 12px rgba(16, 24, 40, 0.05);
+  z-index: 1;
+  padding-right: 4px;
+}
+.ops-table th.ops-table-actions {
+  background: #f9fafb;
 }
 .ops-page-head .rental-detail-back {
   display: inline-block;

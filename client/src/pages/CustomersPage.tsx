@@ -77,14 +77,16 @@ export default function CustomersPage() {
                 <th>{t("opsPages.bookings")}</th>
                 <th>{t("opsPages.revenue")}</th>
                 <th>{t("opsPages.lastBooking")}</th>
-                <th>{t("reservations.actions")}</th>
+                <th className="ops-table-actions">{t("reservations.actions")}</th>
               </tr>
             </thead>
             <tbody>
               {filtered.map((c) => (
                 <tr key={c.id}>
                   <td>
-                    <strong>{c.fullName}</strong>
+                    <Link to={`/customers/${c.id}`}>
+                      <strong>{c.fullName}</strong>
+                    </Link>
                   </td>
                   <td>
                     <a href={`mailto:${c.email}`}>{c.email}</a>
@@ -103,7 +105,7 @@ export default function CustomersPage() {
                     </div>
                   </td>
                   <td className="ops-table-actions">
-                    <Link to={`/customers/${c.id}`} className="btn ghost">
+                    <Link to={`/customers/${c.id}`} className="btn">
                       {t("opsPages.viewHistory")}
                     </Link>
                   </td>

@@ -1000,7 +1000,7 @@ export const sq = {
     bookings: "Rezervime",
     revenue: "Të ardhura",
     lastBooking: "Rezervimi i fundit",
-    viewHistory: "Historiku",
+    viewHistory: "Shiko historikun",
     historySub: "Të gjitha rezervimet e këtij klienti.",
     historyEmpty: "Ky klient nuk ka rezervime.",
     backToCustomers: "Kthehu te klientët",

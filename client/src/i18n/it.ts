@@ -999,7 +999,7 @@ export const it: Dict = {
     bookings: "Prenotazioni",
     revenue: "Ricavi",
     lastBooking: "Ultima prenotazione",
-    viewHistory: "Cronologia",
+    viewHistory: "Vedi cronologia",
     historySub: "Tutte le prenotazioni di questo cliente.",
     historyEmpty: "Questo cliente non ha prenotazioni.",
     backToCustomers: "Torna ai clienti",

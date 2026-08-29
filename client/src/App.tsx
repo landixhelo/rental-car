@@ -164,6 +164,10 @@ export default function App() {
                       }
                     />
                     <Route
+                      path="costumers"
+                      element={<Navigate to="/customers" replace />}
+                    />
+                    <Route
                       path="customers"
                       element={
                         <Protected contractor>

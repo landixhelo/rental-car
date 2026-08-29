@@ -997,7 +997,7 @@ export const en: Dict = {
     bookings: "Bookings",
     revenue: "Revenue",
     lastBooking: "Latest booking",
-    viewHistory: "History",
+    viewHistory: "View history",
     historySub: "All reservations for this customer.",
     historyEmpty: "This customer has no reservations.",
     backToCustomers: "Back to customers",
