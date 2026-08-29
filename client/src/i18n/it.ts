@@ -796,6 +796,7 @@ export const it: Dict = {
     dropoff: "Riconsegna",
     extras: "Extra",
     payment: "Pagamento",
+    cardUnavailable: "Al momento non disponibile",
     notes: "Note",
     document: "Documento",
     total: "Totale",

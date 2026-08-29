@@ -4268,6 +4268,42 @@ textarea { min-height: 90px; resize: vertical; }
   background: #f7f7f8;
   padding: 12px 12px;
 }
+.payment-options {
+  gap: 8px;
+}
+.payment-choice {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  margin: 0;
+  padding: 10px 12px;
+  border-radius: 12px;
+  border: 1px solid rgba(16, 24, 40, 0.12);
+  background: #fff;
+  text-transform: none;
+  letter-spacing: 0;
+  font-size: 0.92rem;
+  font-weight: 500;
+  color: #121212;
+  cursor: pointer;
+}
+.payment-choice input {
+  margin-top: 3px;
+  accent-color: var(--accent);
+}
+.payment-choice.is-disabled {
+  opacity: 0.62;
+  cursor: not-allowed;
+  background: #f2f4f7;
+}
+.payment-choice-note {
+  display: block;
+  margin-top: 2px;
+  font-style: normal;
+  font-size: 0.78rem;
+  font-weight: 500;
+  color: #667085;
+}
 .detail-book-dates {
   display: grid;
   grid-template-columns: 1fr 1fr;

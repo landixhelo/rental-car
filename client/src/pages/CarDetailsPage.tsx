@@ -660,21 +660,53 @@ export default function CarDetailsPage() {
                   </div>
                 </div>
 
-                <label>
-                  {t("details.payment")}
-                  <select
-                    value={paymentMethod}
-                    onChange={(e) => setPaymentMethod(e.target.value)}
+                <div className="detail-book-field payment-options">
+                  <span>{t("details.payment")}</span>
+                  <label className="payment-choice">
+                    <input
+                      type="radio"
+                      name="paymentMethod"
+                      value="CASH"
+                      checked={paymentMethod === "CASH"}
+                      onChange={() => setPaymentMethod("CASH")}
+                    />
+                    <span>{t("labels.payment.CASH")}</span>
+                  </label>
+                  <label className="payment-choice">
+                    <input
+                      type="radio"
+                      name="paymentMethod"
+                      value="BANK_TRANSFER"
+                      checked={paymentMethod === "BANK_TRANSFER"}
+                      onChange={() => setPaymentMethod("BANK_TRANSFER")}
+                    />
+                    <span>{t("labels.payment.BANK_TRANSFER")}</span>
+                  </label>
+                  <label
+                    className={`payment-choice${
+                      meta.cardEnabled ? "" : " is-disabled"
+                    }`}
                   >
-                    <option value="CASH">{t("labels.payment.CASH")}</option>
-                    <option value="BANK_TRANSFER">
-                      {t("labels.payment.BANK_TRANSFER")}
-                    </option>
-                    {meta.cardEnabled ? (
-                      <option value="CARD">{t("labels.payment.CARD")}</option>
-                    ) : null}
-                  </select>
-                </label>
+                    <input
+                      type="radio"
+                      name="paymentMethod"
+                      value="CARD"
+                      disabled={!meta.cardEnabled}
+                      checked={paymentMethod === "CARD"}
+                      onChange={() => {
+                        if (meta.cardEnabled) setPaymentMethod("CARD");
+                      }}
+                    />
+                    <span>
+                      {t("labels.payment.CARD")}
+                      {!meta.cardEnabled ? (
+                        <em className="payment-choice-note">
+                          {t("details.cardUnavailable")}
+                        </em>
+                      ) : null}
+                    </span>
+                  </label>
+                </div>
 
                 <label>
                   {t("details.notes")}

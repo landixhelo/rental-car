@@ -795,6 +795,7 @@ export const sq = {
     dropoff: "Kthimi",
     extras: "Shtesa",
     payment: "Pagesa",
+    cardUnavailable: "Për momentin nuk është e disponueshme",
     notes: "Shënime",
     document: "Dokumenti",
     total: "Totali",
