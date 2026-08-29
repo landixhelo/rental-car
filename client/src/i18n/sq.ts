@@ -792,6 +792,8 @@ export const sq = {
       "Zgjidh një datë të lirë, të paktën {days} ditë pas marrjes.",
     minRentalHint: "Kohëzgjatja minimale e qirasë është {days} ditë.",
     minRentalError: "Minimumi i qirasë është {days} ditë.",
+    noDailyRentals:
+      "Flota nuk pranon rezervime ditore. Minimumi është {days} ditë.",
     maxRentalError: "Maksimumi i qirasë është {days} ditë.",
     calendarPast: "E kaluar",
     calendarBusy: "E rezervuar",

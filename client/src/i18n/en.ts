@@ -790,6 +790,8 @@ export const en: Dict = {
     pickEndHintMin: "Tap a free date at least {days} days after pickup.",
     minRentalHint: "The minimum rental is {days} days.",
     minRentalError: "The minimum rental is {days} days.",
+    noDailyRentals:
+      "This fleet does not accept 1-day rentals. The minimum is {days} days.",
     maxRentalError: "The maximum rental is {days} days.",
     calendarPast: "Past",
     calendarBusy: "Booked",

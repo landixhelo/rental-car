@@ -793,6 +793,8 @@ export const it: Dict = {
       "Tocca una data libera, almeno {days} giorni dopo il ritiro.",
     minRentalHint: "La durata minima del noleggio è di {days} giorni.",
     minRentalError: "Il minimo di noleggio è di {days} giorni.",
+    noDailyRentals:
+      "Questa flotta non accetta noleggi giornalieri. Il minimo è di {days} giorni.",
     maxRentalError: "Il massimo di noleggio è di {days} giorni.",
     calendarPast: "Passato",
     calendarBusy: "Prenotato",

@@ -18,6 +18,7 @@ type Props = {
   minRentalDays?: number;
   maxRentalDays?: number;
   onChange: (startDate: string, endDate: string) => void;
+  alertHint?: string | null;
 };
 
 type Field = "start" | "end";
@@ -43,6 +44,7 @@ export default function BookingCalendar({
   minRentalDays = 1,
   maxRentalDays = 365,
   onChange,
+  alertHint = null,
 }: Props) {
   const t = useT();
   const { locale } = useLocale();
@@ -142,6 +144,18 @@ export default function BookingCalendar({
     minDays > 1
       ? t("details.pickEndHintMin", { days: minDays })
       : t("details.pickEndHint");
+  const selectedDays =
+    start && end ? rentalSpanDays(start, end) : start ? 1 : 0;
+  const noDaily =
+    minDays > 1 && selectedDays > 0 && selectedDays < minDays;
+  const hint = alertHint
+    ? alertHint
+    : noDaily
+      ? t("details.noDailyRentals", { days: minDays })
+      : activeField === "start"
+        ? t("details.pickStart")
+        : endHint;
+  const hintAlert = Boolean(alertHint) || noDaily;
 
   return (
     <div className="booking-calendar">
@@ -174,8 +188,10 @@ export default function BookingCalendar({
             <strong>{end || "—"}</strong>
           </button>
         </div>
-        <p className="booking-calendar-hint">
-          {activeField === "start" ? t("details.pickStart") : endHint}
+        <p
+          className={`booking-calendar-hint${hintAlert ? " is-alert" : ""}`}
+        >
+          {hint}
         </p>
       </div>
 

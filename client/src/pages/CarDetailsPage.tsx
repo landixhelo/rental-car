@@ -130,13 +130,6 @@ export default function CarDetailsPage() {
     if (rentalSpanDays(startDate, endDate) <= 0) {
       return t("details.conflict");
     }
-    const days = rentalSpanDays(startDate, endDate);
-    if (days < minRentalDays) {
-      return t("details.minRentalError", { days: minRentalDays });
-    }
-    if (days > maxRentalDays) {
-      return t("details.maxRentalError", { days: maxRentalDays });
-    }
     if (car.status === "MAINTENANCE") {
       return t("status.MAINTENANCE");
     }
@@ -147,20 +140,41 @@ export default function CarDetailsPage() {
       return `${t("details.conflict")} (${hit.startDate} – ${hit.endDate})`;
     }
     return null;
-  }, [car, startDate, endDate, t, minRentalDays, maxRentalDays]);
+  }, [car, startDate, endDate, t]);
 
-  const canReserve = Boolean(startDate && endDate && !dateConflict);
+  const rentalBlock = useMemo(() => {
+    if (minRentalDays <= 1 || !startDate) return null;
+    if (!endDate) {
+      return t("details.noDailyRentals", { days: minRentalDays });
+    }
+    const days = rentalSpanDays(startDate, endDate);
+    if (days < minRentalDays) {
+      return t("details.noDailyRentals", { days: minRentalDays });
+    }
+    if (days > maxRentalDays) {
+      return t("details.maxRentalError", { days: maxRentalDays });
+    }
+    return null;
+  }, [startDate, endDate, minRentalDays, maxRentalDays, t]);
+
+  const canReserve = Boolean(
+    startDate && endDate && !dateConflict && !rentalBlock
+  );
 
   function onReserve(e: FormEvent) {
     e.preventDefault();
     if (!car || !meta) return;
     if (!startDate || !endDate || startDate < today || endDate <= startDate) {
-      show(t("details.pickStart"));
+      show(rentalBlock || t("details.pickStart"));
+      return;
+    }
+    if (rentalBlock) {
+      show(rentalBlock);
       return;
     }
     const days = rentalSpanDays(startDate, endDate);
     if (days < minRentalDays) {
-      show(t("details.minRentalError", { days: minRentalDays }));
+      show(t("details.noDailyRentals", { days: minRentalDays }));
       return;
     }
     if (days > maxRentalDays) {
@@ -550,11 +564,7 @@ export default function CarDetailsPage() {
                   onChange={(e) => {
                     const start = clampDate(e.target.value, today);
                     setStartDate(start);
-                    if (
-                      !endDate ||
-                      rentalSpanDays(start, endDate) < minRentalDays ||
-                      rentalSpanDays(start, endDate) > maxRentalDays
-                    ) {
+                    if (!endDate || endDate <= start) {
                       setEndDate("");
                     }
                   }}
@@ -575,13 +585,8 @@ export default function CarDetailsPage() {
                   }
                   value={endDate}
                   onChange={(e) => {
-                    const minEnd = startDate
-                      ? addDays(startDate, minRentalDays)
-                      : addDays(today, minRentalDays);
-                    const maxEnd = startDate
-                      ? addDays(startDate, maxRentalDays)
-                      : undefined;
-                    setEndDate(clampDate(e.target.value, minEnd, maxEnd));
+                    const value = e.target.value.slice(0, 10);
+                    setEndDate(value);
                   }}
                   required
                 />
@@ -594,13 +599,14 @@ export default function CarDetailsPage() {
               busyRanges={car.busyRanges || []}
               minRentalDays={minRentalDays}
               maxRentalDays={maxRentalDays}
+              alertHint={rentalBlock}
               onChange={(start, end) => {
                 setStartDate(start);
                 setEndDate(end);
               }}
             />
 
-            {dateConflict ? (
+            {dateConflict && !rentalBlock ? (
               <p className="booking-conflict">{dateConflict}</p>
             ) : null}
 
@@ -634,10 +640,12 @@ export default function CarDetailsPage() {
               </div>
             </div>
 
-            <button className="btn detail-reserve" type="submit" disabled={!canReserve}>
-              {dateConflict
-                ? t("details.conflict")
-                : t("details.reserveNow")}
+            <button
+              className="btn detail-reserve"
+              type="submit"
+              disabled={!canReserve}
+            >
+              {t("details.reserveNow")}
             </button>
             <p className="detail-policy">{t("details.policyNote")}</p>
 

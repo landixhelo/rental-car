@@ -3430,6 +3430,12 @@ main { flex: 1; width: 100%; }
   color: var(--accent);
   font-weight: 600;
 }
+.booking-calendar-hint.is-alert {
+  padding: 10px 12px;
+  border-radius: 10px;
+  background: var(--accent-soft);
+  border: 1px solid color-mix(in srgb, var(--accent) 35%, var(--border));
+}
 .booking-calendar-nav {
   margin-bottom: 10px;
 }
