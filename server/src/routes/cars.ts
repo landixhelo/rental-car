@@ -12,6 +12,7 @@ import { prisma } from "../lib/prisma.js";
 import {
   carOwnerSelect,
   companyNameFromOwner,
+  rentalRulesFromOwner,
   shopSlugFromOwner,
 } from "../lib/carOwner.js";
 import {
@@ -151,6 +152,7 @@ router.get("/", optionalAuth, async (req, res, next) => {
           pricePerDay: Number(car.pricePerDay),
           companyName: companyNameFromOwner(car.owner),
           shopSlug: shopSlugFromOwner(car.owner),
+          ...rentalRulesFromOwner(car.owner),
           ratingAvg: avg,
           ratingCount: count,
           isFavorite: Array.isArray(car.favorites) && car.favorites.length > 0,
@@ -297,6 +299,7 @@ router.get("/:id", optionalAuth, validate(carPublicParamSchema), async (req, res
         pricePerDay: Number(car.pricePerDay),
         companyName: companyNameFromOwner(car.owner),
         shopSlug: shopSlugFromOwner(car.owner),
+        ...rentalRulesFromOwner(car.owner),
         ratingAvg: avg,
         ratingCount: count,
         isFavorite: Array.isArray(car.favorites) && car.favorites.length > 0,

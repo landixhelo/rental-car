@@ -3478,6 +3478,10 @@ main { flex: 1; width: 100%; }
   color: var(--text-muted);
   text-decoration: line-through;
 }
+.booking-day.is-too-short {
+  opacity: 0.38;
+  text-decoration: none;
+}
 .booking-day.is-selected {
   background: var(--accent);
   border-color: var(--accent);
@@ -3487,6 +3491,10 @@ main { flex: 1; width: 100%; }
 .booking-day.is-in-range {
   background: var(--accent-soft);
   border-color: color-mix(in srgb, var(--accent) 30%, var(--border));
+  opacity: 1;
+}
+.booking-day.is-in-range:disabled {
+  cursor: default;
   opacity: 1;
 }
 .booking-calendar-legend {

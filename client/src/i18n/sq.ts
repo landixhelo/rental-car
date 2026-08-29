@@ -788,6 +788,11 @@ export const sq = {
     pickStart: "Zgjidh datën e marrjes",
     pickEnd: "Zgjidh datën e kthimit",
     pickEndHint: "Kliko një datë të lirë pas datës së marrjes.",
+    pickEndHintMin:
+      "Zgjidh një datë të lirë, të paktën {days} ditë pas marrjes.",
+    minRentalHint: "Kohëzgjatja minimale e qirasë është {days} ditë.",
+    minRentalError: "Minimumi i qirasë është {days} ditë.",
+    maxRentalError: "Maksimumi i qirasë është {days} ditë.",
     calendarPast: "E kaluar",
     calendarBusy: "E rezervuar",
     calendarAvailable: "E lirë",

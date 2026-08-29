@@ -3,6 +3,8 @@ type OwnerInfo = {
   fullName: string;
   shopSlug?: string | null;
   shopIsPublic?: boolean | null;
+  minRentalDays?: number | null;
+  maxRentalDays?: number | null;
 } | null;
 
 export const carOwnerSelect = {
@@ -11,8 +13,19 @@ export const carOwnerSelect = {
     fullName: true,
     shopSlug: true,
     shopIsPublic: true,
+    minRentalDays: true,
+    maxRentalDays: true,
   },
 } as const;
+
+export function rentalRulesFromOwner(owner: OwnerInfo) {
+  const min = owner?.minRentalDays;
+  const max = owner?.maxRentalDays;
+  return {
+    minRentalDays: typeof min === "number" && min >= 1 ? min : 1,
+    maxRentalDays: typeof max === "number" && max >= 1 ? max : 365,
+  };
+}
 
 export function companyNameFromOwner(owner: OwnerInfo): string {
   if (!owner) return "Auto Rental";

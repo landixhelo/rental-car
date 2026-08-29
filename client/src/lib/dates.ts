@@ -19,10 +19,22 @@ export function addDays(iso: string, days: number) {
   return formatDay(d);
 }
 
-export function clampDate(value: string, min: string) {
+/** Whole days between pickup and return, matching server calcDays. */
+export function rentalSpanDays(start: string, end: string) {
+  const a = start.slice(0, 10);
+  const b = end.slice(0, 10);
+  if (!a || !b) return 0;
+  const ms =
+    new Date(`${b}T12:00:00`).getTime() - new Date(`${a}T12:00:00`).getTime();
+  return Math.round(ms / (1000 * 60 * 60 * 24));
+}
+
+export function clampDate(value: string, min: string, max?: string) {
   const v = value.slice(0, 10);
   if (!v) return v;
-  return v < min ? min : v;
+  if (v < min) return min;
+  if (max && v > max) return max;
+  return v;
 }
 
 export type BusyRange = { startDate: string; endDate: string };

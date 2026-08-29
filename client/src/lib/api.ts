@@ -73,6 +73,8 @@ export type Car = {
   images?: string[];
   companyName?: string | null;
   shopSlug?: string | null;
+  minRentalDays?: number | null;
+  maxRentalDays?: number | null;
   listingStatus?: string | null;
   reservedUntil?: string | null;
   busyRanges?: Array<{ startDate: string; endDate: string }>;

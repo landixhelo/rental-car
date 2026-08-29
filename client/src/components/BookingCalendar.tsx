@@ -1,10 +1,12 @@
 import { useEffect, useMemo, useState } from "react";
 import { useLocale, useT } from "../context/LocaleContext";
 import {
+  addDays,
   formatDay,
   isBusyDay,
   monthMatrix,
   rangeOverlapsBusy,
+  rentalSpanDays,
   tiraneToday,
   type BusyRange,
 } from "../lib/dates";
@@ -13,6 +15,8 @@ type Props = {
   startDate: string;
   endDate: string;
   busyRanges?: BusyRange[];
+  minRentalDays?: number;
+  maxRentalDays?: number;
   onChange: (startDate: string, endDate: string) => void;
 };
 
@@ -22,17 +26,33 @@ function dayKey(value: string) {
   return value.slice(0, 10);
 }
 
+function fitsRentalSpan(
+  start: string,
+  end: string,
+  minDays: number,
+  maxDays: number
+) {
+  const days = rentalSpanDays(start, end);
+  return days >= minDays && days <= maxDays;
+}
+
 export default function BookingCalendar({
   startDate,
   endDate,
   busyRanges = [],
+  minRentalDays = 1,
+  maxRentalDays = 365,
   onChange,
 }: Props) {
   const t = useT();
   const { locale } = useLocale();
   const today = tiraneToday();
+  const minDays = Math.max(1, minRentalDays);
+  const maxDays = Math.max(minDays, maxRentalDays);
   const start = startDate ? dayKey(startDate) : "";
   const end = endDate ? dayKey(endDate) : "";
+  const minEnd = start ? addDays(start, minDays) : "";
+  const maxEnd = start ? addDays(start, maxDays) : "";
   const seed = start || today;
   const seedDate = new Date(`${seed}T12:00:00`);
   const [cursor, setCursor] = useState({
@@ -74,12 +94,15 @@ export default function BookingCalendar({
     if (isBusyDay(day, busyRanges)) return;
 
     if (activeField === "start") {
-      const nextEnd = end && end > day ? end : "";
-      if (nextEnd && rangeOverlapsBusy(day, nextEnd, busyRanges)) {
-        onChange(day, "");
-      } else {
-        onChange(day, nextEnd);
+      let nextEnd = end && end > day ? end : "";
+      if (
+        nextEnd &&
+        (!fitsRentalSpan(day, nextEnd, minDays, maxDays) ||
+          rangeOverlapsBusy(day, nextEnd, busyRanges))
+      ) {
+        nextEnd = "";
       }
+      onChange(day, nextEnd);
       setActiveField("end");
       return;
     }
@@ -91,6 +114,8 @@ export default function BookingCalendar({
       return;
     }
 
+    if (minEnd && day < minEnd) return;
+    if (maxEnd && day > maxEnd) return;
     if (rangeOverlapsBusy(start, day, busyRanges)) return;
     onChange(start, day);
   }
@@ -112,6 +137,11 @@ export default function BookingCalendar({
     );
     return view > todayMonth;
   })();
+
+  const endHint =
+    minDays > 1
+      ? t("details.pickEndHintMin", { days: minDays })
+      : t("details.pickEndHint");
 
   return (
     <div className="booking-calendar">
@@ -145,9 +175,7 @@ export default function BookingCalendar({
           </button>
         </div>
         <p className="booking-calendar-hint">
-          {activeField === "start"
-            ? t("details.pickStart")
-            : t("details.pickEnd")}
+          {activeField === "start" ? t("details.pickStart") : endHint}
         </p>
       </div>
 
@@ -194,7 +222,17 @@ export default function BookingCalendar({
             activeField === "end" &&
             Boolean(start && key > start) &&
             rangeOverlapsBusy(start, key, busyRanges);
-          const disabled = past || busy || blockedEnd;
+          const tooShort =
+            activeField === "end" &&
+            Boolean(start && minEnd) &&
+            key > start &&
+            key < minEnd;
+          const tooLong =
+            activeField === "end" &&
+            Boolean(start && maxEnd) &&
+            key > maxEnd;
+          const spanBlocked = (tooShort || tooLong) && !busy;
+          const disabled = past || busy || blockedEnd || spanBlocked;
 
           return (
             <button
@@ -205,6 +243,7 @@ export default function BookingCalendar({
                 "booking-day",
                 past ? "is-past" : "",
                 busy ? "is-busy" : "",
+                spanBlocked && !inRange ? "is-too-short" : "",
                 isStart || isEnd ? "is-selected" : "",
                 inRange ? "is-in-range" : "",
               ]
@@ -231,7 +270,13 @@ export default function BookingCalendar({
         </span>
       </div>
 
-      {activeField === "end" && start ? (
+      {minDays > 1 ? (
+        <p className="muted booking-calendar-note">
+          {t("details.minRentalHint", { days: minDays })}
+        </p>
+      ) : null}
+
+      {activeField === "end" && start && minDays <= 1 ? (
         <p className="muted booking-calendar-note">{t("details.pickEndHint")}</p>
       ) : null}
     </div>

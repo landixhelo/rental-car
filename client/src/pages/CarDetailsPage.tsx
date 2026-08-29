@@ -12,7 +12,13 @@ import { mediaUrl } from "../lib/mediaUrl";
 import { carPath } from "../lib/carPath";
 import { fuelLabel, transmissionLabel } from "../lib/labels";
 import { saveBookingDraft } from "../lib/bookingDraft";
-import { addDays, clampDate, rangeOverlapsBusy, tiraneToday } from "../lib/dates";
+import {
+  addDays,
+  clampDate,
+  rangeOverlapsBusy,
+  rentalSpanDays,
+  tiraneToday,
+} from "../lib/dates";
 
 export default function CarDetailsPage() {
   const { id } = useParams();
@@ -80,6 +86,9 @@ export default function CarDetailsPage() {
     setActiveImage(0);
   }, [car?.id]);
 
+  const minRentalDays = Math.max(1, car?.minRentalDays ?? 1);
+  const maxRentalDays = Math.max(minRentalDays, car?.maxRentalDays ?? 365);
+
   const summary = useMemo(() => {
     if (!car || !meta || !startDate || !endDate) {
       return {
@@ -90,10 +99,7 @@ export default function CarDetailsPage() {
         total: 0,
       };
     }
-    const days = Math.ceil(
-      (new Date(endDate).getTime() - new Date(startDate).getTime()) /
-        (1000 * 60 * 60 * 24)
-    );
+    const days = rentalSpanDays(startDate, endDate);
     if (days <= 0) {
       return {
         days: 0,
@@ -121,8 +127,15 @@ export default function CarDetailsPage() {
 
   const dateConflict = useMemo(() => {
     if (!car || !startDate || !endDate) return null;
-    if (new Date(endDate) <= new Date(startDate)) {
+    if (rentalSpanDays(startDate, endDate) <= 0) {
       return t("details.conflict");
+    }
+    const days = rentalSpanDays(startDate, endDate);
+    if (days < minRentalDays) {
+      return t("details.minRentalError", { days: minRentalDays });
+    }
+    if (days > maxRentalDays) {
+      return t("details.maxRentalError", { days: maxRentalDays });
     }
     if (car.status === "MAINTENANCE") {
       return t("status.MAINTENANCE");
@@ -134,7 +147,7 @@ export default function CarDetailsPage() {
       return `${t("details.conflict")} (${hit.startDate} – ${hit.endDate})`;
     }
     return null;
-  }, [car, startDate, endDate, t]);
+  }, [car, startDate, endDate, t, minRentalDays, maxRentalDays]);
 
   const canReserve = Boolean(startDate && endDate && !dateConflict);
 
@@ -143,6 +156,15 @@ export default function CarDetailsPage() {
     if (!car || !meta) return;
     if (!startDate || !endDate || startDate < today || endDate <= startDate) {
       show(t("details.pickStart"));
+      return;
+    }
+    const days = rentalSpanDays(startDate, endDate);
+    if (days < minRentalDays) {
+      show(t("details.minRentalError", { days: minRentalDays }));
+      return;
+    }
+    if (days > maxRentalDays) {
+      show(t("details.maxRentalError", { days: maxRentalDays }));
       return;
     }
     if (rangeOverlapsBusy(startDate, endDate, car.busyRanges || [])) {
@@ -528,7 +550,11 @@ export default function CarDetailsPage() {
                   onChange={(e) => {
                     const start = clampDate(e.target.value, today);
                     setStartDate(start);
-                    if (!endDate || endDate <= start) {
+                    if (
+                      !endDate ||
+                      rentalSpanDays(start, endDate) < minRentalDays ||
+                      rentalSpanDays(start, endDate) > maxRentalDays
+                    ) {
                       setEndDate("");
                     }
                   }}
@@ -539,13 +565,23 @@ export default function CarDetailsPage() {
                 {t("home.searchReturn")}
                 <input
                   type="date"
-                  min={startDate ? addDays(startDate, 1) : addDays(today, 1)}
+                  min={
+                    startDate
+                      ? addDays(startDate, minRentalDays)
+                      : addDays(today, minRentalDays)
+                  }
+                  max={
+                    startDate ? addDays(startDate, maxRentalDays) : undefined
+                  }
                   value={endDate}
                   onChange={(e) => {
                     const minEnd = startDate
-                      ? addDays(startDate, 1)
-                      : addDays(today, 1);
-                    setEndDate(clampDate(e.target.value, minEnd));
+                      ? addDays(startDate, minRentalDays)
+                      : addDays(today, minRentalDays);
+                    const maxEnd = startDate
+                      ? addDays(startDate, maxRentalDays)
+                      : undefined;
+                    setEndDate(clampDate(e.target.value, minEnd, maxEnd));
                   }}
                   required
                 />
@@ -556,6 +592,8 @@ export default function CarDetailsPage() {
               startDate={startDate}
               endDate={endDate}
               busyRanges={car.busyRanges || []}
+              minRentalDays={minRentalDays}
+              maxRentalDays={maxRentalDays}
               onChange={(start, end) => {
                 setStartDate(start);
                 setEndDate(end);
