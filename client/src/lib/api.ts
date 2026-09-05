@@ -47,6 +47,7 @@ export type Account = User & {
   reservationsCount?: number;
   carsCount?: number;
   updatedAt?: string;
+  commissionPercent?: number | null;
 };
 
 export type Car = {
@@ -572,7 +573,25 @@ export const api = {
     request(`/api/admin/users/${id}`, { method: "DELETE" }),
 
   superOverview: () =>
-    request<{ overview: Record<string, number> }>("/api/super-admin/overview"),
+    request<{
+      overview: {
+        clients: number;
+        contractors: number;
+        admins: number;
+        activeUsers: number;
+        inactiveUsers: number;
+        cars: number;
+        reservations: number;
+        revenue: number;
+        commissionPercent: number;
+        commissionEarned: number;
+      };
+    }>("/api/super-admin/overview"),
+  setPlatformCommission: (commissionPercent: number) =>
+    request<{ commissionPercent: number }>("/api/super-admin/commission", {
+      method: "PATCH",
+      body: JSON.stringify({ commissionPercent }),
+    }),
   superAccounts: (params?: Record<string, string>) => {
     const q = new URLSearchParams(params || {}).toString();
     return request<{ accounts: Account[] }>(
@@ -591,6 +610,7 @@ export const api = {
     companyName?: string;
     role: "USER" | "CONTRACTOR" | "ADMIN";
     notes?: string;
+    commissionPercent?: number;
   }) =>
     request<{ account: Account }>("/api/super-admin/accounts", {
       method: "POST",
@@ -606,6 +626,7 @@ export const api = {
       isActive: boolean;
       notes: string | null;
       password: string;
+      commissionPercent: number | null;
     }>
   ) =>
     request<{ account: Account }>(`/api/super-admin/accounts/${id}`, {

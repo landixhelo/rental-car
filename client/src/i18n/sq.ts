@@ -962,6 +962,16 @@ export const sq = {
     active: "Aktivë",
     suspended: "Pezulluar",
     revenue: "Të ardhura",
+    commission: "Komisioni yt",
+    commissionEarned: "Fitimi yt",
+    commissionTitle: "Komisioni i platformës",
+    commissionHint:
+      "Përqindja që ti fiton nga çdo rezervim i makinave të kontraktorëve. 10% është standardi i zakonshëm për platforma qiraje; mund ta ndryshosh kur të duash. Një kontraktor mund të ketë përqindje tjetër.",
+    commissionSave: "Ruaj komisionin",
+    commissionSaved: "Komisioni u ruajt",
+    commissionInvalid: "Vendos një përqindje nga 0 deri në 100.",
+    commissionPct: "Komisioni",
+    commissionPlaceholder: "Komisioni % (10)",
     createTitle: "Krijo llogari (klient / kontraktor / admin)",
     createHint:
       "Për kontraktor: zgjidh rolin Kontraktor dhe plotëso emrin e kompanisë. Fjalëkalimi: min. 10 karaktere, shkronjë e madhe/e vogël, numër dhe simbol.",

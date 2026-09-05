@@ -23,6 +23,10 @@ import { validate } from "../middleware/validate.js";
 import { Router, type NextFunction, type Request, type Response } from "express";
 import { notifyBusinessWhatsApp } from "../lib/whatsapp.js";
 import { writeLimiter } from "../middleware/limiters.js";
+import {
+  commissionForOwner,
+  getPlatformCommissionPercent,
+} from "../lib/commission.js";
 
 const router = Router();
 
@@ -288,7 +292,10 @@ router.post(
       );
       const locationFees = pickup.fee + ret.fee;
       const totalPrice = carSubtotal + extrasTotal + locationFees;
-      const commissionPct = Number(car.owner?.commissionPercent ?? 10);
+      const commissionPct = commissionForOwner(
+        car.owner?.commissionPercent,
+        await getPlatformCommissionPercent()
+      );
       const platformFee =
         car.ownerId && commissionPct > 0
           ? Math.round(totalPrice * (commissionPct / 100) * 100) / 100

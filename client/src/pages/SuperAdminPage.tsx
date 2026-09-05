@@ -6,6 +6,19 @@ import { roleLabel, statusLabel } from "../lib/labels";
 
 type Filter = "all" | "clients" | "contractors" | "admins";
 
+type Overview = {
+  clients: number;
+  contractors: number;
+  admins: number;
+  activeUsers: number;
+  inactiveUsers: number;
+  cars: number;
+  reservations: number;
+  revenue: number;
+  commissionPercent: number;
+  commissionEarned: number;
+};
+
 const emptyForm = {
   fullName: "",
   email: "",
@@ -14,12 +27,15 @@ const emptyForm = {
   companyName: "",
   role: "USER" as "USER" | "CONTRACTOR" | "ADMIN",
   notes: "",
+  commissionPercent: "10",
 };
 
 export default function SuperAdminPage() {
   const t = useT();
   const { show, Toast } = useToast();
-  const [overview, setOverview] = useState<Record<string, number> | null>(null);
+  const [overview, setOverview] = useState<Overview | null>(null);
+  const [commissionInput, setCommissionInput] = useState("10");
+  const [savingCommission, setSavingCommission] = useState(false);
   const [filter, setFilter] = useState<Filter>("all");
   const [q, setQ] = useState("");
   const [accounts, setAccounts] = useState<Account[]>([]);
@@ -37,6 +53,7 @@ export default function SuperAdminPage() {
       api.superAccounts({ role: filter, q }),
     ]);
     setOverview(ov.overview);
+    setCommissionInput(String(ov.overview.commissionPercent));
     setAccounts(list.accounts);
   }
 
@@ -69,6 +86,10 @@ export default function SuperAdminPage() {
         companyName: form.companyName.trim() || undefined,
         phone: form.phone.trim() || undefined,
         notes: form.notes.trim() || undefined,
+        commissionPercent:
+          form.role === "CONTRACTOR" && form.commissionPercent.trim()
+            ? Number(form.commissionPercent)
+            : undefined,
       });
       setForm(emptyForm);
       show(
@@ -102,8 +123,64 @@ export default function SuperAdminPage() {
           <div className="card"><h2>{overview.activeUsers}</h2><p>{t("superAdmin.active")}</p></div>
           <div className="card"><h2>{overview.inactiveUsers}</h2><p>{t("superAdmin.suspended")}</p></div>
           <div className="card"><h2>€{overview.revenue}</h2><p>{t("superAdmin.revenue")}</p></div>
+          <div className="card">
+            <h2>{overview.commissionPercent}%</h2>
+            <p>{t("superAdmin.commission")}</p>
+          </div>
+          <div className="card">
+            <h2>€{overview.commissionEarned}</h2>
+            <p>{t("superAdmin.commissionEarned")}</p>
+          </div>
         </div>
       )}
+
+      <form
+        className="panel"
+        onSubmit={async (e) => {
+          e.preventDefault();
+          const n = Number(commissionInput);
+          if (!Number.isFinite(n) || n < 0 || n > 100) {
+            show(t("superAdmin.commissionInvalid"));
+            return;
+          }
+          setSavingCommission(true);
+          try {
+            const res = await api.setPlatformCommission(n);
+            setCommissionInput(String(res.commissionPercent));
+            if (overview) {
+              setOverview({
+                ...overview,
+                commissionPercent: res.commissionPercent,
+              });
+            }
+            show(t("superAdmin.commissionSaved"));
+          } catch (err) {
+            show(err instanceof Error ? err.message : t("common.error"));
+          } finally {
+            setSavingCommission(false);
+          }
+        }}
+      >
+        <h2>{t("superAdmin.commissionTitle")}</h2>
+        <p className="muted" style={{ marginTop: 0 }}>
+          {t("superAdmin.commissionHint")}
+        </p>
+        <div className="filters">
+          <input
+            type="number"
+            min={0}
+            max={100}
+            step={0.5}
+            value={commissionInput}
+            onChange={(e) => setCommissionInput(e.target.value)}
+            aria-label={t("superAdmin.commission")}
+            required
+          />
+          <button className="btn" type="submit" disabled={savingCommission}>
+            {savingCommission ? t("common.loading") : t("superAdmin.commissionSave")}
+          </button>
+        </div>
+      </form>
 
       <form className="panel" onSubmit={createAccount}>
         <h2>{t("superAdmin.createTitle")}</h2>
@@ -142,6 +219,19 @@ export default function SuperAdminPage() {
             onChange={(e) => setForm({ ...form, companyName: e.target.value })}
             required={form.role === "CONTRACTOR"}
           />
+          {form.role === "CONTRACTOR" ? (
+            <input
+              type="number"
+              min={0}
+              max={100}
+              step={0.5}
+              placeholder={t("superAdmin.commissionPlaceholder")}
+              value={form.commissionPercent}
+              onChange={(e) =>
+                setForm({ ...form, commissionPercent: e.target.value })
+              }
+            />
+          ) : null}
           <select
             value={form.role}
             onChange={(e) =>
@@ -216,6 +306,7 @@ export default function SuperAdminPage() {
                 <th>{t("carForm.status")}</th>
                 <th>{t("admin.reservations")}</th>
                 <th>{t("admin.cars")}</th>
+                <th>{t("superAdmin.commissionPct")}</th>
                 <th>{t("superAdmin.actions")}</th>
               </tr>
             </thead>
@@ -237,6 +328,11 @@ export default function SuperAdminPage() {
                   </td>
                   <td>{a.reservationsCount || 0}</td>
                   <td>{a.carsCount || 0}</td>
+                  <td>
+                    {a.role === "CONTRACTOR"
+                      ? `${a.commissionPercent ?? overview?.commissionPercent ?? 10}%`
+                      : "—"}
+                  </td>
                   <td>
                     <button className="btn ghost" onClick={() => openAccount(a.id)}>
                       {t("superAdmin.open")}
@@ -287,6 +383,35 @@ export default function SuperAdminPage() {
             {selected.email} · {selected.phone || t("superAdmin.noPhone")} ·{" "}
             {selected.companyName || t("superAdmin.noCompany")}
           </p>
+          {selected.role === "CONTRACTOR" ? (
+            <div className="filters" style={{ marginBottom: 12 }}>
+              <label className="settings-field" style={{ minWidth: 180 }}>
+                <span>{t("superAdmin.commissionPct")}</span>
+                <input
+                  type="number"
+                  min={0}
+                  max={100}
+                  step={0.5}
+                  defaultValue={
+                    selected.commissionPercent ??
+                    overview?.commissionPercent ??
+                    10
+                  }
+                  key={`${selected.id}-${selected.commissionPercent}`}
+                  onBlur={async (e) => {
+                    const n = Number(e.target.value);
+                    if (!Number.isFinite(n) || n < 0 || n > 100) return;
+                    const res = await api.updateAccount(selected.id, {
+                      commissionPercent: n,
+                    });
+                    setSelected(res.account);
+                    await load();
+                    show(t("superAdmin.commissionSaved"));
+                  }}
+                />
+              </label>
+            </div>
+          ) : null}
 
           <div className="filters">
             <select
@@ -360,6 +485,9 @@ export default function SuperAdminPage() {
             <div key={r.id} className="review-item">
               <strong>
                 {r.car?.brand} {r.car?.model} · €{r.totalPrice}
+                {r.platformFee > 0
+                  ? ` · ${t("superAdmin.commissionPct")} €${r.platformFee}`
+                  : ""}
               </strong>
               <p>
                 {String(r.startDate).slice(0, 10)} → {String(r.endDate).slice(0, 10)} ·{" "}

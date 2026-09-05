@@ -959,6 +959,16 @@ export const en: Dict = {
     active: "Active",
     suspended: "Suspended",
     revenue: "Revenue",
+    commission: "Your commission",
+    commissionEarned: "Your earnings",
+    commissionTitle: "Platform commission",
+    commissionHint:
+      "The share you earn on every contractor-car booking. 10% is a typical marketplace rate; you can change it anytime. A contractor can have a different rate.",
+    commissionSave: "Save commission",
+    commissionSaved: "Commission saved",
+    commissionInvalid: "Enter a percentage from 0 to 100.",
+    commissionPct: "Commission",
+    commissionPlaceholder: "Commission % (10)",
     createTitle: "Create account (client / contractor / admin)",
     createHint:
       "For contractors: select Contractor and fill in the company name. Password: min. 10 characters, upper/lower case, number and symbol.",

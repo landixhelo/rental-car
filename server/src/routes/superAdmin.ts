@@ -8,6 +8,10 @@ import { AppError } from "../middleware/error.js";
 import { requireAuth, requireSuperAdmin } from "../middleware/auth.js";
 import { validate } from "../middleware/validate.js";
 import { idParamSchema, strongPassword } from "../validators/schemas.js";
+import {
+  asCommissionPercent,
+  getPlatformCommissionPercent,
+} from "../lib/commission.js";
 
 const router = Router();
 
@@ -23,6 +27,7 @@ const createAccountSchema = z.object({
       companyName: z.string().trim().max(120).optional(),
       role: z.enum(["USER", "CONTRACTOR", "ADMIN"]),
       notes: z.string().trim().max(1000).optional(),
+      commissionPercent: z.coerce.number().min(0).max(100).optional(),
     })
     .superRefine((data, ctx) => {
       if (data.role === "CONTRACTOR" && !data.companyName?.trim()) {
@@ -45,6 +50,13 @@ const updateAccountSchema = z.object({
     isActive: z.boolean().optional(),
     notes: z.string().trim().max(1000).optional().nullable(),
     password: strongPassword.optional(),
+    commissionPercent: z.coerce.number().min(0).max(100).optional().nullable(),
+  }),
+});
+
+const platformCommissionSchema = z.object({
+  body: z.object({
+    commissionPercent: z.coerce.number().min(0).max(100),
   }),
 });
 
@@ -57,6 +69,7 @@ function publicAccount(user: {
   role: Role;
   isActive: boolean;
   notes: string | null;
+  commissionPercent?: unknown;
   createdAt: Date;
   updatedAt: Date;
   _count?: { reservations: number; ownedCars: number };
@@ -70,6 +83,10 @@ function publicAccount(user: {
     role: user.role,
     isActive: user.isActive,
     notes: user.notes,
+    commissionPercent:
+      user.commissionPercent == null
+        ? null
+        : asCommissionPercent(user.commissionPercent),
     createdAt: user.createdAt,
     updatedAt: user.updatedAt,
     reservationsCount: user._count?.reservations ?? 0,
@@ -88,6 +105,7 @@ router.get("/overview", async (_req, res, next) => {
       cars,
       reservations,
       revenueRows,
+      commissionPercent,
     ] = await Promise.all([
       prisma.user.count({ where: { role: "USER" } }),
       prisma.user.count({ where: { role: "CONTRACTOR" } }),
@@ -100,14 +118,18 @@ router.get("/overview", async (_req, res, next) => {
       }),
       prisma.reservation.findMany({
         where: { status: { notIn: ["CANCELLED", "REJECTED"] } },
-        select: { totalPrice: true },
+        select: { totalPrice: true, platformFee: true },
       }),
+      getPlatformCommissionPercent(),
     ]);
 
     const revenue = revenueRows.reduce(
       (sum, r) => sum + Number(r.totalPrice),
       0
     );
+    const commissionEarned = Math.round(
+      revenueRows.reduce((sum, r) => sum + Number(r.platformFee || 0), 0) * 100
+    ) / 100;
 
     res.json({
       overview: {
@@ -118,7 +140,9 @@ router.get("/overview", async (_req, res, next) => {
         inactiveUsers,
         cars,
         reservations,
-        revenue,
+        revenue: Math.round(revenue * 100) / 100,
+        commissionPercent,
+        commissionEarned,
       },
     });
   } catch (err) {
@@ -163,6 +187,7 @@ router.get("/accounts", async (req, res, next) => {
         role: true,
         isActive: true,
         notes: true,
+        commissionPercent: true,
         createdAt: true,
         updatedAt: true,
         _count: {
@@ -216,6 +241,7 @@ router.get(
           extrasTotal: Number(r.extrasTotal),
           locationFees: Number(r.locationFees),
           totalPrice: Number(r.totalPrice),
+          platformFee: Number(r.platformFee),
         })),
         cars: user.ownedCars.map((c) => ({
           ...c,
@@ -233,8 +259,16 @@ router.post(
   validate(createAccountSchema),
   async (req, res, next) => {
     try {
-      const { fullName, email, password, phone, companyName, role, notes } =
-        req.body;
+      const {
+        fullName,
+        email,
+        password,
+        phone,
+        companyName,
+        role,
+        notes,
+        commissionPercent,
+      } = req.body;
 
       const exists = await prisma.user.findUnique({ where: { email } });
       if (exists) throw new AppError("Email already registered", 409);
@@ -249,6 +283,10 @@ router.post(
           companyName,
           role,
           notes,
+          commissionPercent:
+            role === "CONTRACTOR" && commissionPercent != null
+              ? asCommissionPercent(commissionPercent)
+              : undefined,
         },
         include: {
           _count: { select: { reservations: true, ownedCars: true } },
@@ -279,6 +317,9 @@ router.patch(
       }
 
       const data: Record<string, unknown> = { ...req.body };
+      if (req.body.commissionPercent != null) {
+        data.commissionPercent = asCommissionPercent(req.body.commissionPercent);
+      }
       if (req.body.password) {
         data.passwordHash = await bcrypt.hash(
           req.body.password,
@@ -296,6 +337,25 @@ router.patch(
       });
 
       res.json({ account: publicAccount(user) });
+    } catch (err) {
+      next(err);
+    }
+  }
+);
+
+router.patch(
+  "/commission",
+  validate(platformCommissionSchema),
+  async (req, res, next) => {
+    try {
+      const commissionPercent = asCommissionPercent(
+        req.body.commissionPercent
+      );
+      await prisma.user.update({
+        where: { id: req.user!.id },
+        data: { commissionPercent },
+      });
+      res.json({ commissionPercent });
     } catch (err) {
       next(err);
     }

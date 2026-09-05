@@ -962,6 +962,16 @@ export const it: Dict = {
     active: "Attivi",
     suspended: "Sospesi",
     revenue: "Ricavi",
+    commission: "La tua commissione",
+    commissionEarned: "Il tuo guadagno",
+    commissionTitle: "Commissione della piattaforma",
+    commissionHint:
+      "La percentuale che guadagni su ogni prenotazione delle auto dei contractor. Il 10% è lo standard per questo tipo di piattaforma; puoi cambiarla quando vuoi. Un contractor può avere una percentuale diversa.",
+    commissionSave: "Salva commissione",
+    commissionSaved: "Commissione salvata",
+    commissionInvalid: "Inserisci una percentuale da 0 a 100.",
+    commissionPct: "Commissione",
+    commissionPlaceholder: "Commissione % (10)",
     createTitle: "Crea account (cliente / contractor / admin)",
     createHint:
       "Per contractor: seleziona Contractor e inserisci il nome azienda. Password: min. 10 caratteri, maiuscole/minuscole, numero e simbolo.",
